@@ -29,23 +29,23 @@ class ThreadDownloadImageDataINNER1 extends Thread
             httpurlconnection.setDoOutput(false);
             httpurlconnection.connect();
 
-            if (httpurlconnection.getResponseCode() / 100 != 2)
+            if (httpurlconnection.getResponseCode() / 100 == 2)
             {
+                BufferedImage bufferedimage = ImageIO.read(httpurlconnection.getInputStream());
+
+                if (ThreadDownloadImageData.getImageBuffer(this.theThreadDownloadImageData) != null)
+                {
+                    bufferedimage = ThreadDownloadImageData.getImageBuffer(this.theThreadDownloadImageData).parseUserSkin(bufferedimage);
+                }
+
+                this.theThreadDownloadImageData.getBufferedImage(bufferedimage);
                 return;
             }
-
-            BufferedImage bufferedimage = ImageIO.read(httpurlconnection.getInputStream());
-
-            if (ThreadDownloadImageData.getImageBuffer(this.theThreadDownloadImageData) != null)
-            {
-                bufferedimage = ThreadDownloadImageData.getImageBuffer(this.theThreadDownloadImageData).parseUserSkin(bufferedimage);
-            }
-
-            this.theThreadDownloadImageData.getBufferedImage(bufferedimage);
         }
         catch (Exception exception)
         {
             exception.printStackTrace();
+            return;
         }
         finally
         {

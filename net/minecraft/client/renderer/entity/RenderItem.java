@@ -345,9 +345,9 @@ public class RenderItem extends Render
         int l = par3ItemStack.getItemDamage();
         Object object = par3ItemStack.getIconIndex();
         float f;
-        int i1;
         float f1;
         float f2;
+        int i1;
 
         Block block = (k < Block.blocksList.length ? Block.blocksList[k] : null);
         if (par3ItemStack.getItemSpriteNumber() == 0 && block != null && RenderBlocks.renderItemIn3d(Block.blocksList[k].getRenderType()))
@@ -361,13 +361,13 @@ public class RenderItem extends Render
             GL11.glRotatef(210.0F, 1.0F, 0.0F, 0.0F);
             GL11.glRotatef(45.0F, 0.0F, 1.0F, 0.0F);
             i1 = Item.itemsList[k].getColorFromItemStack(par3ItemStack, 0);
-            f = (float)(i1 >> 16 & 255) / 255.0F;
-            f1 = (float)(i1 >> 8 & 255) / 255.0F;
-            f2 = (float)(i1 & 255) / 255.0F;
+            f2 = (float)(i1 >> 16 & 255) / 255.0F;
+            f = (float)(i1 >> 8 & 255) / 255.0F;
+            f1 = (float)(i1 & 255) / 255.0F;
 
             if (this.renderWithColor)
             {
-                GL11.glColor4f(f, f1, f2, 1.0F);
+                GL11.glColor4f(f2, f, f1, 1.0F);
             }
 
             GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F);
@@ -385,13 +385,13 @@ public class RenderItem extends Render
                 par2TextureManager.bindTexture(par3ItemStack.getItemSpriteNumber() == 0 ? TextureMap.locationBlocksTexture : TextureMap.locationItemsTexture);
                 Icon icon = Item.itemsList[k].getIcon(par3ItemStack, j1);
                 int k1 = Item.itemsList[k].getColorFromItemStack(par3ItemStack, j1);
-                f1 = (float)(k1 >> 16 & 255) / 255.0F;
-                f2 = (float)(k1 >> 8 & 255) / 255.0F;
+                f = (float)(k1 >> 16 & 255) / 255.0F;
+                f1 = (float)(k1 >> 8 & 255) / 255.0F;
                 float f3 = (float)(k1 & 255) / 255.0F;
 
                 if (this.renderWithColor)
                 {
-                    GL11.glColor4f(f1, f2, f3, 1.0F);
+                    GL11.glColor4f(f, f1, f3, 1.0F);
                 }
 
                 this.renderIcon(par4, par5, icon, 16, 16);
@@ -416,13 +416,13 @@ public class RenderItem extends Render
             }
 
             i1 = Item.itemsList[k].getColorFromItemStack(par3ItemStack, 0);
-            f = (float)(i1 >> 16 & 255) / 255.0F;
-            f1 = (float)(i1 >> 8 & 255) / 255.0F;
-            f2 = (float)(i1 & 255) / 255.0F;
+            f2 = (float)(i1 >> 16 & 255) / 255.0F;
+            f = (float)(i1 >> 8 & 255) / 255.0F;
+            f1 = (float)(i1 & 255) / 255.0F;
 
             if (this.renderWithColor)
             {
-                GL11.glColor4f(f, f1, f2, 1.0F);
+                GL11.glColor4f(f2, f, f1, 1.0F);
             }
 
             this.renderIcon(par4, par5, (Icon)object, 16, 16);

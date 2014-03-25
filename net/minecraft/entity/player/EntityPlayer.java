@@ -181,7 +181,7 @@ public abstract class EntityPlayer extends EntityLivingBase implements ICommandS
      * An instance of a fishing rod's hook. If this isn't null, the icon image of the fishing rod is slightly different
      */
     public EntityFishHook fishEntity;
-
+    
     public EntityPlayer(World par1World, String par2Str)
     {
         super(par1World);
@@ -194,6 +194,7 @@ public abstract class EntityPlayer extends EntityLivingBase implements ICommandS
         this.field_70741_aB = 180.0F;
         this.fireResistance = 20;
         this.eyeHeight = this.getDefaultEyeHeight();
+        
     }
 
     protected void applyEntityAttributes()
@@ -670,6 +671,7 @@ public abstract class EntityPlayer extends EntityLivingBase implements ICommandS
                 }
             }
         }
+        
     }
 
     private void collideWithPlayer(Entity par1Entity)

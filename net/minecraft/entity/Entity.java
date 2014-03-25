@@ -1450,7 +1450,7 @@ public abstract class Entity
      */
     public boolean attackEntityFrom(DamageSource par1DamageSource, float par2)
     {
-        if (this.isEntityInvulnerable())
+    	if (this.isEntityInvulnerable())
         {
             return false;
         }

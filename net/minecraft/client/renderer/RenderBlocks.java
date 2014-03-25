@@ -2376,9 +2376,9 @@ public class RenderBlocks
 
             if ((par2 / 2 + par3 / 2 + par4 / 2 & 1) == 1)
             {
-                d5 = d2;
+                d4 = d2;
                 d2 = d0;
-                d0 = d5;
+                d0 = d4;
             }
 
             if (Block.fire.canBlockCatchFire(this.blockAccess, par2 - 1, par3, par4, EAST))
@@ -2431,13 +2431,13 @@ public class RenderBlocks
 
             if (Block.fire.canBlockCatchFire(this.blockAccess, par2, par3 + 1, par4, DOWN))
             {
-                d5 = (double)par2 + 0.5D + 0.5D;
-                d6 = (double)par2 + 0.5D - 0.5D;
-                d7 = (double)par4 + 0.5D + 0.5D;
-                d8 = (double)par4 + 0.5D - 0.5D;
-                d9 = (double)par2 + 0.5D - 0.5D;
-                d10 = (double)par2 + 0.5D + 0.5D;
-                d4 = (double)par4 + 0.5D - 0.5D;
+                d4 = (double)par2 + 0.5D + 0.5D;
+                d5 = (double)par2 + 0.5D - 0.5D;
+                d6 = (double)par4 + 0.5D + 0.5D;
+                d7 = (double)par4 + 0.5D - 0.5D;
+                d8 = (double)par2 + 0.5D - 0.5D;
+                d9 = (double)par2 + 0.5D + 0.5D;
+                d10 = (double)par4 + 0.5D - 0.5D;
                 double d11 = (double)par4 + 0.5D + 0.5D;
                 d0 = (double)icon.getMinU();
                 d1 = (double)icon.getMinV();
@@ -2448,94 +2448,94 @@ public class RenderBlocks
 
                 if ((par2 + par3 + par4 & 1) == 0)
                 {
-                    tessellator.addVertexWithUV(d9, (double)((float)par3 + f), (double)(par4 + 0), d2, d1);
-                    tessellator.addVertexWithUV(d5, (double)(par3 + 0), (double)(par4 + 0), d2, d3);
-                    tessellator.addVertexWithUV(d5, (double)(par3 + 0), (double)(par4 + 1), d0, d3);
-                    tessellator.addVertexWithUV(d9, (double)((float)par3 + f), (double)(par4 + 1), d0, d1);
+                    tessellator.addVertexWithUV(d8, (double)((float)par3 + f), (double)(par4 + 0), d2, d1);
+                    tessellator.addVertexWithUV(d4, (double)(par3 + 0), (double)(par4 + 0), d2, d3);
+                    tessellator.addVertexWithUV(d4, (double)(par3 + 0), (double)(par4 + 1), d0, d3);
+                    tessellator.addVertexWithUV(d8, (double)((float)par3 + f), (double)(par4 + 1), d0, d1);
                     d0 = (double)icon1.getMinU();
                     d1 = (double)icon1.getMinV();
                     d2 = (double)icon1.getMaxU();
                     d3 = (double)icon1.getMaxV();
-                    tessellator.addVertexWithUV(d10, (double)((float)par3 + f), (double)(par4 + 1), d2, d1);
-                    tessellator.addVertexWithUV(d6, (double)(par3 + 0), (double)(par4 + 1), d2, d3);
-                    tessellator.addVertexWithUV(d6, (double)(par3 + 0), (double)(par4 + 0), d0, d3);
-                    tessellator.addVertexWithUV(d10, (double)((float)par3 + f), (double)(par4 + 0), d0, d1);
+                    tessellator.addVertexWithUV(d9, (double)((float)par3 + f), (double)(par4 + 1), d2, d1);
+                    tessellator.addVertexWithUV(d5, (double)(par3 + 0), (double)(par4 + 1), d2, d3);
+                    tessellator.addVertexWithUV(d5, (double)(par3 + 0), (double)(par4 + 0), d0, d3);
+                    tessellator.addVertexWithUV(d9, (double)((float)par3 + f), (double)(par4 + 0), d0, d1);
                 }
                 else
                 {
                     tessellator.addVertexWithUV((double)(par2 + 0), (double)((float)par3 + f), d11, d2, d1);
-                    tessellator.addVertexWithUV((double)(par2 + 0), (double)(par3 + 0), d8, d2, d3);
-                    tessellator.addVertexWithUV((double)(par2 + 1), (double)(par3 + 0), d8, d0, d3);
+                    tessellator.addVertexWithUV((double)(par2 + 0), (double)(par3 + 0), d7, d2, d3);
+                    tessellator.addVertexWithUV((double)(par2 + 1), (double)(par3 + 0), d7, d0, d3);
                     tessellator.addVertexWithUV((double)(par2 + 1), (double)((float)par3 + f), d11, d0, d1);
                     d0 = (double)icon1.getMinU();
                     d1 = (double)icon1.getMinV();
                     d2 = (double)icon1.getMaxU();
                     d3 = (double)icon1.getMaxV();
-                    tessellator.addVertexWithUV((double)(par2 + 1), (double)((float)par3 + f), d4, d2, d1);
-                    tessellator.addVertexWithUV((double)(par2 + 1), (double)(par3 + 0), d7, d2, d3);
-                    tessellator.addVertexWithUV((double)(par2 + 0), (double)(par3 + 0), d7, d0, d3);
-                    tessellator.addVertexWithUV((double)(par2 + 0), (double)((float)par3 + f), d4, d0, d1);
+                    tessellator.addVertexWithUV((double)(par2 + 1), (double)((float)par3 + f), d10, d2, d1);
+                    tessellator.addVertexWithUV((double)(par2 + 1), (double)(par3 + 0), d6, d2, d3);
+                    tessellator.addVertexWithUV((double)(par2 + 0), (double)(par3 + 0), d6, d0, d3);
+                    tessellator.addVertexWithUV((double)(par2 + 0), (double)((float)par3 + f), d10, d0, d1);
                 }
             }
         }
         else
         {
             double d12 = (double)par2 + 0.5D + 0.2D;
-            d5 = (double)par2 + 0.5D - 0.2D;
-            d6 = (double)par4 + 0.5D + 0.2D;
-            d7 = (double)par4 + 0.5D - 0.2D;
-            d8 = (double)par2 + 0.5D - 0.3D;
-            d9 = (double)par2 + 0.5D + 0.3D;
-            d10 = (double)par4 + 0.5D - 0.3D;
-            d4 = (double)par4 + 0.5D + 0.3D;
-            tessellator.addVertexWithUV(d8, (double)((float)par3 + f), (double)(par4 + 1), d2, d1);
+            d4 = (double)par2 + 0.5D - 0.2D;
+            d5 = (double)par4 + 0.5D + 0.2D;
+            d6 = (double)par4 + 0.5D - 0.2D;
+            d7 = (double)par2 + 0.5D - 0.3D;
+            d8 = (double)par2 + 0.5D + 0.3D;
+            d9 = (double)par4 + 0.5D - 0.3D;
+            d10 = (double)par4 + 0.5D + 0.3D;
+            tessellator.addVertexWithUV(d7, (double)((float)par3 + f), (double)(par4 + 1), d2, d1);
             tessellator.addVertexWithUV(d12, (double)(par3 + 0), (double)(par4 + 1), d2, d3);
             tessellator.addVertexWithUV(d12, (double)(par3 + 0), (double)(par4 + 0), d0, d3);
-            tessellator.addVertexWithUV(d8, (double)((float)par3 + f), (double)(par4 + 0), d0, d1);
-            tessellator.addVertexWithUV(d9, (double)((float)par3 + f), (double)(par4 + 0), d2, d1);
-            tessellator.addVertexWithUV(d5, (double)(par3 + 0), (double)(par4 + 0), d2, d3);
-            tessellator.addVertexWithUV(d5, (double)(par3 + 0), (double)(par4 + 1), d0, d3);
-            tessellator.addVertexWithUV(d9, (double)((float)par3 + f), (double)(par4 + 1), d0, d1);
+            tessellator.addVertexWithUV(d7, (double)((float)par3 + f), (double)(par4 + 0), d0, d1);
+            tessellator.addVertexWithUV(d8, (double)((float)par3 + f), (double)(par4 + 0), d2, d1);
+            tessellator.addVertexWithUV(d4, (double)(par3 + 0), (double)(par4 + 0), d2, d3);
+            tessellator.addVertexWithUV(d4, (double)(par3 + 0), (double)(par4 + 1), d0, d3);
+            tessellator.addVertexWithUV(d8, (double)((float)par3 + f), (double)(par4 + 1), d0, d1);
             d0 = (double)icon1.getMinU();
             d1 = (double)icon1.getMinV();
             d2 = (double)icon1.getMaxU();
             d3 = (double)icon1.getMaxV();
-            tessellator.addVertexWithUV((double)(par2 + 1), (double)((float)par3 + f), d4, d2, d1);
-            tessellator.addVertexWithUV((double)(par2 + 1), (double)(par3 + 0), d7, d2, d3);
-            tessellator.addVertexWithUV((double)(par2 + 0), (double)(par3 + 0), d7, d0, d3);
-            tessellator.addVertexWithUV((double)(par2 + 0), (double)((float)par3 + f), d4, d0, d1);
-            tessellator.addVertexWithUV((double)(par2 + 0), (double)((float)par3 + f), d10, d2, d1);
-            tessellator.addVertexWithUV((double)(par2 + 0), (double)(par3 + 0), d6, d2, d3);
-            tessellator.addVertexWithUV((double)(par2 + 1), (double)(par3 + 0), d6, d0, d3);
-            tessellator.addVertexWithUV((double)(par2 + 1), (double)((float)par3 + f), d10, d0, d1);
+            tessellator.addVertexWithUV((double)(par2 + 1), (double)((float)par3 + f), d10, d2, d1);
+            tessellator.addVertexWithUV((double)(par2 + 1), (double)(par3 + 0), d6, d2, d3);
+            tessellator.addVertexWithUV((double)(par2 + 0), (double)(par3 + 0), d6, d0, d3);
+            tessellator.addVertexWithUV((double)(par2 + 0), (double)((float)par3 + f), d10, d0, d1);
+            tessellator.addVertexWithUV((double)(par2 + 0), (double)((float)par3 + f), d9, d2, d1);
+            tessellator.addVertexWithUV((double)(par2 + 0), (double)(par3 + 0), d5, d2, d3);
+            tessellator.addVertexWithUV((double)(par2 + 1), (double)(par3 + 0), d5, d0, d3);
+            tessellator.addVertexWithUV((double)(par2 + 1), (double)((float)par3 + f), d9, d0, d1);
             d12 = (double)par2 + 0.5D - 0.5D;
-            d5 = (double)par2 + 0.5D + 0.5D;
-            d6 = (double)par4 + 0.5D - 0.5D;
-            d7 = (double)par4 + 0.5D + 0.5D;
-            d8 = (double)par2 + 0.5D - 0.4D;
-            d9 = (double)par2 + 0.5D + 0.4D;
-            d10 = (double)par4 + 0.5D - 0.4D;
-            d4 = (double)par4 + 0.5D + 0.4D;
-            tessellator.addVertexWithUV(d8, (double)((float)par3 + f), (double)(par4 + 0), d0, d1);
+            d4 = (double)par2 + 0.5D + 0.5D;
+            d5 = (double)par4 + 0.5D - 0.5D;
+            d6 = (double)par4 + 0.5D + 0.5D;
+            d7 = (double)par2 + 0.5D - 0.4D;
+            d8 = (double)par2 + 0.5D + 0.4D;
+            d9 = (double)par4 + 0.5D - 0.4D;
+            d10 = (double)par4 + 0.5D + 0.4D;
+            tessellator.addVertexWithUV(d7, (double)((float)par3 + f), (double)(par4 + 0), d0, d1);
             tessellator.addVertexWithUV(d12, (double)(par3 + 0), (double)(par4 + 0), d0, d3);
             tessellator.addVertexWithUV(d12, (double)(par3 + 0), (double)(par4 + 1), d2, d3);
-            tessellator.addVertexWithUV(d8, (double)((float)par3 + f), (double)(par4 + 1), d2, d1);
-            tessellator.addVertexWithUV(d9, (double)((float)par3 + f), (double)(par4 + 1), d0, d1);
-            tessellator.addVertexWithUV(d5, (double)(par3 + 0), (double)(par4 + 1), d0, d3);
-            tessellator.addVertexWithUV(d5, (double)(par3 + 0), (double)(par4 + 0), d2, d3);
-            tessellator.addVertexWithUV(d9, (double)((float)par3 + f), (double)(par4 + 0), d2, d1);
+            tessellator.addVertexWithUV(d7, (double)((float)par3 + f), (double)(par4 + 1), d2, d1);
+            tessellator.addVertexWithUV(d8, (double)((float)par3 + f), (double)(par4 + 1), d0, d1);
+            tessellator.addVertexWithUV(d4, (double)(par3 + 0), (double)(par4 + 1), d0, d3);
+            tessellator.addVertexWithUV(d4, (double)(par3 + 0), (double)(par4 + 0), d2, d3);
+            tessellator.addVertexWithUV(d8, (double)((float)par3 + f), (double)(par4 + 0), d2, d1);
             d0 = (double)icon.getMinU();
             d1 = (double)icon.getMinV();
             d2 = (double)icon.getMaxU();
             d3 = (double)icon.getMaxV();
-            tessellator.addVertexWithUV((double)(par2 + 0), (double)((float)par3 + f), d4, d0, d1);
-            tessellator.addVertexWithUV((double)(par2 + 0), (double)(par3 + 0), d7, d0, d3);
-            tessellator.addVertexWithUV((double)(par2 + 1), (double)(par3 + 0), d7, d2, d3);
-            tessellator.addVertexWithUV((double)(par2 + 1), (double)((float)par3 + f), d4, d2, d1);
-            tessellator.addVertexWithUV((double)(par2 + 1), (double)((float)par3 + f), d10, d0, d1);
-            tessellator.addVertexWithUV((double)(par2 + 1), (double)(par3 + 0), d6, d0, d3);
-            tessellator.addVertexWithUV((double)(par2 + 0), (double)(par3 + 0), d6, d2, d3);
-            tessellator.addVertexWithUV((double)(par2 + 0), (double)((float)par3 + f), d10, d2, d1);
+            tessellator.addVertexWithUV((double)(par2 + 0), (double)((float)par3 + f), d10, d0, d1);
+            tessellator.addVertexWithUV((double)(par2 + 0), (double)(par3 + 0), d6, d0, d3);
+            tessellator.addVertexWithUV((double)(par2 + 1), (double)(par3 + 0), d6, d2, d3);
+            tessellator.addVertexWithUV((double)(par2 + 1), (double)((float)par3 + f), d10, d2, d1);
+            tessellator.addVertexWithUV((double)(par2 + 1), (double)((float)par3 + f), d9, d0, d1);
+            tessellator.addVertexWithUV((double)(par2 + 1), (double)(par3 + 0), d5, d0, d3);
+            tessellator.addVertexWithUV((double)(par2 + 0), (double)(par3 + 0), d5, d2, d3);
+            tessellator.addVertexWithUV((double)(par2 + 0), (double)((float)par3 + f), d9, d2, d1);
         }
 
         return true;
