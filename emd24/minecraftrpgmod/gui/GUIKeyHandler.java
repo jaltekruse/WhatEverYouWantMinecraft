@@ -11,7 +11,7 @@ import cpw.mods.fml.common.TickType;
 
 public class GUIKeyHandler extends KeyHandler {
 
-	public static KeyBinding skillMenu = new KeyBinding("Skills",Keyboard.KEY_T);
+	public static KeyBinding skillMenu = new KeyBinding("Skills",Keyboard.KEY_O);
 	
 	public GUIKeyHandler() {
 		super(new KeyBinding[]{skillMenu} , new boolean[]{false});
