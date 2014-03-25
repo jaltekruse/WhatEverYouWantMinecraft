@@ -31,6 +31,7 @@ import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
+import emd24.minecraftrpgmod.food.FoodTomato;
 import emd24.minecraftrpgmod.skills.SkillMining;
 import emd24.minecraftrpgmod.skills.SkillPlayer;
 import emd24.minecraftrpgmod.skills.SkillRegistry;
@@ -51,6 +52,8 @@ public class RPGMod {
 			serverSide="emd24.minecraftrpgmod.CommonProxy")
 	public static CommonProxy proxy;
 	public PacketHandler packetHandler;
+	
+	public static Item tomatoFruit;
 	
 	
 	//Telling forge that we are creating these
@@ -92,6 +95,11 @@ public class RPGMod {
 		.setManaCost(20).setUnlocalizedName("summonzombie")
 		.setTextureName("tutorialmod:summonzombie");
 		
+		//tomatoFruit = new Tomato(13370, CreativeTabs.tabFood)
+		tomatoFruit = new FoodTomato(6969-256, 4, 0.3F, false)//stats from apple
+		.setUnlocalizedName("tomato")
+		.setTextureName("tutorialmod:tomato");
+		
 		healMana = new ItemManaHeal(4003).setCreativeTab(CreativeTabs.tabMisc).setUnlocalizedName("healMana");
 		
 
@@ -121,6 +129,10 @@ public class RPGMod {
 		mining.addExperienceBlockBreak(15, 20); // experience for mining iron
 		
 		SkillRegistry.registerSkill(mining);
+		
+	 	LanguageRegistry.addName(tomatoFruit, "Tomato");
+	 	GameRegistry.addShapelessRecipe(new ItemStack(lightningSpell, 4), new ItemStack(tomatoFruit));
+
 		
 		proxy.registerRenderers();
 	}
