@@ -105,7 +105,7 @@ public class RPGMod {
 		
 		// Register Blocks
 		
-		GameRegistry.registerBlock(elementium, "Elementium Ore");
+		GameRegistry.registerBlock(elementium, "elementium");
 		GameRegistry.registerBlock(sodium, "Sodium");
 
 		// Register items
@@ -114,11 +114,13 @@ public class RPGMod {
 		LanguageRegistry.addName(becomeUndead, "Become Undead");
 		LanguageRegistry.addName(summonZombie, "Summon Zombie");
 		LanguageRegistry.addName(healMana, "Mana Heal");
+		LanguageRegistry.addName(elementium, "Elementium");
 
 		SkillMining mining = new SkillMining("Mining");
 		mining.addExperienceBlockBreak(1, 50); // experience for mining STONE
 		mining.addExperienceBlockBreak(16, 10); // experience for mining coal
 		mining.addExperienceBlockBreak(15, 20); // experience for mining iron
+		mining.addBlockRequirement(2000, 3);
 		
 		SkillRegistry.registerSkill(mining);
 		

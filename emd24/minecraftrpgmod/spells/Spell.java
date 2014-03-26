@@ -144,8 +144,7 @@ public abstract class Spell extends Item {
 	 * @param par2World
 	 * @param par3EntityPlayer
 	 */
-	private void castSpell(ItemStack par1ItemStack, World par2World,
-			EntityPlayer par3EntityPlayer) {
+	public void castSpell(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer) {
 		// TODO Auto-generated method stub
 		
 	}

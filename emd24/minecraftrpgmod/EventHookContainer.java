@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -31,38 +32,49 @@ import net.minecraftforge.event.world.BlockEvent.BreakEvent;
  *
  */
 public class EventHookContainer {
-	
+
 	private Random rand = new Random();
-	
+
 	/**
 	 * Registers the Player Data class, which tracks information on additional data for the player
 	 * 
 	 */
 	@ForgeSubscribe
-    public void onEntityConstruct(EntityEvent.EntityConstructing event) {
-        if (event.entity instanceof EntityPlayer && ExtendedPlayerData.get(event.entity) == null) {
-            ExtendedPlayerData.register((EntityPlayer) event.entity);
-        }
-    }
-	
-	@ForgeSubscribe
-	public void onBlockBreak(BreakEvent event){
-		// Check for mining experience
-		ExtendedPlayerData data = ExtendedPlayerData.get(event.getPlayer());
-		int blockId = event.block.blockID;
-		int experience = SkillRegistry.getSkill("Mining").getExpForBlockBreak(blockId);
-		if(experience > 0){ 
-			boolean levelUp = data.addExp("Mining", experience);
-			
-			// Notify the player
-			event.getPlayer().sendChatToPlayer((new ChatMessageComponent()).addText("Gained " + experience + " Mining exp"));
-			if(levelUp){
-				event.getPlayer().sendChatToPlayer((new ChatMessageComponent()).addText("Congrats! Reached mining level " + 
-						data.getSkill("Mining").getLevel()));
-			}
+	public void onEntityConstruct(EntityEvent.EntityConstructing event) {
+		if (event.entity instanceof EntityPlayer && ExtendedPlayerData.get(event.entity) == null) {
+			ExtendedPlayerData.register((EntityPlayer) event.entity);
 		}
 	}
-	
+
+	@ForgeSubscribe
+	public void onBlockBreak(BreakEvent event){
+
+		ExtendedPlayerData data = ExtendedPlayerData.get(event.getPlayer());
+		int blockId = event.block.blockID;
+		
+		// Check level requirement
+		if(data.getSkill("Mining").getLevel() >= SkillRegistry.getSkill("Mining").getBlockRequirement(blockId)){
+			
+			// Check for mining experience
+			int experience = SkillRegistry.getSkill("Mining").getExpForBlockBreak(blockId);
+			if(experience > 0){ 
+				boolean levelUp = data.addExp("Mining", experience);
+
+				// Notify the player
+				event.getPlayer().sendChatToPlayer((new ChatMessageComponent()).addText("Gained " + experience + " Mining exp"));
+				if(levelUp){
+					event.getPlayer().sendChatToPlayer((new ChatMessageComponent()).addText("Congrats! Reached mining level " + 
+							data.getSkill("Mining").getLevel()).setColor(EnumChatFormatting.GREEN));
+				}
+			}
+		}
+		else{
+			event.getPlayer().sendChatToPlayer((new ChatMessageComponent()).addText("Mining Level " + 
+					SkillRegistry.getSkill("Mining").getBlockRequirement(blockId) + " required").setColor(EnumChatFormatting.RED));
+			event.setCanceled(true);
+		}
+	}
+
 	@ForgeSubscribe 
 	public void onLivingDeathEvent(LivingDeathEvent event){
 		if (!event.entity.worldObj.isRemote && event.entity instanceof EntityPlayer){
@@ -70,21 +82,21 @@ public class EventHookContainer {
 			ExtendedPlayerData.get(event.entity).saveNBTData(compound);
 			RPGMod.proxy.storeEntityData(((EntityPlayer) event.entity).username, compound);
 		}
-		
+
 	}
-	
+
 	@ForgeSubscribe
 	public void onEntityJoinWorld(EntityJoinWorldEvent event){
 		if (!event.entity.worldObj.isRemote && event.entity instanceof EntityPlayer){
-				NBTTagCompound data = RPGMod.proxy.getEntityData(((EntityPlayer) event.entity).username);
-				if(data != null){
-					ExtendedPlayerData.get(event.entity).loadNBTData(data);
-				}
-				ExtendedPlayerData.get(event.entity).sync();
-				
+			NBTTagCompound data = RPGMod.proxy.getEntityData(((EntityPlayer) event.entity).username);
+			if(data != null){
+				ExtendedPlayerData.get(event.entity).loadNBTData(data);
+			}
+			ExtendedPlayerData.get(event.entity).sync();
+
 		}
 	}
-	
+
 	/**
 	 * Event that checks to see if the player is undead, and if so causes the player to burn up
 	 * like a zombie or skeleton
@@ -94,44 +106,44 @@ public class EventHookContainer {
 	@ForgeSubscribe
 	public void undeadPlayerBurn(LivingUpdateEvent event){
 		if (event.entity instanceof EntityPlayer) {
-            EntityPlayer ent = (EntityPlayer) event.entityLiving;
-            ExtendedPlayerData data = ExtendedPlayerData.get(ent);
-            
-            if (data.isUndead() && ent.worldObj.isDaytime() && !ent.worldObj.isRemote && !ent.worldObj.isRaining())
-            {
-                float f = ent.getBrightness(1.0F);
+			EntityPlayer ent = (EntityPlayer) event.entityLiving;
+			ExtendedPlayerData data = ExtendedPlayerData.get(ent);
 
-                if (f > 0.5F && this.rand.nextFloat() * 30.0F < (f - 0.4F) * 2.0F && ent.worldObj.canBlockSeeTheSky(MathHelper.floor_double(ent.posX), MathHelper.floor_double(ent.posY), MathHelper.floor_double(ent.posZ)))
-                {
-                    boolean flag = true;
-                    ItemStack itemstack = ent.getCurrentItemOrArmor(4);
+			if (data.isUndead() && ent.worldObj.isDaytime() && !ent.worldObj.isRemote && !ent.worldObj.isRaining())
+			{
+				float f = ent.getBrightness(1.0F);
 
-                    if (itemstack != null)
-                    {
-                        if (itemstack.isItemStackDamageable())
-                        {
-                            itemstack.setItemDamage(itemstack.getItemDamageForDisplay() + this.rand.nextInt(2));
+				if (f > 0.5F && this.rand.nextFloat() * 30.0F < (f - 0.4F) * 2.0F && ent.worldObj.canBlockSeeTheSky(MathHelper.floor_double(ent.posX), MathHelper.floor_double(ent.posY), MathHelper.floor_double(ent.posZ)))
+				{
+					boolean flag = true;
+					ItemStack itemstack = ent.getCurrentItemOrArmor(4);
 
-                            if (itemstack.getItemDamageForDisplay() >= itemstack.getMaxDamage())
-                            {
-                                ent.renderBrokenItemStack(itemstack);
-                                ent.setCurrentItemOrArmor(4, (ItemStack)null);
-                            }
-                        }
+					if (itemstack != null)
+					{
+						if (itemstack.isItemStackDamageable())
+						{
+							itemstack.setItemDamage(itemstack.getItemDamageForDisplay() + this.rand.nextInt(2));
 
-                        flag = false;
-                    }
+							if (itemstack.getItemDamageForDisplay() >= itemstack.getMaxDamage())
+							{
+								ent.renderBrokenItemStack(itemstack);
+								ent.setCurrentItemOrArmor(4, (ItemStack)null);
+							}
+						}
 
-                    if (flag)
-                    {
-                        ent.setFire(8);
-                    }
-                }
-            }
-            		
+						flag = false;
+					}
+
+					if (flag)
+					{
+						ent.setFire(8);
+					}
+				}
+			}
+
 		}
 	}
-	
+
 	/**
 	 * If an entity is struck by lightning, this method checks whether struck by
 	 * regular lightning, or lightning that was created by a spell.
@@ -143,7 +155,7 @@ public class EventHookContainer {
 
 		EntityLightningBolt lightning = event.lightning;
 		Entity entityAttacked = event.entity;
-		
+
 		if(lightning instanceof MagicLightning){
 			MagicLightning l = (MagicLightning) lightning;
 			entityAttacked.attackEntityFrom(DamageSource.inFire, 
@@ -157,8 +169,8 @@ public class EventHookContainer {
 			entityAttacked.onStruckByLightning(lightning);
 		}
 	}
-	
+
 	public void onPlayerRespawn(EntityPlayer player) {
-        ExtendedPlayerData.get(player).sync();;
-    }
+		ExtendedPlayerData.get(player).sync();;
+	}
 }

@@ -24,7 +24,8 @@ public class BecomeUndeadSpell extends Spell{
 		this.onItemRightClick = true;
 		this.onItemUse = false;
 	}
-
+	
+	@Override
 	public void castSpell(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer){
 		ExtendedPlayerData data = ExtendedPlayerData.get(par3EntityPlayer);
 

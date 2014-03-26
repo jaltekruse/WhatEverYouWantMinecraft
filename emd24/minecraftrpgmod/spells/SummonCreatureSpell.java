@@ -35,10 +35,12 @@ public class SummonCreatureSpell extends Spell{
 		this.onItemUse = true;
 	}
 
+	
 	/**
 	 * Overwritten onItemUse method that summons a creature in the world. Code is modified/taken from the
 	 * ItemMonsterPlacer class, with some modifications made.
 	 */
+	@Override
 	public void castSpell(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
 	{
 		if (par3World.isRemote)
