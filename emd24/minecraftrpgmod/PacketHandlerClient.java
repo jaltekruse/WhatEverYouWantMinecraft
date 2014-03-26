@@ -117,6 +117,7 @@ public class PacketHandlerClient implements IPacketHandler{
 		try {
 			data.setMaxMana(inputStream.readInt());
 			data.setCurrMana(inputStream.readInt());
+			data.setUndead(inputStream.readBoolean());
 			
 			// Read in the player's skills
 			HashMap<String, SkillPlayer> skills = new HashMap<String, SkillPlayer>();

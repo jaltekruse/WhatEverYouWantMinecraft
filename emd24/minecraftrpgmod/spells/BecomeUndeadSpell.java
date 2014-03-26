@@ -21,21 +21,16 @@ public class BecomeUndeadSpell extends Spell{
 
 	public BecomeUndeadSpell(int id, int maxStackSize, CreativeTabs tab){
 		super(id, 0, tab); //Returns super constructor: par1 is ID
+		this.onItemRightClick = true;
+		this.onItemUse = false;
 	}
-	
-	public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
-    {
-		if (!par3EntityPlayer.capabilities.isCreativeMode)
-        {
-            --par1ItemStack.stackSize;
-        }
+
+	public void castSpell(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer){
 		ExtendedPlayerData data = ExtendedPlayerData.get(par3EntityPlayer);
-		
+
 		if (!data.isUndead()){
 			data.setUndead(true);
 
-        }
-        
-        return par1ItemStack;
-    }
+		}
+	}
 }

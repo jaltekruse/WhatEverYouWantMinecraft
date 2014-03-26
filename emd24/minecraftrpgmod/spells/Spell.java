@@ -26,10 +26,13 @@ public abstract class Spell extends Item {
 	public enum DamageType{
 		WIND, WATER, EARTH, FIRE, HOLY, POS_ENERGY, NEG_ENERGY  
 	}
+	
 	private DamageType spellType;
 	private int basePower;
 	private int manaCost = 0; 
 	private int cooldown;
+	protected boolean onItemUse;
+	protected boolean onItemRightClick;
 
 	/**
 	 * Creates a spell object.
@@ -47,6 +50,9 @@ public abstract class Spell extends Item {
 
 	public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
 	{
+		if(!this.onItemUse){
+			return false;
+		}
 		if (par7 == 0)
 		{
 			--par5;
@@ -104,9 +110,65 @@ public abstract class Spell extends Item {
 		return true;
 	}
 
+	public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
+    {
+		
+		if(!this.onItemRightClick){
+			return par1ItemStack;
+		}
+		
+		ExtendedPlayerData properties = ExtendedPlayerData.get(par3EntityPlayer);
+		if(properties.getCurrMana() < this.manaCost){
+			if(!par2World.isRemote)
+				par3EntityPlayer.sendChatToPlayer((new ChatMessageComponent()).addText("Not enough mana!"));
+		}
+
+		else{
+			castSpell(par1ItemStack, par2World, par3EntityPlayer);
+			properties.useMana(this.manaCost);
+			if (!par3EntityPlayer.capabilities.isCreativeMode)
+			{
+				--par1ItemStack.stackSize;
+			}
+			if(!par2World.isRemote){
+				par3EntityPlayer.sendChatToPlayer((new ChatMessageComponent()).addText("Mana remaining: " + properties.getCurrMana()));
+			}
+		}
+		return par1ItemStack;
+    }
+	
+	/**
+	 * Spell that is activated on player right clicking on an entity
+	 * 
+	 * @param par1ItemStack
+	 * @param par2World
+	 * @param par3EntityPlayer
+	 */
+	private void castSpell(ItemStack par1ItemStack, World par2World,
+			EntityPlayer par3EntityPlayer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * Spell that is activated on player using item on block
+	 * 
+	 * @param par1ItemStack
+	 * @param par2EntityPlayer
+	 * @param par3World
+	 * @param par4
+	 * @param par5
+	 * @param par6
+	 * @param par7
+	 * @param par8
+	 * @param par9
+	 * @param par10
+	 */
 	public void castSpell(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10){
 		System.out.println("FAIL");
 	}
+	
+	
 
 	public boolean onDroppedByPlayer(ItemStack item, EntityPlayer player)
 	{
