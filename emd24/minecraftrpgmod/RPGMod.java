@@ -34,6 +34,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import emd24.minecraftrpgmod.EntityIdMapping.EntityId;
+import emd24.minecraftrpgmod.party.PartyPlayerTracker;
 import emd24.minecraftrpgmod.skills.Skill;
 import emd24.minecraftrpgmod.skills.SkillPlayer;
 import emd24.minecraftrpgmod.skills.SkillRegistry;
@@ -82,6 +83,9 @@ public class RPGMod {
 		
 		// Register Event Handler
 		MinecraftForge.EVENT_BUS.register(new EventHookContainer());
+		
+		//Register Party Player Tracker
+		GameRegistry.registerPlayerTracker(new PartyPlayerTracker());
 		
 		// Define items
 

@@ -15,6 +15,10 @@ public class PartyManagerClient {
 	public static HashMap<String, Integer> playerParty
 		= new HashMap<String, Integer>();
 	
+	public static void clear() {
+		playerParty.clear();
+	}
+	
 	public static void setPlayerParty(String player, int party) {
 		playerParty.put(player, party);
 	}

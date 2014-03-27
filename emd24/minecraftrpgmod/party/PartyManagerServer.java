@@ -63,5 +63,9 @@ public class PartyManagerServer {
 		sendPlayerParties();
 	}
 	
-	
+
+	public static void removePlayerFromGame(String playerName){
+		playerParty.remove(playerName);
+		sendPlayerParties();
+	}
 }

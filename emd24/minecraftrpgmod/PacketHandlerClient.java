@@ -152,6 +152,9 @@ public class PacketHandlerClient implements IPacketHandler{
 	 * @param dat byte array to read from packet
 	 */
 	public void handlePartyData(ByteArrayDataInput dat){
+		//first clear the player party data structure
+		PartyManagerClient.clear();
+		
 		int numPlayers = dat.readInt();
 		for(int i = 0; i < numPlayers; i++){
 			String player = dat.readUTF();
