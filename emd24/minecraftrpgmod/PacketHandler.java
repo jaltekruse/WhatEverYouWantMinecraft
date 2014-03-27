@@ -16,6 +16,7 @@ import cpw.mods.fml.common.network.IConnectionHandler;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
+import emd24.minecraftrpgmod.party.PartyManagerServer;
 import emd24.minecraftrpgmod.skills.SkillPlayer;
 import emd24.minecraftrpgmod.skills.SkillManagerServer;
 
@@ -26,7 +27,8 @@ import emd24.minecraftrpgmod.skills.SkillManagerServer;
  *
  */
 public class PacketHandler implements IPacketHandler, IConnectionHandler {
-
+	public static final int GET_ALL_PARTIES = 3;
+	public static String PARTY_CHANNEL = "rpgmod";
 	/**
 	 * Creates a packet to be sent containing updated information on a single skill
 	 * for a single player.
@@ -114,6 +116,37 @@ public class PacketHandler implements IPacketHandler, IConnectionHandler {
 				dos.writeInt(skill.getLevel());
 				dos.writeInt(skill.getExperience());
 			}
+		}
+		dos.close();
+		packet.channel = "rpgmod";
+		packet.data = bos.toByteArray();
+		packet.length = bos.size();
+		packet.isChunkDataPacket = false;
+		return packet;
+		} catch(Exception e){
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/**
+	 *  Creates a packet to be sent containing updated information all the skills
+	 * for all the players.
+	 * 
+	 * @return packet to be sent
+	 */
+	public static Packet250CustomPayload getPartiesPacket(){
+		try{
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		DataOutputStream dos = new DataOutputStream(bos);
+		Packet250CustomPayload packet = new Packet250CustomPayload();
+		dos.writeByte(GET_ALL_PARTIES);
+		dos.writeInt(PartyManagerServer.playerParty.size());
+
+		for(String player : PartyManagerServer.playerParty.keySet()){
+			dos.writeUTF(player);
+			int party = PartyManagerServer.playerParty.get(player);
+			dos.writeInt(party);
 		}
 		dos.close();
 		packet.channel = "rpgmod";

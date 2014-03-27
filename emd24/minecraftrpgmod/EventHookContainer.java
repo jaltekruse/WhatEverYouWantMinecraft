@@ -2,6 +2,7 @@ package emd24.minecraftrpgmod;
 
 import java.util.Random;
 
+import emd24.minecraftrpgmod.party.PartyManagerServer;
 import emd24.minecraftrpgmod.skills.SkillManagerServer;
 import emd24.minecraftrpgmod.skills.SkillRegistry;
 import emd24.minecraftrpgmod.spells.entities.MagicLightning;
@@ -42,6 +43,7 @@ public class EventHookContainer {
     public void onEntityConstruct(EntityEvent.EntityConstructing event) {
         if (event.entity instanceof EntityPlayer && ExtendedPlayerData.get(event.entity) == null) {
             ExtendedPlayerData.register((EntityPlayer) event.entity);
+            
         }
     }
 	
@@ -76,11 +78,13 @@ public class EventHookContainer {
 	@ForgeSubscribe
 	public void onEntityJoinWorld(EntityJoinWorldEvent event){
 		if (!event.entity.worldObj.isRemote && event.entity instanceof EntityPlayer){
-				NBTTagCompound data = RPGMod.proxy.getEntityData(((EntityPlayer) event.entity).username);
-				if(data != null){
-					ExtendedPlayerData.get(event.entity).loadNBTData(data);
-				}
-				ExtendedPlayerData.get(event.entity).sync();
+			EntityPlayer player = (EntityPlayer) event.entity;
+			PartyManagerServer.addPlayerToParty(player.username, 0);
+			NBTTagCompound data = RPGMod.proxy.getEntityData(player.username);
+			if(data != null){
+				ExtendedPlayerData.get(event.entity).loadNBTData(data);
+			}
+			ExtendedPlayerData.get(event.entity).sync();
 				
 		}
 	}
