@@ -14,9 +14,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumToolMaterial;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
+import net.minecraft.item.ItemSeeds;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.EnumHelper;
+import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -31,7 +33,7 @@ import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
-import emd24.minecraftrpgmod.food.FoodTomato;
+import emd24.minecraftrpgmod.food.*;
 import emd24.minecraftrpgmod.skills.SkillMining;
 import emd24.minecraftrpgmod.skills.SkillPlayer;
 import emd24.minecraftrpgmod.skills.SkillRegistry;
@@ -53,7 +55,9 @@ public class RPGMod {
 	public static CommonProxy proxy;
 	public PacketHandler packetHandler;
 	
+	public static Block tomatoCrop;
 	public static Item tomatoFruit;
+	public static ItemSeeds tomatoSeed;
 	
 	
 	//Telling forge that we are creating these
@@ -95,10 +99,18 @@ public class RPGMod {
 		.setManaCost(20).setUnlocalizedName("summonzombie")
 		.setTextureName("tutorialmod:summonzombie");
 		
+		
+		tomatoCrop = new CropTomato(504);
+		
 		//tomatoFruit = new Tomato(13370, CreativeTabs.tabFood)
 		tomatoFruit = new FoodTomato(6969-256, 4, 0.3F, false)//stats from apple
 		.setUnlocalizedName("tomato")
 		.setTextureName("tutorialmod:tomato");
+		
+	 	tomatoSeed = (ItemSeeds) new ItemSeeds(6970-256, tomatoCrop.blockID, Block.tilledField.blockID)
+		.setUnlocalizedName("tomatoseed")
+		.setTextureName("tutorialmod:tomatoseed");
+		
 		
 		healMana = new ItemManaHeal(4003).setCreativeTab(CreativeTabs.tabMisc).setUnlocalizedName("healMana");
 		
@@ -130,10 +142,11 @@ public class RPGMod {
 		
 		SkillRegistry.registerSkill(mining);
 		
+		GameRegistry.registerBlock(tomatoCrop, "Tomato Block");
 	 	LanguageRegistry.addName(tomatoFruit, "Tomato");
 	 	GameRegistry.addShapelessRecipe(new ItemStack(lightningSpell, 4), new ItemStack(tomatoFruit));
-
-		
+	 	LanguageRegistry.addName(tomatoSeed, "Tomato Seeds");
+	 	
 		proxy.registerRenderers();
 	}
 
