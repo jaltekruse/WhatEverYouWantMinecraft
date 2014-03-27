@@ -45,7 +45,7 @@ import emd24.minecraftrpgmod.spells.*;
  * Basic needed forge stuff
  */
 @Mod(modid="RPGMod",name="RPGMod",version="v1")
-@NetworkMod(clientSideRequired=true,serverSideRequired=false, serverPacketHandlerSpec = @SidedPacketHandler(packetHandler = PacketHandler.class, channels = {"rpgmod", ExtendedPlayerData.CHANNEL}), 
+@NetworkMod(clientSideRequired=true,serverSideRequired=false, serverPacketHandlerSpec = @SidedPacketHandler(packetHandler = PacketHandlerServer.class, channels = {"rpgmod", ExtendedPlayerData.CHANNEL}), 
 clientPacketHandlerSpec = @SidedPacketHandler(packetHandler = PacketHandlerClient.class, channels = {"rpgmod", ExtendedPlayerData.CHANNEL}))
 public class RPGMod {
 
@@ -56,7 +56,7 @@ public class RPGMod {
 	@SidedProxy(clientSide="emd24.minecraftrpgmod.ClientProxy",
 			serverSide="emd24.minecraftrpgmod.CommonProxy")
 	public static CommonProxy proxy;
-	public PacketHandler packetHandler;
+	public PacketHandlerServer packetHandler;
 	
 	
 	//Telling forge that we are creating these
@@ -78,7 +78,7 @@ public class RPGMod {
 	public void preInit(FMLPreInitializationEvent event){
 		
 		// Register packet handler
-		packetHandler = new PacketHandler();
+		packetHandler = new PacketHandlerServer();
 		NetworkRegistry.instance().registerConnectionHandler(packetHandler);
 		
 		// Register Event Handler

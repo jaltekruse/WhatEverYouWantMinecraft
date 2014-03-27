@@ -8,7 +8,10 @@ import java.util.Set;
 
 import org.lwjgl.opengl.GL11;
 
+import cpw.mods.fml.common.network.PacketDispatcher;
 import emd24.minecraftrpgmod.ExtendedPlayerData;
+import emd24.minecraftrpgmod.PacketHandlerServer;
+import emd24.minecraftrpgmod.PacketHandlerClient;
 import emd24.minecraftrpgmod.RPGMod;
 import emd24.minecraftrpgmod.party.PartyManagerClient;
 /*
@@ -20,6 +23,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.src.ModLoader;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -79,7 +83,11 @@ public class GUIParty extends GuiScreen {
 			itPaP.next();
 		}
 		Map.Entry<String, Integer> entry = (Entry<String, Integer>) itPaP.next();
-		Minecraft.getMinecraft().thePlayer.addChatMessage(entry.getKey());
+		String playerName = entry.getKey();
+		
+		//Send Invite packet
+		Packet packet = PacketHandlerClient.sendPartyInvite(playerName);
+		PacketDispatcher.sendPacketToServer(packet);
 	}
 	
 	@Override

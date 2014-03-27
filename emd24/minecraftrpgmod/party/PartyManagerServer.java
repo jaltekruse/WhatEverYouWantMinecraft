@@ -6,12 +6,13 @@ import java.util.Set;
 
 import net.minecraft.network.packet.Packet;
 import cpw.mods.fml.common.network.PacketDispatcher;
-import emd24.minecraftrpgmod.PacketHandler;
+import emd24.minecraftrpgmod.PacketHandlerServer;
 
 public class PartyManagerServer {
 	// Maps player name to party ID
 	public static HashMap<String, Integer> playerParty
 		= new HashMap<String, Integer>();
+	protected static int autoincrement = 1;
 	
 	/**
 	 * Gets a list of player names in a specified player's party.
@@ -30,7 +31,7 @@ public class PartyManagerServer {
 	}
 	
 	public static void sendPlayerParties() {
-		Packet packet = PacketHandler.getPartiesPacket();
+		Packet packet = PacketHandlerServer.getPartiesPacket();
 		PacketDispatcher.sendPacketToAllPlayers(packet);
 	}
 	
@@ -45,6 +46,16 @@ public class PartyManagerServer {
 		}
 		return false;
 		
+	}
+	
+	public static void addPlayerToPlayersParty(String playerName, String invitingPlayer) {
+		//lookup inviting player's party
+		int partyID = playerParty.get(invitingPlayer);
+		if(partyID == 0) {
+			partyID = autoincrement++;
+			playerParty.put(invitingPlayer, partyID);
+		}
+		addPlayerToParty(playerName, partyID);
 	}
 	
 	public static void removePlayerFromParty(String playerName){

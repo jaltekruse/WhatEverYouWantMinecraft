@@ -6,7 +6,7 @@ import net.minecraft.network.packet.Packet;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import emd24.minecraftrpgmod.PacketHandler;
+import emd24.minecraftrpgmod.PacketHandlerServer;
 
 @SideOnly(Side.CLIENT)
 public class PartyManagerClient {
