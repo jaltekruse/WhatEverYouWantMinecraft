@@ -29,6 +29,7 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.player.EntityInteractEvent;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
+import net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent;
 
 /**
  * Class containing event hooks in Forge. The purpose of this class is listen to
@@ -58,32 +59,53 @@ public class EventHookContainer {
 		ExtendedPlayerData data = ExtendedPlayerData.get(event.getPlayer());
 		int blockId = event.block.blockID;
 
-		// Check experience and level requirement on block breaking
+		// Check level requirement on block breaking
 		for(String skill : SkillRegistry.getSkillNames()){
 
-			// Check level requirement
-			if(data.getSkill(skill).getLevel() >= SkillRegistry.getSkill(skill).getBlockRequirement(blockId)){
-
-				// Check for mining experience
-				int experience = SkillRegistry.getSkill(skill).getExpForBlockBreak(blockId);
-				if(experience > 0){ 
-					boolean levelUp = data.addExp(skill, experience);
-
-					// Notify the player
-					event.getPlayer().sendChatToPlayer((new ChatMessageComponent()).addText("Gained " + experience 
-							+ " " + skill + " exp"));
-					if(levelUp){
-						event.getPlayer().sendChatToPlayer((new ChatMessageComponent()).addText("Congrats! Reached "
-								+ skill + " Level " + data.getSkill(skill).getLevel()).setColor(EnumChatFormatting.GREEN));
-					}
-				}
-			}
-			else{
+			// Cancel and send error message if cannot be broken
+			if(data.getSkill(skill).getLevel() < SkillRegistry.getSkill(skill).getBlockRequirement(blockId)){
 				event.getPlayer().sendChatToPlayer((new ChatMessageComponent()).addText(skill + " Level " + 
 						SkillRegistry.getSkill(skill).getBlockRequirement(blockId) + " required").setColor(EnumChatFormatting.RED));
 				event.setCanceled(true);
 			}
 
+		}
+	}
+
+	@ForgeSubscribe
+	public void onBlockHarvest(HarvestDropsEvent event){
+		
+		if(event.harvester == null){
+			return;
+		}
+		
+		int blockId = event.block.blockID;
+		ExtendedPlayerData data = ExtendedPlayerData.get(event.harvester);
+
+		for(String skill : SkillRegistry.getSkillNames()){
+
+			int experience = SkillRegistry.getSkill(skill).getExpForBlockBreak(blockId);
+
+			if(experience > 0){ 
+
+				boolean levelUp = data.addExp(skill, experience);
+
+				// Notify the player
+				event.harvester.sendChatToPlayer((new ChatMessageComponent()).addText("Gained " + experience 
+						+ " " + skill + " exp"));
+				if(levelUp){
+					event.harvester.sendChatToPlayer((new ChatMessageComponent()).addText("Congrats! Reached "
+							+ skill + " Level " + data.getSkill(skill).getLevel()).setColor(EnumChatFormatting.GREEN));
+				}
+			}
+			// Determine if player harvests extra items
+			Random rnd = new Random();
+			if(rnd.nextDouble() <= SkillRegistry.getSkill(skill).getHarvestPerkProbability(blockId, 
+					data.getSkill(skill).getLevel())){
+				for(ItemStack item : event.drops){
+					item.stackSize++;
+				}
+			}
 		}
 	}
 
@@ -121,13 +143,13 @@ public class EventHookContainer {
 			EntityPlayer player = event.entityPlayer;
 			EntityLiving target = (EntityLiving) event.target;
 			if(player.isSneaking() && (SkillRegistry.getSkill("Thieving") instanceof SkillThieving)){
-				
+
 				SkillThieving s = (SkillThieving) SkillRegistry.getSkill("Thieving");
-				
+
 				// TODO: Need to get EntityId from entity
-				
+
 				EntityId id = EntityIdMapping.getEntityId(event.target);
-				
+
 				if(!s.isThievable(id)){
 					player.sendChatToPlayer((new ChatMessageComponent()).addText("Nothing to steal!"));
 					return;

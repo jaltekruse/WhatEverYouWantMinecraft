@@ -19,13 +19,13 @@ public class ItemManaHeal extends Item{
 		{
 			--par1ItemStack.stackSize;
 		}
-		else{
-			ExtendedPlayerData data = ExtendedPlayerData.get(par3EntityPlayer);
-			data.setCurrMana(data.getMaxMana());
-			if(!par2World.isRemote){
-				par3EntityPlayer.sendChatToPlayer((new ChatMessageComponent()).addText("Mana Recovered"));
-			}
+
+		ExtendedPlayerData data = ExtendedPlayerData.get(par3EntityPlayer);
+		data.setCurrMana(data.getMaxMana());
+		if(!par2World.isRemote){
+			par3EntityPlayer.sendChatToPlayer((new ChatMessageComponent()).addText("Mana Recovered"));
 		}
+
 		return par1ItemStack;
 
 	}

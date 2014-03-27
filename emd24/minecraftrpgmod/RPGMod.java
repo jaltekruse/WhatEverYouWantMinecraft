@@ -34,11 +34,10 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import emd24.minecraftrpgmod.EntityIdMapping.EntityId;
-import emd24.minecraftrpgmod.skills.SkillMining;
+import emd24.minecraftrpgmod.skills.Skill;
 import emd24.minecraftrpgmod.skills.SkillPlayer;
 import emd24.minecraftrpgmod.skills.SkillRegistry;
 import emd24.minecraftrpgmod.skills.SkillThieving;
-import emd24.minecraftrpgmod.skills.SkillTreepunching;
 import emd24.minecraftrpgmod.skills.ThievingData;
 import emd24.minecraftrpgmod.spells.*;
 /*
@@ -126,16 +125,18 @@ public class RPGMod {
 		
 		// Mining
 		
-		SkillMining mining = new SkillMining("Mining");
+		Skill mining = new Skill("Mining");
 		mining.addExperienceBlockBreak(1, 50); // experience for mining STONE
 		mining.addExperienceBlockBreak(16, 10); // experience for mining coal
 		mining.addExperienceBlockBreak(15, 20); // experience for mining iron
 		mining.addBlockRequirement(2000, 3);
+		mining.addHarvestPerkBlock(16, 5, 0.5);
 		
 		// Treepunching
 		
-		SkillTreepunching treepunching = new SkillTreepunching("Treepunching");
+		Skill treepunching = new Skill("Treepunching");
 		treepunching.addExperienceBlockBreak(17, 50); // experience for getting wood
+		treepunching.addHarvestPerkBlock(17, 3, 0.5);
 		
 		// Thieving
 		

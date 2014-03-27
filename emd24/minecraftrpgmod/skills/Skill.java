@@ -1,6 +1,8 @@
 package emd24.minecraftrpgmod.skills;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Abstract class that represents a skill, what items give experience, and
@@ -9,13 +11,14 @@ import java.util.HashMap;
  * @author Evan Dyke
  *
  */
-public abstract class Skill {
+public class Skill {
 	
 	public String name;
 	
 	// Maps block ID experience given when broken 
 	private HashMap<Integer, Integer> expGivenOnBreak;
 	private HashMap<Integer, Integer> blockRequirements;
+	private HashMap<Integer, ArrayList<HarvestPerkEntry>> harvestPerks;
 	
 	/**
 	 * Connstructor for a skill.
@@ -26,6 +29,7 @@ public abstract class Skill {
 		this.name = name;
 		this.expGivenOnBreak = new HashMap<Integer, Integer>();
 		this.blockRequirements = new HashMap<Integer, Integer>();
+		this.harvestPerks = new HashMap<Integer, ArrayList<HarvestPerkEntry>>();
 	}
 	/**
 	 * Adds to the skill a block that gives experience when destroyed.
@@ -74,7 +78,61 @@ public abstract class Skill {
 		return this.blockRequirements.get(blockId);
 	}
 	
-	// TODO: add method for registering perks 
-	public abstract void registerPerks();
+	/**
+	 * Method that registers a HarvestPerk, where an extra block is mined 
+	 * with a given probability.
+	 * 
+	 * @param blockId id of block to add
+	 * @param level level required for perk
+	 * @param prob probability of perk
+	 */
+	public void addHarvestPerkBlock(int blockId, int level, double prob){
+		if(!harvestPerks.containsKey(blockId)){
+			harvestPerks.put(blockId, new ArrayList<HarvestPerkEntry>());
+		}
+		harvestPerks.get(blockId).add(new HarvestPerkEntry(level, prob));
+	}
 	
+	/**
+	 * Gets the probability of harvesting an extra block based on the user's
+	 * level.
+	 * 
+	 * @param blockId id of block to check
+	 * @param level level of player
+	 * @return probability of getting extra drop
+	 */
+	public double getHarvestPerkProbability(int blockId, int level){
+		if(!harvestPerks.containsKey(blockId)){
+			return 0.0;
+		}
+		HarvestPerkEntry temp = null;
+		for(HarvestPerkEntry entry : harvestPerks.get(blockId)){
+			
+			// Adds a higher perk level is found
+			if(entry.level <= level && (temp == null || entry.level > temp.level)){
+				temp = entry;
+			}
+		}
+		if(temp == null){
+			return 0.0;
+		}
+		return temp.prob;
+		
+	}
+	
+	/**
+	 * Entry for an extra harvest perk. contains level required
+	 * and probability
+	 * 
+	 * @author Owner
+	 *
+	 */
+	private class HarvestPerkEntry{
+		public int level;
+		public double prob;
+		public HarvestPerkEntry(int level, double prob){
+			this.level = level;
+			this.prob = prob;
+		}
+	}
 }

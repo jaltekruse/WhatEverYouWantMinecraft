@@ -102,11 +102,4 @@ public class SkillThieving extends Skill{
 		return null;
 	}
 
-	@Override
-	public void registerPerks() {
-		// TODO Auto-generated method stub
-
-	}
-
-
 }
