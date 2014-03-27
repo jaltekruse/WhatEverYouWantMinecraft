@@ -2,10 +2,15 @@ package emd24.minecraftrpgmod;
 
 import java.util.Random;
 
+import emd24.minecraftrpgmod.EntityIdMapping.EntityId;
+import emd24.minecraftrpgmod.skills.Skill;
 import emd24.minecraftrpgmod.skills.SkillManagerServer;
 import emd24.minecraftrpgmod.skills.SkillRegistry;
+import emd24.minecraftrpgmod.skills.SkillThieving;
 import emd24.minecraftrpgmod.spells.entities.MagicLightning;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,6 +27,7 @@ import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.event.entity.player.EntityInteractEvent;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 
 /**
@@ -51,27 +57,33 @@ public class EventHookContainer {
 
 		ExtendedPlayerData data = ExtendedPlayerData.get(event.getPlayer());
 		int blockId = event.block.blockID;
-		
-		// Check level requirement
-		if(data.getSkill("Mining").getLevel() >= SkillRegistry.getSkill("Mining").getBlockRequirement(blockId)){
-			
-			// Check for mining experience
-			int experience = SkillRegistry.getSkill("Mining").getExpForBlockBreak(blockId);
-			if(experience > 0){ 
-				boolean levelUp = data.addExp("Mining", experience);
 
-				// Notify the player
-				event.getPlayer().sendChatToPlayer((new ChatMessageComponent()).addText("Gained " + experience + " Mining exp"));
-				if(levelUp){
-					event.getPlayer().sendChatToPlayer((new ChatMessageComponent()).addText("Congrats! Reached mining level " + 
-							data.getSkill("Mining").getLevel()).setColor(EnumChatFormatting.GREEN));
+		// Check experience and level requirement on block breaking
+		for(String skill : SkillRegistry.getSkillNames()){
+
+			// Check level requirement
+			if(data.getSkill(skill).getLevel() >= SkillRegistry.getSkill(skill).getBlockRequirement(blockId)){
+
+				// Check for mining experience
+				int experience = SkillRegistry.getSkill(skill).getExpForBlockBreak(blockId);
+				if(experience > 0){ 
+					boolean levelUp = data.addExp(skill, experience);
+
+					// Notify the player
+					event.getPlayer().sendChatToPlayer((new ChatMessageComponent()).addText("Gained " + experience 
+							+ " " + skill + " exp"));
+					if(levelUp){
+						event.getPlayer().sendChatToPlayer((new ChatMessageComponent()).addText("Congrats! Reached "
+								+ skill + " Level " + data.getSkill(skill).getLevel()).setColor(EnumChatFormatting.GREEN));
+					}
 				}
 			}
-		}
-		else{
-			event.getPlayer().sendChatToPlayer((new ChatMessageComponent()).addText("Mining Level " + 
-					SkillRegistry.getSkill("Mining").getBlockRequirement(blockId) + " required").setColor(EnumChatFormatting.RED));
-			event.setCanceled(true);
+			else{
+				event.getPlayer().sendChatToPlayer((new ChatMessageComponent()).addText(skill + " Level " + 
+						SkillRegistry.getSkill(skill).getBlockRequirement(blockId) + " required").setColor(EnumChatFormatting.RED));
+				event.setCanceled(true);
+			}
+
 		}
 	}
 
@@ -95,6 +107,68 @@ public class EventHookContainer {
 			ExtendedPlayerData.get(event.entity).sync();
 
 		}
+	}
+
+	/**
+	 * Event that checks for entity interaction and attempts to pickpocket NPC if player is sneaking. 
+	 * 
+	 * @param event
+	 */
+	@ForgeSubscribe
+	public void onPickpocket(EntityInteractEvent event){
+
+		if(event.target instanceof EntityLiving && !event.entityPlayer.worldObj.isRemote){
+			EntityPlayer player = event.entityPlayer;
+			EntityLiving target = (EntityLiving) event.target;
+			if(player.isSneaking() && (SkillRegistry.getSkill("Thieving") instanceof SkillThieving)){
+				
+				SkillThieving s = (SkillThieving) SkillRegistry.getSkill("Thieving");
+				
+				// TODO: Need to get EntityId from entity
+				
+				EntityId id = EntityIdMapping.getEntityId(event.target);
+				
+				if(!s.isThievable(id)){
+					player.sendChatToPlayer((new ChatMessageComponent()).addText("Nothing to steal!"));
+					return;
+				}
+
+				// Steal loot from entity
+				ItemStack loot = s.getLoot(id);
+
+				// Give player item and exp if successful, damage player if not
+				if(loot != null){
+
+					player.inventory.addItemStackToInventory(loot);
+					int experience = s.getExperience(id);
+					ExtendedPlayerData data = ExtendedPlayerData.get(player);
+
+					if(experience > 0){ 
+						boolean levelUp = data.addExp(s.name, experience);
+
+						// Notify the player
+						player.sendChatToPlayer((new ChatMessageComponent()).addText("Gained " + experience 
+								+ " " + s.name + " exp"));
+						if(levelUp){
+							player.sendChatToPlayer((new ChatMessageComponent()).addText("Congrats! Reached "
+									+ s.name + " Level " + data.getSkill(s.name).getLevel()).setColor(EnumChatFormatting.GREEN));
+						}
+					}
+				} 
+				else{
+					player.attackEntityFrom(DamageSource.generic, 5);
+					player.sendChatToPlayer((new ChatMessageComponent()).addText("Got caught stealing!").setColor(EnumChatFormatting.RED));
+				}
+
+			}
+			else{
+				// Regular method call
+				player.interactWith(event.entity);
+			}
+
+		}
+
+
 	}
 
 	/**

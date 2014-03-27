@@ -3,6 +3,8 @@ package emd24.minecraftrpgmod;
 /*
  * Basic importing
  */
+import java.util.HashMap;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockOre;
 import net.minecraft.block.StepSound;
@@ -31,9 +33,13 @@ import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
+import emd24.minecraftrpgmod.EntityIdMapping.EntityId;
 import emd24.minecraftrpgmod.skills.SkillMining;
 import emd24.minecraftrpgmod.skills.SkillPlayer;
 import emd24.minecraftrpgmod.skills.SkillRegistry;
+import emd24.minecraftrpgmod.skills.SkillThieving;
+import emd24.minecraftrpgmod.skills.SkillTreepunching;
+import emd24.minecraftrpgmod.skills.ThievingData;
 import emd24.minecraftrpgmod.spells.*;
 /*
  * Basic needed forge stuff
@@ -116,13 +122,37 @@ public class RPGMod {
 		LanguageRegistry.addName(healMana, "Mana Heal");
 		LanguageRegistry.addName(elementium, "Elementium");
 
+		// Add Skills
+		
+		// Mining
+		
 		SkillMining mining = new SkillMining("Mining");
 		mining.addExperienceBlockBreak(1, 50); // experience for mining STONE
 		mining.addExperienceBlockBreak(16, 10); // experience for mining coal
 		mining.addExperienceBlockBreak(15, 20); // experience for mining iron
 		mining.addBlockRequirement(2000, 3);
 		
+		// Treepunching
+		
+		SkillTreepunching treepunching = new SkillTreepunching("Treepunching");
+		treepunching.addExperienceBlockBreak(17, 50); // experience for getting wood
+		
+		// Thieving
+		
+		SkillThieving thieving = new SkillThieving("Thieving");
+		
+		// Create loot of pickpocketing villager
+		HashMap<Integer, Double> villagerLoot = new HashMap<Integer, Double>();
+		villagerLoot.put(357, 0.75);
+		villagerLoot.put(388, 0.25);
+		
+		ThievingData villagerThievingData = new ThievingData(EntityId.VILLAGER,	25, 1, 0.75, villagerLoot);
+		thieving.addThievingData(villagerThievingData);
+		
 		SkillRegistry.registerSkill(mining);
+		SkillRegistry.registerSkill(treepunching);
+		SkillRegistry.registerSkill(thieving);
+		
 		
 		proxy.registerRenderers();
 	}
