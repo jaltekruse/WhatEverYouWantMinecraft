@@ -10,6 +10,7 @@ import org.lwjgl.opengl.GL11;
 
 import emd24.minecraftrpgmod.ExtendedPlayerData;
 import emd24.minecraftrpgmod.RPGMod;
+import emd24.minecraftrpgmod.party.PartyManagerClient;
 /*
 import emd24.minecraftrpgmod.skills.Skill;
 import emd24.minecraftrpgmod.skills.SkillManagerServer;
@@ -38,7 +39,7 @@ public class GUIParty extends GuiScreen {
 	public static final ResourceLocation resource = new ResourceLocation("RPGMod", "textures/gui/");
 	private EntityPlayer player;
 	
-	HashMap<String, Integer> pAP = new HashMap<String, Integer>();
+	HashMap<String, Integer> pAP = PartyManagerClient.playerParty;
 	Set<Map.Entry<String, Integer>> playersAndParties;
 	
 	public GUIParty(EntityPlayer player){
@@ -50,9 +51,9 @@ public class GUIParty extends GuiScreen {
 		/* This is purely for testing, this should be replaced with a call to
 		 * Wes' method that gets player info. I think...
 		 */
-		pAP.put("Player 1", 0);
-		pAP.put("Player2", 1);
-		pAP.put("Player 3", 2);
+		//pAP.put("Player 1", 0);
+		//pAP.put("Player2", 1);
+		//pAP.put("Player 3", 2);
 		// The things that correspond to the actual method follow:
 		buttonList.clear();
 		playersAndParties = pAP.entrySet();
