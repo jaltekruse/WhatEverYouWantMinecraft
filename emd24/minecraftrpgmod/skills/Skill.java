@@ -15,6 +15,7 @@ public abstract class Skill {
 	
 	// Maps block ID experience given when broken 
 	private HashMap<Integer, Integer> expGivenOnBreak;
+	private HashMap<Integer, Integer> blockRequirements;
 	
 	/**
 	 * Connstructor for a skill.
@@ -24,6 +25,7 @@ public abstract class Skill {
 	public Skill(String name){
 		this.name = name;
 		this.expGivenOnBreak = new HashMap<Integer, Integer>();
+		this.blockRequirements = new HashMap<Integer, Integer>();
 	}
 	/**
 	 * Adds to the skill a block that gives experience when destroyed.
@@ -47,6 +49,29 @@ public abstract class Skill {
 			return 0;
 		}
 		return this.expGivenOnBreak.get(blockId);
+	}
+	
+	/**
+	 * Adds a skill level requirement for a block
+	 * 
+	 * @param blockId id of block to break
+	 * @param level level required to break block
+	 */
+	public void addBlockRequirement(int blockId, int level){
+		this.blockRequirements.put(blockId, level);
+	}
+	
+	/**
+	 * Gets the level requirement for a block
+	 * 
+	 * @param blockId id of block to get
+	 * @return level required
+	 */
+	public int getBlockRequirement(int blockId){
+		if(!this.blockRequirements.containsKey(blockId)){
+			return 0;
+		}
+		return this.blockRequirements.get(blockId);
 	}
 	
 	// TODO: add method for registering perks 

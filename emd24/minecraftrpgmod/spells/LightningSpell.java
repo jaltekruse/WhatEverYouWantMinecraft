@@ -19,6 +19,8 @@ public class LightningSpell extends Spell{
 
 	public LightningSpell(int id, int basePower, CreativeTabs tab) {
 		super(id, basePower, tab); // Create a spell with base damage of 10
+		this.onItemRightClick = false;
+		this.onItemUse = true;
 	}
 	
 	/**

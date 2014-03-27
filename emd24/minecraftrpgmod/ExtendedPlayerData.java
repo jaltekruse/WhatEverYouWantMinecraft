@@ -199,6 +199,7 @@ public class ExtendedPlayerData implements IExtendedEntityProperties{
 		try{
 			outputStream.writeInt(this.maxMana);
 			outputStream.writeInt(this.currMana);
+			outputStream.writeBoolean(this.undead);
 			
 			outputStream.writeInt(this.skills.size());
 			for(SkillPlayer skill : skills.values()){

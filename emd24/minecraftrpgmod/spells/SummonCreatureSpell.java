@@ -31,17 +31,21 @@ public class SummonCreatureSpell extends Spell{
 	public SummonCreatureSpell(int id, int monster_id, CreativeTabs tab) {
 		super(id, 0, tab);
 		this.monster_id = monster_id;
+		this.onItemRightClick = false;
+		this.onItemUse = true;
 	}
 
+	
 	/**
 	 * Overwritten onItemUse method that summons a creature in the world. Code is modified/taken from the
 	 * ItemMonsterPlacer class, with some modifications made.
 	 */
-	public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
+	@Override
+	public void castSpell(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
 	{
 		if (par3World.isRemote)
 		{
-			return true;
+			return;
 		}
 		else{
 			int i1 = par3World.getBlockId(par4, par5, par6);
@@ -57,7 +61,7 @@ public class SummonCreatureSpell extends Spell{
 
 			if (!EntityList.entityEggs.containsKey(Integer.valueOf(this.monster_id)))
 			{
-				return true;
+				return;
 			}
 			else
 			{
@@ -89,7 +93,7 @@ public class SummonCreatureSpell extends Spell{
 				}
 			}
 		}
-		return true;
+		return;
 	}
 	
 }
