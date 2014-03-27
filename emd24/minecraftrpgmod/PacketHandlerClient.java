@@ -1,20 +1,26 @@
 package emd24.minecraftrpgmod;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.src.ModLoader;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import emd24.minecraftrpgmod.party.PartyManagerClient;
+import emd24.minecraftrpgmod.party.PartyManagerServer;
 import emd24.minecraftrpgmod.skills.SkillManagerClient;
 import emd24.minecraftrpgmod.skills.SkillPlayer;
 import emd24.minecraftrpgmod.skills.SkillRegistry;
@@ -50,6 +56,9 @@ public class PacketHandlerClient implements IPacketHandler{
 				break;
 			case 2:
 				handleAllSkillUpdate(dat);
+				break;
+			case 3:
+				this.handlePartyData(dat);
 				break;
 			}
 		}
@@ -135,5 +144,50 @@ public class PacketHandlerClient implements IPacketHandler{
 			return;
 		}
 
+	}
+
+	/**
+	 * Reads data from a packet about all parties
+	 * 
+	 * @param dat byte array to read from packet
+	 */
+	public void handlePartyData(ByteArrayDataInput dat){
+		int numPlayers = dat.readInt();
+		for(int i = 0; i < numPlayers; i++){
+			String player = dat.readUTF();
+			int party = dat.readInt();
+			PartyManagerClient.setPlayerParty(player, party);
+			
+			String message = "partydata pak: " + player + " : " + party;
+			ModLoader.getMinecraftInstance().thePlayer.addChatMessage(message);
+		}
+	}
+	
+	/**
+	 *  Creates a packet to be sent containing updated information all the skills
+	 * for all the players.
+	 * 
+	 * @return packet to be sent
+	 */
+	public static Packet250CustomPayload sendPartyInvite(String playerName){
+		try{
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		DataOutputStream dos = new DataOutputStream(bos);
+		Packet250CustomPayload packet = new Packet250CustomPayload();
+		dos.writeByte(4);
+
+		dos.writeUTF(playerName);
+		dos.writeUTF(Minecraft.getMinecraft().thePlayer.username);
+
+		dos.close();
+		packet.channel = "rpgmod";
+		packet.data = bos.toByteArray();
+		packet.length = bos.size();
+		packet.isChunkDataPacket = false;
+		return packet;
+		} catch(Exception e){
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

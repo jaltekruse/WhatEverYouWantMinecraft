@@ -2,6 +2,7 @@ package emd24.minecraftrpgmod;
 
 import java.util.Random;
 
+import emd24.minecraftrpgmod.party.PartyManagerServer;
 import emd24.minecraftrpgmod.EntityIdMapping.EntityId;
 import emd24.minecraftrpgmod.skills.Skill;
 import emd24.minecraftrpgmod.skills.SkillManagerServer;
@@ -47,12 +48,13 @@ public class EventHookContainer {
 	 * 
 	 */
 	@ForgeSubscribe
-	public void onEntityConstruct(EntityEvent.EntityConstructing event) {
-		if (event.entity instanceof EntityPlayer && ExtendedPlayerData.get(event.entity) == null) {
-			ExtendedPlayerData.register((EntityPlayer) event.entity);
-		}
-	}
-
+    public void onEntityConstruct(EntityEvent.EntityConstructing event) {
+        if (event.entity instanceof EntityPlayer && ExtendedPlayerData.get(event.entity) == null) {
+            ExtendedPlayerData.register((EntityPlayer) event.entity);
+            
+        }
+    }
+	
 	@ForgeSubscribe
 	public void onBlockBreak(BreakEvent event){
 
@@ -122,11 +124,15 @@ public class EventHookContainer {
 	@ForgeSubscribe
 	public void onEntityJoinWorld(EntityJoinWorldEvent event){
 		if (!event.entity.worldObj.isRemote && event.entity instanceof EntityPlayer){
-			NBTTagCompound data = RPGMod.proxy.getEntityData(((EntityPlayer) event.entity).username);
+			EntityPlayer player = (EntityPlayer) event.entity;
+			PartyManagerServer.addPlayerToParty(player.username, 0);
+			NBTTagCompound data = RPGMod.proxy.getEntityData(player.username);
+
 			if(data != null){
 				ExtendedPlayerData.get(event.entity).loadNBTData(data);
 			}
 			ExtendedPlayerData.get(event.entity).sync();
+
 
 		}
 	}

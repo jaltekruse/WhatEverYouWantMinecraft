@@ -12,9 +12,10 @@ import cpw.mods.fml.common.TickType;
 public class GUIKeyHandler extends KeyHandler {
 
 	public static KeyBinding skillMenu = new KeyBinding("Skills",Keyboard.KEY_O);
+	public static KeyBinding partyMenu = new KeyBinding("Party",Keyboard.KEY_P);
 	
 	public GUIKeyHandler() {
-		super(new KeyBinding[]{skillMenu} , new boolean[]{false});
+		super(new KeyBinding[]{skillMenu, partyMenu} , new boolean[]{false, false});
 		// TODO Auto-generated constructor stub
 	}
 
@@ -30,6 +31,8 @@ public class GUIKeyHandler extends KeyHandler {
 		if(Minecraft.getMinecraft().currentScreen == null) {
 			if(kb.keyCode == skillMenu.keyCode) {
 				Minecraft.getMinecraft().displayGuiScreen(new GUISkills(Minecraft.getMinecraft().thePlayer));
+			} else if(kb.keyCode == partyMenu.keyCode) {
+				Minecraft.getMinecraft().displayGuiScreen(new GUIParty(Minecraft.getMinecraft().thePlayer));
 			}
 		}		
 	}
