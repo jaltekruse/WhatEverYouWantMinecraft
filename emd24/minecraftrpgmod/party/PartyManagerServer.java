@@ -68,4 +68,8 @@ public class PartyManagerServer {
 		playerParty.remove(playerName);
 		sendPlayerParties();
 	}
+	
+	public static void promotePlayer(String playerName) {
+		
+	}
 }

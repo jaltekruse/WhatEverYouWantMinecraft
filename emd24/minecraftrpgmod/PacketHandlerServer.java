@@ -171,9 +171,25 @@ public class PacketHandlerServer implements IPacketHandler, IConnectionHandler {
 	 * @param dat byte array to read from packet
 	 */
 	public static void handleInviteRequest(ByteArrayDataInput dat){
+		int type = dat.readByte();
 		String playerName = dat.readUTF();
 		String invitingPlayer = dat.readUTF();
-		PartyManagerServer.addPlayerToPlayersParty(playerName, invitingPlayer);
+		switch(type) {
+		//invite
+		case 0:
+			PartyManagerServer.addPlayerToPlayersParty(playerName, invitingPlayer);
+			break;
+		//leave/kick
+		case 1:
+			PartyManagerServer.removePlayerFromParty(playerName);
+			break;
+		//promote
+		case 2:
+			//TODO check invitingPlayer for leader status
+			//promote player
+			
+			break;
+		}
 	}
 
 	@Override

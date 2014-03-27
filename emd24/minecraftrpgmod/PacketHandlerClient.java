@@ -169,15 +169,17 @@ public class PacketHandlerClient implements IPacketHandler{
 	/**
 	 *  Creates a packet to be sent containing updated information all the skills
 	 * for all the players.
-	 * 
+	 * @param playerName = playerName to target action
+	 * @param type = 0-invite player, 1-kick/leave, 2-promote player
 	 * @return packet to be sent
 	 */
-	public static Packet250CustomPayload sendPartyInvite(String playerName){
+	public static Packet250CustomPayload sendPartyInvite(String playerName, int type){
 		try{
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		DataOutputStream dos = new DataOutputStream(bos);
 		Packet250CustomPayload packet = new Packet250CustomPayload();
 		dos.writeByte(4);
+		dos.writeByte(type);
 
 		dos.writeUTF(playerName);
 		dos.writeUTF(Minecraft.getMinecraft().thePlayer.username);

@@ -27,6 +27,7 @@ import net.minecraft.network.packet.Packet;
 import net.minecraft.src.ModLoader;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraftforge.client.GuiControlsScrollPanel;
 
 /**
  * This class is the GUI that shows the party interface. Based on code by Evan Dyke.
@@ -43,6 +44,8 @@ public class GUIParty extends GuiScreen {
 	public static final ResourceLocation resource = new ResourceLocation("RPGMod", "textures/gui/");
 	private EntityPlayer player;
 	
+	private GuiControlsScrollPanel scrollPane;
+	
 	HashMap<String, Integer> pAP = PartyManagerClient.playerParty;
 	Set<Map.Entry<String, Integer>> playersAndParties;
 	
@@ -52,13 +55,8 @@ public class GUIParty extends GuiScreen {
 	
 	public void initGui()
 	{
-		/* This is purely for testing, this should be replaced with a call to
-		 * Wes' method that gets player info. I think...
-		 */
-		//pAP.put("Player 1", 0);
-		//pAP.put("Player2", 1);
-		//pAP.put("Player 3", 2);
-		// The things that correspond to the actual method follow:
+		//scrollPane = new GuiControlsScrollPanel(this, options, mc);
+
 		buttonList.clear();
 		playersAndParties = pAP.entrySet();
 		Iterator itPaP = playersAndParties.iterator();
@@ -67,7 +65,8 @@ public class GUIParty extends GuiScreen {
 		// understand how to actually set this up correctly with a scroll bar.
 		while (itPaP.hasNext()){
 			itPaP.next();
-			buttonList.add(new GuiButton(h, 250, h * 20 + 50, "Invite"));
+			buttonList.add(new GuiButton(h, 250, h * 20 + 45, 50, 20, "Invite"));
+			//TODO: buttonList.add(new GuiButton(h + pAP.size(), 310, h * 20 + 45, 50, 20, "Kick"));
 			h++;
 		}
 		
@@ -86,7 +85,7 @@ public class GUIParty extends GuiScreen {
 		String playerName = entry.getKey();
 		
 		//Send Invite packet
-		Packet packet = PacketHandlerClient.sendPartyInvite(playerName);
+		Packet packet = PacketHandlerClient.sendPartyInvite(playerName, 0);
 		PacketDispatcher.sendPacketToServer(packet);
 	}
 	
