@@ -73,16 +73,19 @@ public class SkillThieving extends Skill{
 	 * 
 	 * 
 	 * @param id entity id of NPC to steal from
+	 * @param alertLevel level of alertness of target
+	 * int playerLevel thieving level of the player
 	 * @return ItemStack containing loot. Returns null if attempt was unsuccessful.
 	 */
-	public ItemStack getLoot(EntityId id){
+	public ItemStack getLoot(EntityId id, int alertLevel, int playerLevel){
 
 		
 		
 		// Check to see if thieving attempt successful
 		Random rnd = new Random();
-		if(rnd.nextDouble() <= data.get(id).getProbSuccess()){
-
+		if(rnd.nextDouble() <= Math.min(data.get(id).getProbSuccess() * (1 + (playerLevel - 1.0) / 100.0) / Math.pow(2, alertLevel), 1.0)){
+			
+			
 			/* Randomly generates loot. This is done by generating a random
 			 * number that is uniformly distributed on [0.0, 1.0). It then iterates
 			 * through the list and finds the cumulative probabilities. When the cumulative
