@@ -48,13 +48,21 @@ public class EventHookContainer {
 	 * 
 	 */
 	@ForgeSubscribe
-    public void onEntityConstruct(EntityEvent.EntityConstructing event) {
-        if (event.entity instanceof EntityPlayer && ExtendedPlayerData.get(event.entity) == null) {
-            ExtendedPlayerData.register((EntityPlayer) event.entity);
-            
-        }
-    }
-	
+	public void onEntityConstruct(EntityEvent.EntityConstructing event) {
+		if (event.entity instanceof EntityPlayer && ExtendedPlayerData.get(event.entity) == null) {
+			ExtendedPlayerData.register((EntityPlayer) event.entity);
+
+		}
+
+		// Register Data on thieving
+		if(event.entity instanceof EntityLiving){
+			EntityLiving ent = (EntityLiving) event.entity;
+			if(((SkillThieving) SkillRegistry.getSkill("Thieving")).isThievable(EntityIdMapping.getEntityId(ent))){
+				ExtendedEntityLivingData.register(ent);
+			}
+		}
+	}
+
 	@ForgeSubscribe
 	public void onBlockBreak(BreakEvent event){
 
@@ -76,11 +84,11 @@ public class EventHookContainer {
 
 	@ForgeSubscribe
 	public void onBlockHarvest(HarvestDropsEvent event){
-		
+
 		if(event.harvester == null){
 			return;
 		}
-		
+
 		int blockId = event.block.blockID;
 		ExtendedPlayerData data = ExtendedPlayerData.get(event.harvester);
 
@@ -147,29 +155,39 @@ public class EventHookContainer {
 
 		if(event.target instanceof EntityLiving && !event.entityPlayer.worldObj.isRemote){
 			EntityPlayer player = event.entityPlayer;
-			EntityLiving target = (EntityLiving) event.target;
+
 			if(player.isSneaking() && (SkillRegistry.getSkill("Thieving") instanceof SkillThieving)){
 
+				EntityLiving target = (EntityLiving) event.target;
+				ExtendedEntityLivingData dataTarget = ExtendedEntityLivingData.get(target); 
 				SkillThieving s = (SkillThieving) SkillRegistry.getSkill("Thieving");
 
 				// TODO: Need to get EntityId from entity
 
 				EntityId id = EntityIdMapping.getEntityId(event.target);
 
-				if(!s.isThievable(id)){
+				if(!s.isThievable(id) || dataTarget.stealCoolDown > 0){
 					player.sendChatToPlayer((new ChatMessageComponent()).addText("Nothing to steal!"));
 					return;
 				}
-
+				player.sendChatToPlayer((new ChatMessageComponent()).addText("Alert Level " + dataTarget.alertLevel));
+				ExtendedPlayerData data = ExtendedPlayerData.get(player);
+				
 				// Steal loot from entity
-				ItemStack loot = s.getLoot(id);
+				ItemStack loot = s.getLoot(id, dataTarget.alertLevel, data.getSkill("Thieving").getLevel());
 
 				// Give player item and exp if successful, damage player if not
 				if(loot != null){
 
 					player.inventory.addItemStackToInventory(loot);
+					player.worldObj.playSoundEffect(player.posX, player.posY, player.posZ, "random.pop", 10000.0F, 0.8F + this.rand.nextFloat() * 0.2F);
+					
+					dataTarget.alertLevel++;
+					dataTarget.alertTimer = 1200;
+					dataTarget.stealCoolDown = 200;
+					
 					int experience = s.getExperience(id);
-					ExtendedPlayerData data = ExtendedPlayerData.get(player);
+					
 
 					if(experience > 0){ 
 						boolean levelUp = data.addExp(s.name, experience);
@@ -186,6 +204,8 @@ public class EventHookContainer {
 				else{
 					player.attackEntityFrom(DamageSource.generic, 5);
 					player.sendChatToPlayer((new ChatMessageComponent()).addText("Got caught stealing!").setColor(EnumChatFormatting.RED));
+					dataTarget.alertLevel = 5;
+					dataTarget.alertTimer = 1200;
 				}
 
 			}
@@ -243,6 +263,33 @@ public class EventHookContainer {
 				}
 			}
 
+		}
+	}
+	
+	/**
+	 * This method updates the timer for thievable NPCs to allow their alert level  to gradually reduce
+	 * over  time
+	 * 
+	 * @param event
+	 */
+	@ForgeSubscribe
+	public void updateEntityThieving(LivingUpdateEvent event){
+
+
+		if(((SkillThieving) SkillRegistry.getSkill("Thieving")).
+				isThievable(EntityIdMapping.getEntityId(event.entityLiving))){
+			
+			ExtendedEntityLivingData data = ExtendedEntityLivingData.get((EntityLiving) event.entityLiving);
+			if(data.stealCoolDown > 0){
+				data.stealCoolDown--;
+			}
+			if(data.alertTimer > 0){
+				data.alertTimer--;
+			}
+			if(data.alertTimer == 0 && data.alertLevel > 0){
+				data.alertLevel--;
+				data.alertTimer = 1200;
+			}
 		}
 	}
 
