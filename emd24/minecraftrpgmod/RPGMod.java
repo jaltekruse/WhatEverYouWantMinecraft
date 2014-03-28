@@ -17,6 +17,7 @@ import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -25,6 +26,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import emd24.minecraftrpgmod.EntityIdMapping.EntityId;
@@ -39,19 +41,17 @@ import emd24.minecraftrpgmod.spells.*;
 /*
  * Basic needed forge stuff
  */
-@Mod(modid="RPGMod",name="RPGMod",version="v1")
+@Mod(modid="rpgmod",name="RPGMod",version="v1")
 
 public class RPGMod {
 
-	@Instance(value="tutorialmod")
+	@Instance(value="rpgmod")
 	public static RPGMod instance;
 
 	// List where client and server proxy code is located
 	@SidedProxy(clientSide="emd24.minecraftrpgmod.ClientProxy",
 			serverSide="emd24.minecraftrpgmod.CommonProxy")
 	public static CommonProxy proxy;
-	public PacketHandlerServer packetHandler;
-	
 	
 	//Telling forge that we are creating these
 	//items
@@ -65,9 +65,7 @@ public class RPGMod {
 	public static Block elementium;
 	
 	public static final PacketPipeline packetPipeline = new PacketPipeline();
-	public static final GUIKeyHandler gui_keyboard = new GUIKeyHandler();
 
-	//Skill s = new Skill();
 
 	//tools
 
@@ -76,7 +74,7 @@ public class RPGMod {
 		
 		// Initialize packet pipeline
 		packetPipeline.initialise();
-		
+		FMLCommonHandler.instance().bus().register(new GUIKeyHandler());
 		
 		// Register Event Handler
 		MinecraftForge.EVENT_BUS.register(new EventHookContainer());
@@ -87,22 +85,22 @@ public class RPGMod {
 		// Define items
 
 		lightningSpell = new LightningSpell(10, CreativeTabs.tabCombat)
-		.setManaCost(25).setUnlocalizedName("lightningSpell")
-		.setTextureName("tutorialmod:lightningSpell");
+		.setManaCost(25).setUnlocalizedName("lightningspell")
+		.setTextureName("rpgmod:lightningSpell");
 
 		becomeUndead = new BecomeUndeadSpell(CreativeTabs.tabCombat)
 		.setManaCost(10).setUnlocalizedName("becomeundead")
-		.setTextureName("tutorialmod:becomeundead");
+		.setTextureName("rpgmod:becomeundead");
 
 		summonZombie = new SummonCreatureSpell(0, CreativeTabs.tabCombat)
 		.setManaCost(20).setUnlocalizedName("summonzombie")
-		.setTextureName("tutorialmod:summonzombie");
+		.setTextureName("rpgmod:summonzombie");
 		
 		healMana = new ItemManaHeal().setCreativeTab(CreativeTabs.tabMisc).setUnlocalizedName("healMana");
 		
 
 		elementium = new BlockOre().setHardness(5.0F).setResistance(5.0F).setStepSound(Block.soundTypeStone)
-				.setBlockName("oreElementium").setBlockTextureName("tutorialmod:elementium_ore").setCreativeTab(CreativeTabs.tabMaterials);
+				.setBlockName("oreElementium").setBlockTextureName("rpgmod:elementium_ore").setCreativeTab(CreativeTabs.tabMaterials);
 		
 		sodium = new BlockOre().setHardness(0.5F).setResistance(5.0F).setStepSound(Block.soundTypeGravel)
 				.setBlockName("oreSodium").setBlockTextureName("dirt");
@@ -126,17 +124,17 @@ public class RPGMod {
 		// Mining
 		
 		Skill mining = new Skill("Mining");
-		mining.addExperienceBlockBreak(1, 50); // experience for mining STONE
-		mining.addExperienceBlockBreak(16, 10); // experience for mining coal
-		mining.addExperienceBlockBreak(15, 20); // experience for mining iron
-		mining.addBlockRequirement(2000, 3);
-		mining.addHarvestPerkBlock(16, 5, 0.5);
+		mining.addExperienceBlockBreak(Block.getBlockFromName("stone"), 50); // experience for mining STONE
+		mining.addExperienceBlockBreak(Block.getBlockFromName("coal_ore"), 10); // experience for mining coal
+		mining.addExperienceBlockBreak(Block.getBlockFromName("iron_ore"), 20); // experience for mining iron
+		mining.addBlockRequirement(Block.getBlockFromName("elementium"), 3);
+		mining.addHarvestPerkBlock(Block.getBlockFromName("log"), 5, 0.5);
 		
 		// Treepunching
 		
 		Skill treepunching = new Skill("Treepunching");
-		treepunching.addExperienceBlockBreak(17, 50); // experience for getting wood
-		treepunching.addHarvestPerkBlock(17, 3, 0.5);
+		treepunching.addExperienceBlockBreak(Block.getBlockFromName("log"), 50); // experience for getting wood
+		treepunching.addHarvestPerkBlock(Block.getBlockFromName("log"), 3, 0.5);
 		
 		// Thieving
 		
@@ -144,8 +142,8 @@ public class RPGMod {
 		
 		// Create loot of pickpocketing villager
 		HashMap<Integer, Double> villagerLoot = new HashMap<Integer, Double>();
-		villagerLoot.put(357, 0.75);
-		villagerLoot.put(388, 0.25);
+		villagerLoot.put(GameData.itemRegistry.getId("minecraft:cookie"), 0.75);
+		villagerLoot.put(GameData.itemRegistry.getId("minecraft:emerald"), 0.25);
 		
 		ThievingData villagerThievingData = new ThievingData(EntityId.VILLAGER,	25, 1, 0.75, villagerLoot);
 		thieving.addThievingData(villagerThievingData);

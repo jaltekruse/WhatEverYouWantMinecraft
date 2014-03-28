@@ -75,8 +75,8 @@ public class ThievingData {
 			totalProb += prob;
 		}
 		if(totalProb != 1){
-			throw new IllegalArgumentException("Entity loot data must total a probability"
-					+ "of 1.0");
+			throw new IllegalArgumentException("Entity loot data must total a probability of 1.0 got " +
+					totalProb + " instead");
 		}
 	}
 	

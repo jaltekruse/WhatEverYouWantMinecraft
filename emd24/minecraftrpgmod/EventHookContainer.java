@@ -70,14 +70,13 @@ public class EventHookContainer {
 	public void onBlockBreak(BreakEvent event){
 
 		ExtendedPlayerData data = ExtendedPlayerData.get(event.getPlayer());
-		int blockId = event.block.getIdFromBlock(event.block);
 
 		// Check level requirement on block breaking
 		for(String skill : SkillRegistry.getSkillNames()){
 
 			// Cancel and send error message if cannot be broken
-			if(data.getSkill(skill).getLevel() < SkillRegistry.getSkill(skill).getBlockRequirement(blockId)){
-				event.getPlayer().addChatMessage(new ChatComponentText(skill + " Level " +	SkillRegistry.getSkill(skill).getBlockRequirement(blockId)
+			if(data.getSkill(skill).getLevel() < SkillRegistry.getSkill(skill).getBlockRequirement(event.block)){
+				event.getPlayer().addChatMessage(new ChatComponentText(skill + " Level " +	SkillRegistry.getSkill(skill).getBlockRequirement(event.block)
 						+ " required").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
 				event.setCanceled(true);
 			}
@@ -92,11 +91,10 @@ public class EventHookContainer {
 			return;
 		}
 
-		int blockId = event.block.getIdFromBlock(event.block);
 		ExtendedPlayerData data = ExtendedPlayerData.get(event.harvester);
 		for(String skill : SkillRegistry.getSkillNames()){
 
-			int experience = SkillRegistry.getSkill(skill).getExpForBlockBreak(blockId);
+			int experience = SkillRegistry.getSkill(skill).getExpForBlockBreak(event.block);
 
 			if(experience > 0){ 
 
@@ -112,7 +110,7 @@ public class EventHookContainer {
 			}
 			// Determine if player harvests extra items
 			Random rnd = new Random();
-			if(rnd.nextDouble() <= SkillRegistry.getSkill(skill).getHarvestPerkProbability(blockId, 
+			if(rnd.nextDouble() <= SkillRegistry.getSkill(skill).getHarvestPerkProbability(event.block, 
 					data.getSkill(skill).getLevel())){
 				for(ItemStack item : event.drops){
 					item.stackSize++;

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import net.minecraft.block.Block;
+
 /**
  * Abstract class that represents a skill, what items give experience, and
  * perks. 
@@ -37,8 +39,8 @@ public class Skill {
 	 * @param blockId id of block
 	 * @param expGiven experience given from breaking block
 	 */
-	public void addExperienceBlockBreak(int blockId, int expGiven){
-		this.expGivenOnBreak.put(blockId, expGiven);
+	public void addExperienceBlockBreak(Block block, int expGiven){
+		this.expGivenOnBreak.put(Block.getIdFromBlock(block), expGiven);
 	}
 	
 	/**
@@ -48,11 +50,11 @@ public class Skill {
 	 * @param blockId id of block to check experience for
 	 * @return experience given by breaking block
 	 */
-	public int getExpForBlockBreak(int blockId){
-		if(!this.expGivenOnBreak.containsKey(blockId)){
+	public int getExpForBlockBreak(Block block){
+		if(!this.expGivenOnBreak.containsKey(Block.getIdFromBlock(block))){
 			return 0;
 		}
-		return this.expGivenOnBreak.get(blockId);
+		return this.expGivenOnBreak.get(Block.getIdFromBlock(block));
 	}
 	
 	/**
@@ -61,8 +63,8 @@ public class Skill {
 	 * @param blockId id of block to break
 	 * @param level level required to break block
 	 */
-	public void addBlockRequirement(int blockId, int level){
-		this.blockRequirements.put(blockId, level);
+	public void addBlockRequirement(Block block, int level){
+		this.blockRequirements.put(Block.getIdFromBlock(block), level);
 	}
 	
 	/**
@@ -71,11 +73,11 @@ public class Skill {
 	 * @param blockId id of block to get
 	 * @return level required
 	 */
-	public int getBlockRequirement(int blockId){
-		if(!this.blockRequirements.containsKey(blockId)){
+	public int getBlockRequirement(Block block){
+		if(!this.blockRequirements.containsKey(Block.getIdFromBlock(block))){
 			return 0;
 		}
-		return this.blockRequirements.get(blockId);
+		return this.blockRequirements.get(Block.getIdFromBlock(block));
 	}
 	
 	/**
@@ -86,11 +88,11 @@ public class Skill {
 	 * @param level level required for perk
 	 * @param prob probability of perk
 	 */
-	public void addHarvestPerkBlock(int blockId, int level, double prob){
-		if(!harvestPerks.containsKey(blockId)){
-			harvestPerks.put(blockId, new ArrayList<HarvestPerkEntry>());
+	public void addHarvestPerkBlock(Block block, int level, double prob){
+		if(!harvestPerks.containsKey(Block.getIdFromBlock(block))){
+			harvestPerks.put(Block.getIdFromBlock(block), new ArrayList<HarvestPerkEntry>());
 		}
-		harvestPerks.get(blockId).add(new HarvestPerkEntry(level, prob));
+		harvestPerks.get(Block.getIdFromBlock(block)).add(new HarvestPerkEntry(level, prob));
 	}
 	
 	/**
@@ -101,12 +103,12 @@ public class Skill {
 	 * @param level level of player
 	 * @return probability of getting extra drop
 	 */
-	public double getHarvestPerkProbability(int blockId, int level){
-		if(!harvestPerks.containsKey(blockId)){
+	public double getHarvestPerkProbability(Block block, int level){
+		if(!harvestPerks.containsKey(Block.getIdFromBlock(block))){
 			return 0.0;
 		}
 		HarvestPerkEntry temp = null;
-		for(HarvestPerkEntry entry : harvestPerks.get(blockId)){
+		for(HarvestPerkEntry entry : harvestPerks.get(Block.getIdFromBlock(block))){
 			
 			// Adds a higher perk level is found
 			if(entry.level <= level && (temp == null || entry.level > temp.level)){
