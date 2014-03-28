@@ -8,7 +8,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.src.ModLoader;
 import net.minecraft.world.World;
 
 /**
@@ -19,8 +18,8 @@ import net.minecraft.world.World;
  */
 public class BecomeUndeadSpell extends Spell{
 
-	public BecomeUndeadSpell(int id, int maxStackSize, CreativeTabs tab){
-		super(id, 0, tab); //Returns super constructor: par1 is ID
+	public BecomeUndeadSpell(CreativeTabs tab){
+		super(0, tab); //Returns super constructor: par1 is ID
 		this.onItemRightClick = true;
 		this.onItemUse = false;
 	}

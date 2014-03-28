@@ -5,8 +5,6 @@ import java.io.DataOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.common.network.Player;
 import emd24.minecraftrpgmod.skills.SkillPlayer;
 import emd24.minecraftrpgmod.skills.SkillRegistry;
 import net.minecraft.entity.Entity;
@@ -14,7 +12,6 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
 
@@ -67,7 +64,7 @@ public class ExtendedEntityLivingData implements IExtendedEntityProperties{
 		rbt.setInteger("stealTicks", this.stealCoolDown);
 		rbt.setInteger("alertTicks", this.alertTimer);
 		
-		compound.setCompoundTag(IDENTIFIER, rbt);
+		compound.setTag(IDENTIFIER, rbt);
 	
 	}
 

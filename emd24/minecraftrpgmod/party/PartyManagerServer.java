@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
-import net.minecraft.network.packet.Packet;
-import cpw.mods.fml.common.network.PacketDispatcher;
 import emd24.minecraftrpgmod.PacketHandlerServer;
+import emd24.minecraftrpgmod.RPGMod;
+import emd24.minecraftrpgmod.packets.PartyDataPacket;
+import emd24.minecraftrpgmod.packets.PlayerDataPacket;
 
 public class PartyManagerServer {
 	// Maps player name to party ID
@@ -30,18 +31,13 @@ public class PartyManagerServer {
 		return partyPlayerList;
 	}
 	
-	public static void sendPlayerParties() {
-		Packet packet = PacketHandlerServer.getPartiesPacket();
-		PacketDispatcher.sendPacketToAllPlayers(packet);
-	}
-	
 	public static boolean addPlayerToParty(String playerName, int partyID) {
 		if(!playerParty.containsKey(playerName) || playerParty.get(playerName) == 0) {
 			//no party -> join
 			playerParty.put(playerName, partyID);
 			
 			//Update clients with new party info
-			sendPlayerParties();
+			RPGMod.packetPipeline.sendToAll(new PartyDataPacket());
 			return true;
 		}
 		return false;
@@ -60,13 +56,13 @@ public class PartyManagerServer {
 	
 	public static void removePlayerFromParty(String playerName){
 		playerParty.put(playerName, 0);
-		sendPlayerParties();
+		RPGMod.packetPipeline.sendToAll(new PartyDataPacket());
 	}
 	
 
 	public static void removePlayerFromGame(String playerName){
 		playerParty.remove(playerName);
-		sendPlayerParties();
+		RPGMod.packetPipeline.sendToAll(new PartyDataPacket());
 	}
 	
 	public static void promotePlayer(String playerName) {

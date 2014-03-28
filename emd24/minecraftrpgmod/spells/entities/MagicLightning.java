@@ -6,13 +6,16 @@ import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.effect.EntityWeatherEffect;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
+import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
@@ -38,6 +41,8 @@ public class MagicLightning extends EntityLightningBolt
      */
     private int boltLivingTime;
 
+    private static final String __OBFID = "CL_00001666";
+
     public MagicLightning(World par1World, double par2, double par4, double par6, int power)
     {
         super(par1World, par2, par4, par6);
@@ -47,15 +52,15 @@ public class MagicLightning extends EntityLightningBolt
         this.boltLivingTime = this.rand.nextInt(3) + 1;
         this.power = power;
 
-        if (!par1World.isRemote && par1World.getGameRules().getGameRuleBooleanValue("doFireTick") && par1World.difficultySetting >= 2 && par1World.doChunksNearChunkExist(MathHelper.floor_double(par2), MathHelper.floor_double(par4), MathHelper.floor_double(par6), 10))
+        if (!par1World.isRemote && par1World.getGameRules().getGameRuleBooleanValue("doFireTick") && (par1World.difficultySetting == EnumDifficulty.NORMAL || par1World.difficultySetting == EnumDifficulty.HARD) && par1World.doChunksNearChunkExist(MathHelper.floor_double(par2), MathHelper.floor_double(par4), MathHelper.floor_double(par6), 10))
         {
             int i = MathHelper.floor_double(par2);
             int j = MathHelper.floor_double(par4);
             int k = MathHelper.floor_double(par6);
 
-            if (par1World.getBlockId(i, j, k) == 0 && Block.fire.canPlaceBlockAt(par1World, i, j, k))
+            if (par1World.getBlock(i, j, k).getMaterial() == Material.air && Blocks.fire.canPlaceBlockAt(par1World, i, j, k))
             {
-                par1World.setBlock(i, j, k, Block.fire.blockID);
+                par1World.setBlock(i, j, k, Blocks.fire);
             }
 
             for (i = 0; i < 4; ++i)
@@ -64,9 +69,9 @@ public class MagicLightning extends EntityLightningBolt
                 k = MathHelper.floor_double(par4) + this.rand.nextInt(3) - 1;
                 int l = MathHelper.floor_double(par6) + this.rand.nextInt(3) - 1;
 
-                if (par1World.getBlockId(j, k, l) == 0 && Block.fire.canPlaceBlockAt(par1World, j, k, l))
+                if (par1World.getBlock(j, k, l).getMaterial() == Material.air && Blocks.fire.canPlaceBlockAt(par1World, j, k, l))
                 {
-                    par1World.setBlock(j, k, l, Block.fire.blockID);
+                    par1World.setBlock(j, k, l, Blocks.fire);
                 }
             }
         }
@@ -77,7 +82,7 @@ public class MagicLightning extends EntityLightningBolt
      */
     public void onUpdate()
     {
-        this.onEntityUpdate();
+        super.onUpdate();
 
         if (this.lightningState == 2)
         {
@@ -105,9 +110,9 @@ public class MagicLightning extends EntityLightningBolt
                     int j = MathHelper.floor_double(this.posY);
                     int k = MathHelper.floor_double(this.posZ);
 
-                    if (this.worldObj.getBlockId(i, j, k) == 0 && Block.fire.canPlaceBlockAt(this.worldObj, i, j, k))
+                    if (this.worldObj.getBlock(i, j, k).getMaterial() == Material.air && Blocks.fire.canPlaceBlockAt(this.worldObj, i, j, k))
                     {
-                        this.worldObj.setBlock(i, j, k, Block.fire.blockID);
+                        this.worldObj.setBlock(i, j, k, Blocks.fire);
                     }
                 }
             }
@@ -127,10 +132,8 @@ public class MagicLightning extends EntityLightningBolt
                 for (int l = 0; l < list.size(); ++l)
                 {
                     Entity entity = (Entity)list.get(l);
-                    if (!MinecraftForge.EVENT_BUS.post(new EntityStruckByLightningEvent(entity, this)))
-                    {
+                    if (!net.minecraftforge.event.ForgeEventFactory.onEntityStruckByLightning(entity, this))
                         entity.onStruckByLightning(this);
-                    }
                 }
             }
         }
@@ -147,16 +150,6 @@ public class MagicLightning extends EntityLightningBolt
      * (abstract) Protected helper method to write subclass entity data to NBT.
      */
     protected void writeEntityToNBT(NBTTagCompound par1NBTTagCompound) {}
-
-    @SideOnly(Side.CLIENT)
-
-    /**
-     * Checks using a Vec3d to determine if this entity is within range of that vector to be rendered. Args: vec3D
-     */
-    public boolean isInRangeToRenderVec3D(Vec3 par1Vec3)
-    {
-        return this.lightningState >= 0;
-    }
 
 	public int getPower() {
 		return power;

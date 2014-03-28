@@ -5,15 +5,13 @@ import java.io.DataOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.common.network.Player;
+import emd24.minecraftrpgmod.packets.PlayerDataPacket;
 import emd24.minecraftrpgmod.skills.SkillPlayer;
 import emd24.minecraftrpgmod.skills.SkillRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
 
@@ -29,22 +27,22 @@ public class ExtendedPlayerData implements IExtendedEntityProperties{
 	public static final String CHANNEL = "extplayerdata";
 	public boolean dirty = true;
 	private final EntityPlayer player;
-	
+
 	// Sets whether player is undead
 	private boolean undead;
 	private int currMana, maxMana;
 	private HashMap<String, SkillPlayer> skills = new HashMap<String, SkillPlayer>();;
-	
+
 	public ExtendedPlayerData(EntityPlayer player){
 		this.player = player;
 		this.maxMana = 50;
 		this.currMana = this.maxMana;
-		
+
 		// Add the skills to the player
 		for(String skillName: SkillRegistry.getSkillNames()){
 			skills.put(skillName, new SkillPlayer(skillName));
 		}
-		
+
 		// TODO: sync data
 	}
 
@@ -52,32 +50,32 @@ public class ExtendedPlayerData implements IExtendedEntityProperties{
 		player.registerExtendedProperties(ExtendedPlayerData.IDENTIFIER, 
 				new ExtendedPlayerData(player));
 	}
-	
+
 	public static ExtendedPlayerData get(Entity player){
 		return (ExtendedPlayerData)player.getExtendedProperties(IDENTIFIER);
 	}
-	
+
 	@Override
 	public void init(Entity entity, World world) {
-		
+
 	}
-	
+
 	@Override
 	public void saveNBTData(NBTTagCompound compound) {
 		// TODO Auto-generated method stub
 		NBTTagCompound rbt = new NBTTagCompound();
-		
+
 		rbt.setBoolean("undead", this.undead);
 		rbt.setInteger("maxMana", this.maxMana);
 		rbt.setInteger("currMana", this.currMana);
-		
+
 		for(SkillPlayer skill : skills.values()){
 			rbt.setInteger( skill.name  + ".lvl", skill.getLevel());
 			rbt.setInteger( skill.name  + ".exp", skill.getExperience());
-			
+
 		}
-		
-		compound.setCompoundTag(IDENTIFIER, rbt);
+
+		compound.setTag(IDENTIFIER, rbt);
 	}
 
 
@@ -88,7 +86,7 @@ public class ExtendedPlayerData implements IExtendedEntityProperties{
 		this.undead = rbt.getBoolean("undead");
 		this.maxMana = rbt.getInteger("maxMana");
 		this.currMana = rbt.getInteger("currMana");
-		
+
 		// Load information on skills
 		for(String skillName: SkillRegistry.getSkillNames()){
 			int level = rbt.getInteger(skillName + ".lvl");
@@ -96,7 +94,7 @@ public class ExtendedPlayerData implements IExtendedEntityProperties{
 			skills.put(skillName, new SkillPlayer(skillName, level, experience));
 		}
 	}
-	
+
 	public boolean isUndead() {
 		return undead;
 	}
@@ -118,7 +116,7 @@ public class ExtendedPlayerData implements IExtendedEntityProperties{
 	public int getMaxMana() {
 		return maxMana;
 	}
-	
+
 	public void useMana(int mana){
 		this.currMana -= mana;
 		sync();
@@ -128,11 +126,11 @@ public class ExtendedPlayerData implements IExtendedEntityProperties{
 		this.maxMana = maxMana;
 		sync();
 	}
-	
+
 	public HashMap<String, SkillPlayer> getSkillList(){
 		return skills;
 	}
-	
+
 	/**
 	 * Gets a skill for the player.
 	 * 
@@ -145,12 +143,12 @@ public class ExtendedPlayerData implements IExtendedEntityProperties{
 		}
 		return skills.get(name);
 	}
-	
+
 	public void setSkillList(HashMap<String, SkillPlayer> skills){
 		this.skills = skills;
 		sync();
 	}
-	
+
 	/**
 	 * Adds a skill to a player.
 	 * 
@@ -159,10 +157,8 @@ public class ExtendedPlayerData implements IExtendedEntityProperties{
 	public void addSkillToPlayer(SkillPlayer skill){
 		skills.put(skill.name, skill);
 		sync();
-		
-		//PacketDispatcher.sendPacketToAllPlayers(PacketHandler.getSkillUpdatePacket(player, skill.name));
 	}
-	
+
 	/**
 	 * Give experience to a player in a skill.
 	 * 
@@ -172,11 +168,10 @@ public class ExtendedPlayerData implements IExtendedEntityProperties{
 	 */
 	public boolean addExp(String skill, int amount){
 		boolean levelUp = skills.get(skill).addExperience(amount);
-		//PacketDispatcher.sendPacketToAllPlayers(PacketHandler.getSkillUpdatePacket(player, skill));
 		sync();
 		return levelUp;
 	}
-	
+
 	/**
 	 * Adds levels to a player's skill
 	 * 
@@ -185,39 +180,13 @@ public class ExtendedPlayerData implements IExtendedEntityProperties{
 	 */
 	public void addLevels(String skill, int levels){
 		skills.get(skill).addLevels(levels);
-		//PacketDispatcher.sendPacketToAllPlayers(PacketHandler.getSkillUpdatePacket(player, skill));
 		sync();
+
 	}
-	
-	/**
-	 * Sends data to client about extended payer data stored on server.
-	 */
-	public final void sync(){
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		DataOutputStream outputStream = new DataOutputStream(bos);
-		
-		try{
-			outputStream.writeInt(this.maxMana);
-			outputStream.writeInt(this.currMana);
-			outputStream.writeBoolean(this.undead);
-			
-			outputStream.writeInt(this.skills.size());
-			for(SkillPlayer skill : skills.values()){
-				outputStream.writeUTF(skill.name);
-				outputStream.writeInt(skill.getLevel());
-				outputStream.writeInt(skill.getExperience());
-			}
-			
-		} catch(Exception e){
-			e.printStackTrace();
+
+	public void sync(){
+		if(!player.worldObj.isRemote){
+			RPGMod.packetPipeline.sendTo(new PlayerDataPacket(player), (EntityPlayerMP) player);
 		}
-		
-		Packet250CustomPayload packet = new Packet250CustomPayload(CHANNEL, bos.toByteArray());
-		
-		if (!player.worldObj.isRemote) {
-			EntityPlayerMP player1 = (EntityPlayerMP) player;
-			PacketDispatcher.sendPacketToPlayer(packet, (Player) player1);
-			}
 	}
-	
 }

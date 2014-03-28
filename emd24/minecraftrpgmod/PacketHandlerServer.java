@@ -31,6 +31,7 @@ import emd24.minecraftrpgmod.skills.SkillManagerServer;
  * @author Evan Dyke
  *
  */
+@Deprecated
 public class PacketHandlerServer implements IPacketHandler, IConnectionHandler {
 	public static final int GET_ALL_PARTIES = 3;
 	public static String PARTY_CHANNEL = "rpgmod";

@@ -2,7 +2,6 @@ package emd24.minecraftrpgmod.skills;
 
 import java.util.HashMap;
 
-import cpw.mods.fml.common.network.PacketDispatcher;
 import emd24.minecraftrpgmod.PacketHandlerServer;
 
 /**
@@ -41,7 +40,7 @@ public class SkillManagerServer {
 			players.put(player, skills);
 			
 			// Notify everyone else on the server
-			PacketDispatcher.sendPacketToAllPlayers(PacketHandlerServer.getPlayerSkillUpdatePacket(player));
+//			PacketDispatcher.sendPacketToAllPlayers(PacketHandlerServer.getPlayerSkillUpdatePacket(player));
 			
 		}
 		return players.get(player);
@@ -72,7 +71,7 @@ public class SkillManagerServer {
 		players.put(player, skillList);
 		
 		// Notify everone else on the server
-		PacketDispatcher.sendPacketToAllPlayers(PacketHandlerServer.getPlayerSkillUpdatePacket(player));
+//		PacketDispatcher.sendPacketToAllPlayers(PacketHandlerServer.getPlayerSkillUpdatePacket(player));
 	}
 	
 	/**
@@ -83,7 +82,7 @@ public class SkillManagerServer {
 	 */
 	public static void addSkillToPlayer(String player, SkillPlayer skill){
 		getPlayerSkillList(player).put(skill.name, skill);
-		PacketDispatcher.sendPacketToAllPlayers(PacketHandlerServer.getSkillUpdatePacket(player, skill.name));
+//		PacketDispatcher.sendPacketToAllPlayers(PacketHandlerServer.getSkillUpdatePacket(player, skill.name));
 	}
 	
 	/**
@@ -96,7 +95,7 @@ public class SkillManagerServer {
 	 */
 	public static boolean addExp(String player, String skill, int amount){
 		boolean levelUp = getSkill(player, skill).addExperience(amount);
-		PacketDispatcher.sendPacketToAllPlayers(PacketHandlerServer.getSkillUpdatePacket(player, skill));
+//		PacketDispatcher.sendPacketToAllPlayers(PacketHandlerServer.getSkillUpdatePacket(player, skill));
 		return levelUp;
 	}
 	
@@ -109,6 +108,6 @@ public class SkillManagerServer {
 	 */
 	public static void addLevels(String player, String skill, int levels){
 		getSkill(player, skill).addLevels(levels);
-		PacketDispatcher.sendPacketToAllPlayers(PacketHandlerServer.getSkillUpdatePacket(player, skill));
+	//	PacketDispatcher.sendPacketToAllPlayers(PacketHandlerServer.getSkillUpdatePacket(player, skill));
 	}
 }

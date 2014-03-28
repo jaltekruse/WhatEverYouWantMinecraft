@@ -7,34 +7,29 @@ import java.util.HashMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockOre;
-import net.minecraft.block.StepSound;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.EnumToolMaterial;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import net.minecraftforge.common.EnumHelper;
 import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkMod;
-import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import emd24.minecraftrpgmod.EntityIdMapping.EntityId;
-import emd24.minecraftrpgmod.party.PartyPlayerTracker;
+import emd24.minecraftrpgmod.gui.GUIKeyHandler;
+import emd24.minecraftrpgmod.packets.PacketPipeline;
 import emd24.minecraftrpgmod.skills.Skill;
 import emd24.minecraftrpgmod.skills.SkillPlayer;
 import emd24.minecraftrpgmod.skills.SkillRegistry;
@@ -45,8 +40,7 @@ import emd24.minecraftrpgmod.spells.*;
  * Basic needed forge stuff
  */
 @Mod(modid="RPGMod",name="RPGMod",version="v1")
-@NetworkMod(clientSideRequired=true,serverSideRequired=false, serverPacketHandlerSpec = @SidedPacketHandler(packetHandler = PacketHandlerServer.class, channels = {"rpgmod", ExtendedPlayerData.CHANNEL}), 
-clientPacketHandlerSpec = @SidedPacketHandler(packetHandler = PacketHandlerClient.class, channels = {"rpgmod", ExtendedPlayerData.CHANNEL}))
+
 public class RPGMod {
 
 	@Instance(value="tutorialmod")
@@ -69,6 +63,9 @@ public class RPGMod {
 
 	public static Block sodium;
 	public static Block elementium;
+	
+	public static final PacketPipeline packetPipeline = new PacketPipeline();
+	public static final GUIKeyHandler gui_keyboard = new GUIKeyHandler();
 
 	//Skill s = new Skill();
 
@@ -77,53 +74,52 @@ public class RPGMod {
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event){
 		
-		// Register packet handler
-		packetHandler = new PacketHandlerServer();
-		NetworkRegistry.instance().registerConnectionHandler(packetHandler);
+		// Initialize packet pipeline
+		packetPipeline.initialise();
+		
 		
 		// Register Event Handler
 		MinecraftForge.EVENT_BUS.register(new EventHookContainer());
 		
 		//Register Party Player Tracker
-		GameRegistry.registerPlayerTracker(new PartyPlayerTracker());
+		//GameRegistry.registerPlayerTracker(new PartyPlayerTracker());
 		
 		// Define items
 
-		lightningSpell = new LightningSpell(4000, 10, CreativeTabs.tabCombat)
+		lightningSpell = new LightningSpell(10, CreativeTabs.tabCombat)
 		.setManaCost(25).setUnlocalizedName("lightningSpell")
 		.setTextureName("tutorialmod:lightningSpell");
 
-		becomeUndead = new BecomeUndeadSpell(4001, 0, CreativeTabs.tabCombat)
+		becomeUndead = new BecomeUndeadSpell(CreativeTabs.tabCombat)
 		.setManaCost(10).setUnlocalizedName("becomeundead")
 		.setTextureName("tutorialmod:becomeundead");
 
-		summonZombie = new SummonCreatureSpell(4002, 54, CreativeTabs.tabCombat)
+		summonZombie = new SummonCreatureSpell(0, CreativeTabs.tabCombat)
 		.setManaCost(20).setUnlocalizedName("summonzombie")
 		.setTextureName("tutorialmod:summonzombie");
 		
-		healMana = new ItemManaHeal(4003).setCreativeTab(CreativeTabs.tabMisc).setUnlocalizedName("healMana");
+		healMana = new ItemManaHeal().setCreativeTab(CreativeTabs.tabMisc).setUnlocalizedName("healMana");
 		
 
-		elementium = (new BlockOre(2000)).setHardness(5.0F).setResistance(5.0F).setStepSound(Block.soundStoneFootstep)
-				.setUnlocalizedName("oreElementium").setTextureName("tutorialmod:elementium_ore");
+		elementium = new BlockOre().setHardness(5.0F).setResistance(5.0F).setStepSound(Block.soundTypeStone)
+				.setBlockName("oreElementium").setBlockTextureName("tutorialmod:elementium_ore").setCreativeTab(CreativeTabs.tabMaterials);
 		
-		sodium = (new BlockOre(2001)).setHardness(0.5F).setResistance(5.0F).setStepSound(Block.soundGravelFootstep)
-				.setUnlocalizedName("oreSodium").setTextureName("dirt");
+		sodium = new BlockOre().setHardness(0.5F).setResistance(5.0F).setStepSound(Block.soundTypeGravel)
+				.setBlockName("oreSodium").setBlockTextureName("dirt");
 		
 		
 		
 		// Register Blocks
 		
 		GameRegistry.registerBlock(elementium, "elementium");
-		GameRegistry.registerBlock(sodium, "Sodium");
+		GameRegistry.registerBlock(sodium, "sodium");
 
-		// Register items
+		GameRegistry.registerItem(lightningSpell, "lightningspell");
+		GameRegistry.registerItem(becomeUndead, "becomeundead");
+		GameRegistry.registerItem(summonZombie, "summonzombie");
+		GameRegistry.registerItem(healMana, "healmana");
 		
-		LanguageRegistry.addName(lightningSpell, "Lightning Spell");
-		LanguageRegistry.addName(becomeUndead, "Become Undead");
-		LanguageRegistry.addName(summonZombie, "Summon Zombie");
-		LanguageRegistry.addName(healMana, "Mana Heal");
-		LanguageRegistry.addName(elementium, "Elementium");
+		// Register items
 
 		// Add Skills
 		
@@ -169,6 +165,7 @@ public class RPGMod {
 	}
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
-		// Stub Method
+
+		packetPipeline.postInitialise();
 	}
 }

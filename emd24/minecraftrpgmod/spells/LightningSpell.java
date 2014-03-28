@@ -17,8 +17,8 @@ import net.minecraft.world.World;
  */
 public class LightningSpell extends Spell{
 
-	public LightningSpell(int id, int basePower, CreativeTabs tab) {
-		super(id, basePower, tab); // Create a spell with base damage of 10
+	public LightningSpell(int basePower, CreativeTabs tab) {
+		super(basePower, tab); // Create a spell with base damage of 10
 		this.onItemRightClick = false;
 		this.onItemUse = true;
 	}

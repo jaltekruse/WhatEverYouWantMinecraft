@@ -8,7 +8,6 @@ import java.util.Set;
 
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.common.network.PacketDispatcher;
 import emd24.minecraftrpgmod.ExtendedPlayerData;
 import emd24.minecraftrpgmod.PacketHandlerServer;
 import emd24.minecraftrpgmod.PacketHandlerClient;
@@ -23,11 +22,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.src.ModLoader;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraftforge.client.GuiControlsScrollPanel;
 
 /**
  * This class is the GUI that shows the party interface. Based on code by Evan Dyke.
@@ -44,7 +40,7 @@ public class GUIParty extends GuiScreen {
 	public static final ResourceLocation resource = new ResourceLocation("RPGMod", "textures/gui/");
 	private EntityPlayer player;
 	
-	private GuiControlsScrollPanel scrollPane;
+	//private GuiControlsScrollPanel scrollPane;
 	
 	HashMap<String, Integer> pAP = PartyManagerClient.playerParty;
 	Set<Map.Entry<String, Integer>> playersAndParties;
@@ -84,9 +80,10 @@ public class GUIParty extends GuiScreen {
 		Map.Entry<String, Integer> entry = (Entry<String, Integer>) itPaP.next();
 		String playerName = entry.getKey();
 		
-		//Send Invite packet
-		Packet packet = PacketHandlerClient.sendPartyInvite(playerName, 0);
-		PacketDispatcher.sendPacketToServer(packet);
+		// TODO: Send invite packet
+		
+//		Packet packet = PacketHandlerClient.sendPartyInvite(playerName, 0);
+//		PacketDispatcher.sendPacketToServer(packet);
 	}
 	
 	@Override
@@ -95,7 +92,7 @@ public class GUIParty extends GuiScreen {
 		
 		drawRect(20, 20, width - 20, height - 20, 0xffdddddd);
 		
-		drawCenteredString(fontRenderer, "Party", width / 2, 30, 0xffffffff);
+		drawCenteredString(fontRendererObj, "Party", width / 2, 30, 0xffffffff);
 		
 		//Simplified Algo for Testing:
 		//obtain a list of players in the world
@@ -106,8 +103,8 @@ public class GUIParty extends GuiScreen {
 		int h = 1;
 		while (itPaP.hasNext()){
 			Map.Entry<String, Integer> entry = (Entry<String, Integer>) itPaP.next();
-			drawString(fontRenderer, entry.getKey(), 50, h * 20 + 50, 0xffffffff);
-			drawString(fontRenderer, "" + entry.getValue(), 150, h * 20 + 50, 0xffffffff);
+			drawString(fontRendererObj, entry.getKey(), 50, h * 20 + 50, 0xffffffff);
+			drawString(fontRendererObj, "" + entry.getValue(), 150, h * 20 + 50, 0xffffffff);
 			//buttonList.add(new GuiButton(h, 250, h * 20 + 50, "Invite"));
 			h++;
 		}

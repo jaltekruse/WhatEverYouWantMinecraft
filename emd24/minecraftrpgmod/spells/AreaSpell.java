@@ -10,8 +10,8 @@ import net.minecraft.creativetab.CreativeTabs;
  */
 public abstract class AreaSpell extends Spell{
 
-	public AreaSpell(int id, int basePower, CreativeTabs tab) {
-		super(id, basePower, tab);
+	public AreaSpell(int basePower, CreativeTabs tab) {
+		super(basePower, tab);
 		// TODO Auto-generated constructor stub
 	}
 	

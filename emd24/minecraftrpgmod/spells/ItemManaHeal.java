@@ -4,13 +4,13 @@ import emd24.minecraftrpgmod.ExtendedPlayerData;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ChatMessageComponent;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 
 public class ItemManaHeal extends Item{
 
-	public ItemManaHeal(int id) {
-		super(id);
+	public ItemManaHeal() {
+		super();
 	}
 
 	@Override
@@ -23,7 +23,7 @@ public class ItemManaHeal extends Item{
 		ExtendedPlayerData data = ExtendedPlayerData.get(par3EntityPlayer);
 		data.setCurrMana(data.getMaxMana());
 		if(!par2World.isRemote){
-			par3EntityPlayer.sendChatToPlayer((new ChatMessageComponent()).addText("Mana Recovered"));
+			par3EntityPlayer.addChatMessage((new ChatComponentText("Mana Recovered")));
 		}
 
 		return par1ItemStack;

@@ -2,12 +2,13 @@ package emd24.minecraftrpgmod.spells;
 
 import emd24.minecraftrpgmod.ExtendedPlayerData;
 import emd24.minecraftrpgmod.spells.entities.MagicLightning;
+import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ChatMessageComponent;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 
 /**
@@ -40,8 +41,8 @@ public abstract class Spell extends Item {
 	 * @param id item id of the spell
 	 * @param tab creative mode tab to place item
 	 */
-	public Spell(int id, int basePower, CreativeTabs tab) {
-		super(id); //Returns super constructor: par1 is ID
+	public Spell(int basePower, CreativeTabs tab) {
+		super(); //Returns super constructor: par1 is ID
 		setMaxStackSize(1);
 		setCreativeTab(tab); //Tells the game what creative mode tab it goes in
 		this.basePower = basePower;
@@ -91,7 +92,7 @@ public abstract class Spell extends Item {
 			ExtendedPlayerData properties = ExtendedPlayerData.get(par2EntityPlayer);
 			if(properties.getCurrMana() < this.manaCost){
 				if(!par3World.isRemote)
-					par2EntityPlayer.sendChatToPlayer((new ChatMessageComponent()).addText("Not enough mana!"));
+					par2EntityPlayer.addChatMessage(new ChatComponentText("Not enough mana!"));
 			}
 
 			else{
@@ -102,7 +103,7 @@ public abstract class Spell extends Item {
 					--par1ItemStack.stackSize;
 				}
 				if(!par3World.isRemote){
-					par2EntityPlayer.sendChatToPlayer((new ChatMessageComponent()).addText("Mana remaining: " + properties.getCurrMana()));
+					par2EntityPlayer.addChatMessage((new ChatComponentText("Mana remaining: " + properties.getCurrMana())));
 				}
 			}  		
 
@@ -120,7 +121,7 @@ public abstract class Spell extends Item {
 		ExtendedPlayerData properties = ExtendedPlayerData.get(par3EntityPlayer);
 		if(properties.getCurrMana() < this.manaCost){
 			if(!par2World.isRemote)
-				par3EntityPlayer.sendChatToPlayer((new ChatMessageComponent()).addText("Not enough mana!"));
+				par3EntityPlayer.addChatMessage(new ChatComponentText("Not enough mana!"));
 		}
 
 		else{
@@ -131,7 +132,7 @@ public abstract class Spell extends Item {
 				--par1ItemStack.stackSize;
 			}
 			if(!par2World.isRemote){
-				par3EntityPlayer.sendChatToPlayer((new ChatMessageComponent()).addText("Mana remaining: " + properties.getCurrMana()));
+				par3EntityPlayer.addChatMessage(new ChatComponentText("Mana remaining: " + properties.getCurrMana()));
 			}
 		}
 		return par1ItemStack;

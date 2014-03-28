@@ -1,6 +1,6 @@
 package emd24.minecraftrpgmod;
 
-import cpw.mods.fml.client.registry.KeyBindingRegistry;
+import cpw.mods.fml.client.registry.ClientRegistry;
 import emd24.minecraftrpgmod.gui.GUIKeyHandler;
 import emd24.minecraftrpgmod.gui.GUISkills;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,8 +12,8 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void registerRenderers() {
+			
 		
-		KeyBindingRegistry.registerKeyBinding(new GUIKeyHandler());
 	}
 	
 }

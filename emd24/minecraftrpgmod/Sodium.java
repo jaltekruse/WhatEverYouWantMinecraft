@@ -5,14 +5,13 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.src.ModLoader;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 public class Sodium extends Block {
 
-	public Sodium (int id, Material material){
-		super(id, material);
+	public Sodium (Material material){
+		super(material);
 		
 	}
 	

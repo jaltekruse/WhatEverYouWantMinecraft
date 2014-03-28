@@ -12,7 +12,6 @@ import emd24.minecraftrpgmod.skills.SkillPlayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.src.ModLoader;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.entity.player.EntityPlayerMP;
 
@@ -43,21 +42,21 @@ public class GUISkills extends GuiScreen{
 		drawRect(20, 20, width - 20, height - 20, 0xffdddddd);
 		
 		HashMap<String, SkillPlayer> playerSkills = ExtendedPlayerData.get(player).getSkillList();
-		
+		this.
 		// Draw headings of the skill list
-		drawString(fontRenderer, "Skill", 50, 50, 0xffffffff);
-		drawString(fontRenderer, "Level", 150, 50, 0xffffffff);
-		drawString(fontRenderer, "Total Experience", 250, 50, 0xffffffff);
-		drawString(fontRenderer, "Next Level", 350, 50, 0xffffffff);
+		drawString(fontRendererObj, "Skill", 50, 50, 0xffffffff);
+		drawString(fontRendererObj, "Level", 150, 50, 0xffffffff);
+		drawString(fontRendererObj, "Total Experience", 250, 50, 0xffffffff);
+		drawString(fontRendererObj, "Next Level", 350, 50, 0xffffffff);
 		
 		// Draw the skill data on each row
 		int h = 1;
 		for(SkillPlayer skill : playerSkills.values())
 		{
-			drawString(fontRenderer, skill.name, 50, h * 20 + 50, 0xffffffff);
-			drawString(fontRenderer, "" + skill.getLevel(), 150, h * 20 + 50, 0xffffffff);
-			drawString(fontRenderer, "" + skill.getExperience(), 250, h * 20 + 50, 0xffffffff);
-			drawString(fontRenderer, "" + SkillPlayer.expForLevel(skill.getLevel() + 1), 350, h * 20 + 50, 0xffffffff);
+			drawString(fontRendererObj, skill.name, 50, h * 20 + 50, 0xffffffff);
+			drawString(fontRendererObj, "" + skill.getLevel(), 150, h * 20 + 50, 0xffffffff);
+			drawString(fontRendererObj, "" + skill.getExperience(), 250, h * 20 + 50, 0xffffffff);
+			drawString(fontRendererObj, "" + SkillPlayer.expForLevel(skill.getLevel() + 1), 350, h * 20 + 50, 0xffffffff);
 			h++;
 		}
 		

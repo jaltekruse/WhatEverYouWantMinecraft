@@ -1,8 +1,9 @@
 package emd24.minecraftrpgmod.gui;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.src.ModLoader;
+import net.minecraft.util.ChatComponentText;
 
 public class GUIWhatever extends GuiScreen
 {
@@ -23,12 +24,12 @@ public class GUIWhatever extends GuiScreen
 		switch(guibutton.id)
 		{
 		case 1:
-			ModLoader.getMinecraftInstance().theWorld.setRainStrength(5F);
-			ModLoader.getMinecraftInstance().thePlayer.addChatMessage("Rain started");
+			Minecraft.getMinecraft().theWorld.setRainStrength(5F);
+			Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("Rain started"));
 			break;
 		case 2:
-			ModLoader.getMinecraftInstance().theWorld.setRainStrength(0F);
-			ModLoader.getMinecraftInstance().thePlayer.addChatMessage("Rain stopped");
+			Minecraft.getMinecraft().theWorld.setRainStrength(0F);
+			Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("Rain stopped"));
 			break;
 		default:
 			break;
@@ -45,13 +46,13 @@ public class GUIWhatever extends GuiScreen
 		drawDefaultBackground();
 
 		drawRect(20, 20, width - 20, height - 20, 0x60ff0000);
-		drawCenteredString(fontRenderer, "Fucking Players:", width / 2, 30, 0xffffffff);
+		drawCenteredString(fontRendererObj, "Fucking Players:", width / 2, 30, 0xffffffff);
 
 		
-		String[] usernames = ModLoader.getMinecraftServerInstance().getAllUsernames();
+		String[] usernames = Minecraft.getMinecraft().getIntegratedServer().getAllUsernames();
 		for(int x = 0; x < usernames.length; x++)
 		{
-			drawCenteredString(fontRenderer, usernames[x], width / 2, x * 20 + 50, 0xffffffff);
+			drawCenteredString(fontRendererObj, usernames[x], width / 2, x * 20 + 50, 0xffffffff);
 		}
 		
 

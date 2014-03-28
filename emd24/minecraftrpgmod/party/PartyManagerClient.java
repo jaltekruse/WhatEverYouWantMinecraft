@@ -2,8 +2,6 @@ package emd24.minecraftrpgmod.party;
 
 import java.util.HashMap;
 
-import net.minecraft.network.packet.Packet;
-import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import emd24.minecraftrpgmod.PacketHandlerServer;

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 import emd24.minecraftrpgmod.EntityIdMapping.EntityId;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 /**
@@ -98,7 +99,7 @@ public class SkillThieving extends Skill{
 			for(int i : data.get(id).getLoot().keySet()){
 				cumProb += data.get(id).getLoot().get(i);
 				if(value < cumProb){
-					return new ItemStack(i, 1, 0);
+					return new ItemStack(Item.getItemById(i), 1, 0);
 				}
 			}
 		}

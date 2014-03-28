@@ -2,6 +2,8 @@ package emd24.minecraftrpgmod;
 
 import java.util.Random;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import emd24.minecraftrpgmod.packets.PlayerDataPacket;
 import emd24.minecraftrpgmod.party.PartyManagerServer;
 import emd24.minecraftrpgmod.EntityIdMapping.EntityId;
 import emd24.minecraftrpgmod.skills.Skill;
@@ -15,13 +17,14 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChatMessageComponent;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatStyle;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
-import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
@@ -47,7 +50,7 @@ public class EventHookContainer {
 	 * Registers the Player Data class, which tracks information on additional data for the player
 	 * 
 	 */
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onEntityConstruct(EntityEvent.EntityConstructing event) {
 		if (event.entity instanceof EntityPlayer && ExtendedPlayerData.get(event.entity) == null) {
 			ExtendedPlayerData.register((EntityPlayer) event.entity);
@@ -63,35 +66,34 @@ public class EventHookContainer {
 		}
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onBlockBreak(BreakEvent event){
 
 		ExtendedPlayerData data = ExtendedPlayerData.get(event.getPlayer());
-		int blockId = event.block.blockID;
+		int blockId = event.block.getIdFromBlock(event.block);
 
 		// Check level requirement on block breaking
 		for(String skill : SkillRegistry.getSkillNames()){
 
 			// Cancel and send error message if cannot be broken
 			if(data.getSkill(skill).getLevel() < SkillRegistry.getSkill(skill).getBlockRequirement(blockId)){
-				event.getPlayer().sendChatToPlayer((new ChatMessageComponent()).addText(skill + " Level " + 
-						SkillRegistry.getSkill(skill).getBlockRequirement(blockId) + " required").setColor(EnumChatFormatting.RED));
+				event.getPlayer().addChatMessage(new ChatComponentText(skill + " Level " +	SkillRegistry.getSkill(skill).getBlockRequirement(blockId)
+						+ " required").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
 				event.setCanceled(true);
 			}
 
 		}
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onBlockHarvest(HarvestDropsEvent event){
 
 		if(event.harvester == null){
 			return;
 		}
 
-		int blockId = event.block.blockID;
+		int blockId = event.block.getIdFromBlock(event.block);
 		ExtendedPlayerData data = ExtendedPlayerData.get(event.harvester);
-
 		for(String skill : SkillRegistry.getSkillNames()){
 
 			int experience = SkillRegistry.getSkill(skill).getExpForBlockBreak(blockId);
@@ -101,11 +103,11 @@ public class EventHookContainer {
 				boolean levelUp = data.addExp(skill, experience);
 
 				// Notify the player
-				event.harvester.sendChatToPlayer((new ChatMessageComponent()).addText("Gained " + experience 
+				event.harvester.addChatMessage(new ChatComponentText("Gained " + experience 
 						+ " " + skill + " exp"));
 				if(levelUp){
-					event.harvester.sendChatToPlayer((new ChatMessageComponent()).addText("Congrats! Reached "
-							+ skill + " Level " + data.getSkill(skill).getLevel()).setColor(EnumChatFormatting.GREEN));
+					event.harvester.addChatMessage((new ChatComponentText("Congrats! Reached " + skill + " Level " 
+							+ data.getSkill(skill).getLevel()).setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GREEN))));
 				}
 			}
 			// Determine if player harvests extra items
@@ -119,29 +121,26 @@ public class EventHookContainer {
 		}
 	}
 
-	@ForgeSubscribe 
+	@SubscribeEvent 
 	public void onLivingDeathEvent(LivingDeathEvent event){
 		if (!event.entity.worldObj.isRemote && event.entity instanceof EntityPlayer){
 			NBTTagCompound compound = new NBTTagCompound(); 
 			ExtendedPlayerData.get(event.entity).saveNBTData(compound);
-			RPGMod.proxy.storeEntityData(((EntityPlayer) event.entity).username, compound);
 		}
 
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onEntityJoinWorld(EntityJoinWorldEvent event){
 		if (!event.entity.worldObj.isRemote && event.entity instanceof EntityPlayer){
 			EntityPlayer player = (EntityPlayer) event.entity;
-			PartyManagerServer.addPlayerToParty(player.username, 0);
-			NBTTagCompound data = RPGMod.proxy.getEntityData(player.username);
+			PartyManagerServer.addPlayerToParty(player.getCommandSenderName(), 0);
+			NBTTagCompound data = RPGMod.proxy.getEntityData(player.getCommandSenderName());
 
 			if(data != null){
 				ExtendedPlayerData.get(event.entity).loadNBTData(data);
 			}
 			ExtendedPlayerData.get(event.entity).sync();
-
-
 		}
 	}
 
@@ -150,7 +149,7 @@ public class EventHookContainer {
 	 * 
 	 * @param event
 	 */
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onPickpocket(EntityInteractEvent event){
 
 		if(event.target instanceof EntityLiving && !event.entityPlayer.worldObj.isRemote){
@@ -162,17 +161,16 @@ public class EventHookContainer {
 				ExtendedEntityLivingData dataTarget = ExtendedEntityLivingData.get(target); 
 				SkillThieving s = (SkillThieving) SkillRegistry.getSkill("Thieving");
 
-				// TODO: Need to get EntityId from entity
 
 				EntityId id = EntityIdMapping.getEntityId(event.target);
 
 				if(!s.isThievable(id) || dataTarget.stealCoolDown > 0){
-					player.sendChatToPlayer((new ChatMessageComponent()).addText("Nothing to steal!"));
+					player.addChatMessage(new ChatComponentText("Nothing to steal!"));
 					return;
 				}
-				player.sendChatToPlayer((new ChatMessageComponent()).addText("Alert Level " + dataTarget.alertLevel));
+				player.addChatMessage((new ChatComponentText("Alert Level " + dataTarget.alertLevel)));
 				ExtendedPlayerData data = ExtendedPlayerData.get(player);
-				
+
 				// Steal loot from entity
 				ItemStack loot = s.getLoot(id, dataTarget.alertLevel, data.getSkill("Thieving").getLevel());
 
@@ -181,29 +179,28 @@ public class EventHookContainer {
 
 					player.inventory.addItemStackToInventory(loot);
 					player.worldObj.playSoundEffect(player.posX, player.posY, player.posZ, "random.pop", 10000.0F, 0.8F + this.rand.nextFloat() * 0.2F);
-					
+
 					dataTarget.alertLevel++;
 					dataTarget.alertTimer = 1200;
 					dataTarget.stealCoolDown = 200;
-					
+
 					int experience = s.getExperience(id);
-					
+
 
 					if(experience > 0){ 
 						boolean levelUp = data.addExp(s.name, experience);
 
 						// Notify the player
-						player.sendChatToPlayer((new ChatMessageComponent()).addText("Gained " + experience 
-								+ " " + s.name + " exp"));
+						player.addChatMessage((new ChatComponentText("Gained " + experience + " " + s.name + " exp")));
 						if(levelUp){
-							player.sendChatToPlayer((new ChatMessageComponent()).addText("Congrats! Reached "
-									+ s.name + " Level " + data.getSkill(s.name).getLevel()).setColor(EnumChatFormatting.GREEN));
+							player.addChatMessage((new ChatComponentText("Congrats! Reached " + s.name + " Level " + data.getSkill(s.name).getLevel())
+							.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GREEN))));
 						}
 					}
 				} 
 				else{
 					player.attackEntityFrom(DamageSource.generic, 5);
-					player.sendChatToPlayer((new ChatMessageComponent()).addText("Got caught stealing!").setColor(EnumChatFormatting.RED));
+					player.addChatMessage((new ChatComponentText("Got caught stealing!").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED))));
 					dataTarget.alertLevel = 5;
 					dataTarget.alertTimer = 1200;
 				}
@@ -225,20 +222,20 @@ public class EventHookContainer {
 	 * 
 	 * @param event
 	 */
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void undeadPlayerBurn(LivingUpdateEvent event){
 		if (event.entity instanceof EntityPlayer) {
 			EntityPlayer ent = (EntityPlayer) event.entityLiving;
 			ExtendedPlayerData data = ExtendedPlayerData.get(ent);
 
-			if (data.isUndead() && ent.worldObj.isDaytime() && !ent.worldObj.isRemote && !ent.worldObj.isRaining())
+			if (data.isUndead() && ent.worldObj.isDaytime() && !ent.worldObj.isRemote)
 			{
 				float f = ent.getBrightness(1.0F);
 
-				if (f > 0.5F && this.rand.nextFloat() * 30.0F < (f - 0.4F) * 2.0F && ent.worldObj.canBlockSeeTheSky(MathHelper.floor_double(ent.posX), MathHelper.floor_double(ent.posY), MathHelper.floor_double(ent.posZ)))
+				if (f > 0.5F && ent.getRNG().nextFloat() * 30.0F < (f - 0.4F) * 2.0F && ent.worldObj.canBlockSeeTheSky(MathHelper.floor_double(ent.posX), MathHelper.floor_double(ent.posY), MathHelper.floor_double(ent.posZ)))
 				{
 					boolean flag = true;
-					ItemStack itemstack = ent.getCurrentItemOrArmor(4);
+					ItemStack itemstack = ent.getEquipmentInSlot(4);
 
 					if (itemstack != null)
 					{
@@ -262,23 +259,23 @@ public class EventHookContainer {
 					}
 				}
 			}
-
 		}
+
 	}
-	
+
 	/**
 	 * This method updates the timer for thievable NPCs to allow their alert level  to gradually reduce
 	 * over  time
 	 * 
 	 * @param event
 	 */
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void updateEntityThieving(LivingUpdateEvent event){
 
 
 		if(((SkillThieving) SkillRegistry.getSkill("Thieving")).
 				isThievable(EntityIdMapping.getEntityId(event.entityLiving))){
-			
+
 			ExtendedEntityLivingData data = ExtendedEntityLivingData.get((EntityLiving) event.entityLiving);
 			if(data.stealCoolDown > 0){
 				data.stealCoolDown--;
@@ -299,7 +296,7 @@ public class EventHookContainer {
 	 * 
 	 * @param event the Forge onStruckByLightning event
 	 */
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void lightningStrike(EntityStruckByLightningEvent event){
 
 		EntityLightningBolt lightning = event.lightning;
@@ -320,6 +317,8 @@ public class EventHookContainer {
 	}
 
 	public void onPlayerRespawn(EntityPlayer player) {
-		ExtendedPlayerData.get(player).sync();;
+		if(!player.worldObj.isRemote){
+			RPGMod.packetPipeline.sendTo(new PlayerDataPacket(player), (EntityPlayerMP) player);
+		}
 	}
 }
