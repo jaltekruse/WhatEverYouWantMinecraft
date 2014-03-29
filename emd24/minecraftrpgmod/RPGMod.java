@@ -26,10 +26,13 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import emd24.minecraftrpgmod.EntityIdMapping.EntityId;
+import emd24.minecraftrpgmod.combatitems.HolyHandGrenade;
+import emd24.minecraftrpgmod.combatitems.HolyHandGrenadeEntity;
 import emd24.minecraftrpgmod.gui.GUIKeyHandler;
 import emd24.minecraftrpgmod.packets.PacketPipeline;
 import emd24.minecraftrpgmod.skills.Skill;
@@ -41,18 +44,18 @@ import emd24.minecraftrpgmod.spells.*;
 /*
  * Basic needed forge stuff
  */
-@Mod(modid="rpgmod",name="RPGMod",version="v1")
+@Mod(modid=RPGMod.MOD_ID,version=RPGMod.VERSION)
 
 public class RPGMod {
 
-	@Instance(value="rpgmod")
-	public static RPGMod instance;
+	public static final String MOD_ID = "minecraftrpgmod";
+	public static final String VERSION = "0.1";
 
 	// List where client and server proxy code is located
 	@SidedProxy(clientSide="emd24.minecraftrpgmod.ClientProxy",
 			serverSide="emd24.minecraftrpgmod.CommonProxy")
 	public static CommonProxy proxy;
-	
+
 	//Telling forge that we are creating these
 	//items
 	public static Item lightningSpell;
@@ -60,10 +63,13 @@ public class RPGMod {
 	public static Item becomeUndead;
 	public static Item summonZombie;
 	public static Item healMana;
+	public static Item holyHandGrenade;
 
 	public static Block sodium;
 	public static Block elementium;
-	
+
+	private static int modEntityID = 0;
+
 	public static final PacketPipeline packetPipeline = new PacketPipeline();
 
 
@@ -71,88 +77,96 @@ public class RPGMod {
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event){
-		
+
 		// Initialize packet pipeline
 		packetPipeline.initialise();
 		FMLCommonHandler.instance().bus().register(new GUIKeyHandler());
-		
+
 		// Register Event Handler
 		MinecraftForge.EVENT_BUS.register(new EventHookContainer());
-		
+
 		//Register Party Player Tracker
 		//GameRegistry.registerPlayerTracker(new PartyPlayerTracker());
-		
+
 		// Define items
 
 		lightningSpell = new LightningSpell(10, CreativeTabs.tabCombat)
-		.setManaCost(25).setUnlocalizedName("lightningspell")
-		.setTextureName("rpgmod:lightningSpell");
+		.setManaCost(25).setUnlocalizedName("lightning_spell")
+		.setTextureName(MOD_ID + ":lightningSpell");
 
 		becomeUndead = new BecomeUndeadSpell(CreativeTabs.tabCombat)
-		.setManaCost(10).setUnlocalizedName("becomeundead")
-		.setTextureName("rpgmod:becomeundead");
+		.setManaCost(10).setUnlocalizedName("become_undead")
+		.setTextureName(MOD_ID + ":becomeundead");
 
 		summonZombie = new SummonCreatureSpell(0, CreativeTabs.tabCombat)
-		.setManaCost(20).setUnlocalizedName("summonzombie")
-		.setTextureName("rpgmod:summonzombie");
-		
-		healMana = new ItemManaHeal().setCreativeTab(CreativeTabs.tabMisc).setUnlocalizedName("healMana");
-		
+		.setManaCost(20).setUnlocalizedName("summon_zombie")
+		.setTextureName(MOD_ID + ":summonzombie");
+
+		holyHandGrenade = new HolyHandGrenade().setUnlocalizedName("holy_hand_grenade")
+				.setTextureName(MOD_ID + ":holyhandgrenade");
+
+		healMana = new ItemManaHeal().setCreativeTab(CreativeTabs.tabMisc).setUnlocalizedName("heal_mana");
+
 
 		elementium = new BlockOre().setHardness(5.0F).setResistance(5.0F).setStepSound(Block.soundTypeStone)
-				.setBlockName("oreElementium").setBlockTextureName("rpgmod:elementium_ore").setCreativeTab(CreativeTabs.tabMaterials);
-		
-		sodium = new BlockOre().setHardness(0.5F).setResistance(5.0F).setStepSound(Block.soundTypeGravel)
-				.setBlockName("oreSodium").setBlockTextureName("dirt");
-		
-		
-		
-		// Register Blocks
-		
-		GameRegistry.registerBlock(elementium, "elementium");
-		GameRegistry.registerBlock(sodium, "sodium");
+				.setBlockName("elementium_ore").setBlockTextureName(MOD_ID + ":elementium_ore").setCreativeTab(CreativeTabs.tabMaterials);
 
-		GameRegistry.registerItem(lightningSpell, "lightningspell");
-		GameRegistry.registerItem(becomeUndead, "becomeundead");
-		GameRegistry.registerItem(summonZombie, "summonzombie");
-		GameRegistry.registerItem(healMana, "healmana");
-		
-		// Register items
+		sodium = new BlockOre().setHardness(0.5F).setResistance(5.0F).setStepSound(Block.soundTypeGravel)
+				.setBlockName("sodium").setBlockTextureName(MOD_ID + ":dirt");
+
+
 
 		// Add Skills
-		
+
 		// Mining
-		
+
 		Skill mining = new Skill("Mining");
 		mining.addExperienceBlockBreak(Block.getBlockFromName("stone"), 50); // experience for mining STONE
 		mining.addExperienceBlockBreak(Block.getBlockFromName("coal_ore"), 10); // experience for mining coal
 		mining.addExperienceBlockBreak(Block.getBlockFromName("iron_ore"), 20); // experience for mining iron
 		mining.addBlockRequirement(Block.getBlockFromName("elementium"), 3);
 		mining.addHarvestPerkBlock(Block.getBlockFromName("log"), 5, 0.5);
-		
+
 		// Treepunching
-		
+
 		Skill treepunching = new Skill("Treepunching");
 		treepunching.addExperienceBlockBreak(Block.getBlockFromName("log"), 50); // experience for getting wood
 		treepunching.addHarvestPerkBlock(Block.getBlockFromName("log"), 3, 0.5);
-		
+
 		// Thieving
-		
+
 		SkillThieving thieving = new SkillThieving("Thieving");
-		
+
 		// Create loot of pickpocketing villager
 		HashMap<Integer, Double> villagerLoot = new HashMap<Integer, Double>();
 		villagerLoot.put(GameData.itemRegistry.getId("minecraft:cookie"), 0.75);
 		villagerLoot.put(GameData.itemRegistry.getId("minecraft:emerald"), 0.25);
-		
+
 		ThievingData villagerThievingData = new ThievingData(EntityId.VILLAGER,	25, 1, 0.75, villagerLoot);
 		thieving.addThievingData(villagerThievingData);
+
+		// Register Blocks
+
+		GameRegistry.registerBlock(elementium, elementium.getUnlocalizedName().substring(5));
+		GameRegistry.registerBlock(sodium, sodium.getUnlocalizedName().substring(5));
+
+		// Register Items
 		
+		GameRegistry.registerItem(lightningSpell, lightningSpell.getUnlocalizedName().substring(5));
+		GameRegistry.registerItem(becomeUndead, becomeUndead.getUnlocalizedName().substring(5));
+		GameRegistry.registerItem(summonZombie, summonZombie.getUnlocalizedName().substring(5));
+		GameRegistry.registerItem(healMana, healMana.getUnlocalizedName().substring(5));
+		GameRegistry.registerItem(holyHandGrenade, holyHandGrenade.getUnlocalizedName().substring(5));
+
+		// Register Entities
+		
+		EntityRegistry.registerModEntity(HolyHandGrenadeEntity.class, "holy_hand_grenade", ++modEntityID, this, 64, 10, true);
+
 		SkillRegistry.registerSkill(mining);
 		SkillRegistry.registerSkill(treepunching);
 		SkillRegistry.registerSkill(thieving);
-		
-		
+
+
 		proxy.registerRenderers();
 	}
 
