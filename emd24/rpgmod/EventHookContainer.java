@@ -326,7 +326,7 @@ public class EventHookContainer {
 	@SubscribeEvent
 	public void pickupHolyHandGrenade(EntityItemPickupEvent event){
 		if(event.item.getEntityItem().getItem() instanceof HolyHandGrenade){
-			event.entityPlayer.playSound(RPGMod.MOD_ID + ":holyhandgrenadepickup", 1.0F, 1.0F);
+			event.entityPlayer.worldObj.playSoundAtEntity(event.entityPlayer, RPGMod.MOD_ID + ":holyhandgrenadepickup", 1.0F, 1.0F);
 		}
 		
 	}

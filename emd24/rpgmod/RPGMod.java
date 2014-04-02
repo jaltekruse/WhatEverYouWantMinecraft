@@ -149,16 +149,16 @@ public class RPGMod {
 
 		// Register Blocks
 
-		GameRegistry.registerBlock(elementium, elementium.getUnlocalizedName().substring(5));
-		GameRegistry.registerBlock(sodium, sodium.getUnlocalizedName().substring(5));
+		GameRegistry.registerBlock(elementium, elementium.getUnlocalizedName());
+		GameRegistry.registerBlock(sodium, sodium.getUnlocalizedName());
 
 		// Register Items
 		
-		GameRegistry.registerItem(lightningSpell, lightningSpell.getUnlocalizedName().substring(5));
-		GameRegistry.registerItem(becomeUndead, becomeUndead.getUnlocalizedName().substring(5));
-		GameRegistry.registerItem(summonZombie, summonZombie.getUnlocalizedName().substring(5));
-		GameRegistry.registerItem(healMana, healMana.getUnlocalizedName().substring(5));
-		GameRegistry.registerItem(holyHandGrenade, holyHandGrenade.getUnlocalizedName().substring(5));
+		GameRegistry.registerItem(lightningSpell, lightningSpell.getUnlocalizedName());
+		GameRegistry.registerItem(becomeUndead, becomeUndead.getUnlocalizedName());
+		GameRegistry.registerItem(summonZombie, summonZombie.getUnlocalizedName());
+		GameRegistry.registerItem(healMana, healMana.getUnlocalizedName());
+		GameRegistry.registerItem(holyHandGrenade, holyHandGrenade.getUnlocalizedName());
 
 		// Register Entities
 		
