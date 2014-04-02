@@ -144,7 +144,7 @@ public class RPGMod {
 		villagerLoot.put(GameData.itemRegistry.getId("minecraft:cookie"), 0.75);
 		villagerLoot.put(GameData.itemRegistry.getId("minecraft:emerald"), 0.25);
 
-		ThievingData villagerThievingData = new ThievingData(EntityId.VILLAGER,	25, 1, 0.75, villagerLoot);
+		ThievingData villagerThievingData = new ThievingData(EntityId.VILLAGER,	25, 1, 0.9, villagerLoot);
 		thieving.addThievingData(villagerThievingData);
 
 		// Register Blocks

@@ -75,7 +75,6 @@ public class ExtendedEntityLivingData implements IExtendedEntityProperties{
 		NBTTagCompound rbt = compound.getCompoundTag(IDENTIFIER);
 		this.alertLevel = rbt.getInteger("alertLvl");
 		this.stealCoolDown = rbt.getInteger("stealTicks");
-		this.alertLevel = rbt.getInteger("alertTicks");
 	}
 	
 }

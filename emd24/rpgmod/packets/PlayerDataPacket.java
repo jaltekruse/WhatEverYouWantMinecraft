@@ -30,7 +30,6 @@ public class PlayerDataPacket extends AbstractPacket{
 	public void decodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
 		data = ByteBufUtils.readTag(buffer);
 		
-		
 	}
 
 	@Override
