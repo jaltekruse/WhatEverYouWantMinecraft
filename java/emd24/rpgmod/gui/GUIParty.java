@@ -12,6 +12,8 @@ import emd24.rpgmod.ExtendedPlayerData;
 import emd24.rpgmod.PacketHandlerClient;
 import emd24.rpgmod.PacketHandlerServer;
 import emd24.rpgmod.RPGMod;
+import emd24.rpgmod.packets.PartyDataPacket;
+import emd24.rpgmod.packets.PartyInvitePacket;
 import emd24.rpgmod.party.PartyManagerClient;
 /*
 import emd24.minecraftrpgmod.skills.Skill;
@@ -62,7 +64,7 @@ public class GUIParty extends GuiScreen {
 		while (itPaP.hasNext()){
 			itPaP.next();
 			buttonList.add(new GuiButton(h, 250, h * 20 + 45, 50, 20, "Invite"));
-			//TODO: buttonList.add(new GuiButton(h + pAP.size(), 310, h * 20 + 45, 50, 20, "Kick"));
+			buttonList.add(new GuiButton(h + pAP.size(), 310, h * 20 + 45, 50, 20, "Kick"));
 			h++;
 		}
 		
@@ -74,16 +76,21 @@ public class GUIParty extends GuiScreen {
 		//to and then send the invite to the player.
 		Iterator itPaP = playersAndParties.iterator();
 		int h = guibutton.id - 1;
+		int type = 1;
+		if(h >= pAP.size()) {
+			h -= pAP.size();
+			type = 2;
+		}
 		for (int i = 0; i < h; i++){
 			itPaP.next();
 		}
 		Map.Entry<String, Integer> entry = (Entry<String, Integer>) itPaP.next();
 		String playerName = entry.getKey();
 		
-		// TODO: Send invite packet
-		
-//		Packet packet = PacketHandlerClient.sendPartyInvite(playerName, 0);
-//		PacketDispatcher.sendPacketToServer(packet);
+		//Send packet
+		String invitingPlayer = Minecraft.getMinecraft().thePlayer.getCommandSenderName();
+		PartyInvitePacket packet = new PartyInvitePacket(type, playerName, invitingPlayer);
+		RPGMod.packetPipeline.sendToServer(packet);
 	}
 	
 	@Override
