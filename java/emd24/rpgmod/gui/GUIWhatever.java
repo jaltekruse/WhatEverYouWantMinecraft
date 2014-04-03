@@ -3,6 +3,7 @@ package emd24.rpgmod.gui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
 
 public class GUIWhatever extends GuiScreen
@@ -12,11 +13,29 @@ public class GUIWhatever extends GuiScreen
 		
 	}
 	
+    /**
+     * Set the time in the server object.
+     * Stole this from CommandTime.java
+     */
+    protected void setTime(int time)
+    {
+        for (int j = 0; j < MinecraftServer.getServer().worldServers.length; ++j)
+        {
+            MinecraftServer.getServer().worldServers[j].setWorldTime((long)time);
+        }
+    }
+	
 	public void initGui()
 	{
 		buttonList.clear();
-		buttonList.add(new GuiButton(1, width/2 - 80, height / 2 + 20, "Rain, rain Motherfuckers!"));
-		buttonList.add(new GuiButton(2, width/2 - 80, height / 2 + 50, "Stop the fucking rain..."));
+		int height = 60;
+		buttonList.add(new GuiButton(1, width/2 - 80, height, "Rain, rain Motherfuckers!"));
+		height += 30;
+		buttonList.add(new GuiButton(2, width/2 - 80, height, "Stop the fucking rain..."));
+		height += 30;
+		buttonList.add(new GuiButton(3, width/2 - 80, height, "I'm Blind!  Give me some fucking light!"));
+		height += 30;
+		buttonList.add(new GuiButton(4, width/2 - 80, height, "I'm a creature of the damned darkness!"));
 	}
 	
 	protected void actionPerformed(GuiButton guibutton)
@@ -30,6 +49,12 @@ public class GUIWhatever extends GuiScreen
 		case 2:
 			Minecraft.getMinecraft().theWorld.setRainStrength(0F);
 			Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("Rain stopped"));
+			break;
+		case 3:
+			this.setTime(0);
+			break;
+		case 4:
+			this.setTime(12500);	//See CommandTime.java
 			break;
 		default:
 			break;

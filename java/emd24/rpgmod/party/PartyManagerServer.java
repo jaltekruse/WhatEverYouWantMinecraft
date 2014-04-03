@@ -53,9 +53,11 @@ public class PartyManagerServer {
 		addPlayerToParty(playerName, partyID);
 	}
 	
-	public static void removePlayerFromParty(String playerName){
+	public static void removePlayerFromParty(String playerName, String kickingPlayer){
 		playerParty.put(playerName, 0);
 		RPGMod.packetPipeline.sendToAll(new PartyDataPacket());
+		
+		//TODO: add check for player leader before kicking
 	}
 	
 
