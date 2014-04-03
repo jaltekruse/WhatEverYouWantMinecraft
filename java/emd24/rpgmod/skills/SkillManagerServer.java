@@ -2,8 +2,6 @@ package emd24.rpgmod.skills;
 
 import java.util.HashMap;
 
-import emd24.rpgmod.PacketHandlerServer;
-
 /**
  * 
  * 

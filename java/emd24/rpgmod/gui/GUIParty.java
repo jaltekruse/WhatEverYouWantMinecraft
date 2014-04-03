@@ -9,8 +9,6 @@ import java.util.Set;
 import org.lwjgl.opengl.GL11;
 
 import emd24.rpgmod.ExtendedPlayerData;
-import emd24.rpgmod.PacketHandlerClient;
-import emd24.rpgmod.PacketHandlerServer;
 import emd24.rpgmod.RPGMod;
 import emd24.rpgmod.party.PartyManagerClient;
 /*

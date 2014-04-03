@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
-import emd24.rpgmod.PacketHandlerServer;
 import emd24.rpgmod.RPGMod;
 import emd24.rpgmod.packets.PartyDataPacket;
 import emd24.rpgmod.packets.PlayerDataPacket;
