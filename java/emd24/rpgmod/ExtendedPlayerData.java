@@ -25,25 +25,27 @@ public class ExtendedPlayerData implements IExtendedEntityProperties{
 
 	public static final String IDENTIFIER = "ExtendedPlayer";
 	public static final String CHANNEL = "extplayerdata";
-	public boolean dirty = true;
 	private final EntityPlayer player;
 
 	// Sets whether player is undead
 	private boolean undead;
-	private int currMana, maxMana;
-	private HashMap<String, SkillPlayer> skills = new HashMap<String, SkillPlayer>();;
+	
+	// regenRate is # of ticks to restore mana
+	private int currMana, maxMana, regenRate; 
+	public int manaTicks;
+	private HashMap<String, SkillPlayer> skills = new HashMap<String, SkillPlayer>();
 
 	public ExtendedPlayerData(EntityPlayer player){
 		this.player = player;
 		this.maxMana = 50;
 		this.currMana = this.maxMana;
+		this.regenRate = 50;
+		this.manaTicks = this.regenRate;
 
 		// Add the skills to the player
 		for(String skillName: SkillRegistry.getSkillNames()){
 			skills.put(skillName, new SkillPlayer(skillName));
 		}
-
-		// TODO: sync data
 	}
 
 	public final static void register(EntityPlayer player){
@@ -68,7 +70,8 @@ public class ExtendedPlayerData implements IExtendedEntityProperties{
 		rbt.setBoolean("undead", this.undead);
 		rbt.setInteger("maxMana", this.maxMana);
 		rbt.setInteger("currMana", this.currMana);
-
+		rbt.setInteger("manaRegenRate", this.regenRate);
+		
 		for(SkillPlayer skill : skills.values()){
 			rbt.setInteger( skill.name  + ".lvl", skill.getLevel());
 			rbt.setInteger( skill.name  + ".exp", skill.getExperience());
@@ -86,6 +89,7 @@ public class ExtendedPlayerData implements IExtendedEntityProperties{
 		this.undead = rbt.getBoolean("undead");
 		this.maxMana = rbt.getInteger("maxMana");
 		this.currMana = rbt.getInteger("currMana");
+		this.regenRate = rbt.getInteger("manaRegenRate");
 
 		// Load information on skills
 		for(String skillName: SkillRegistry.getSkillNames()){
@@ -121,10 +125,19 @@ public class ExtendedPlayerData implements IExtendedEntityProperties{
 		this.currMana -= mana;
 		sync();
 	}
+	
+	public void recoverMana(int mana){
+		this.currMana = Math.min(currMana + mana, maxMana);
+		sync();
+	}
 
 	public void setMaxMana(int maxMana) {
 		this.maxMana = maxMana;
 		sync();
+	}
+	
+	public boolean isFullMana(){
+		return (currMana == maxMana);
 	}
 
 	public HashMap<String, SkillPlayer> getSkillList(){
@@ -182,6 +195,14 @@ public class ExtendedPlayerData implements IExtendedEntityProperties{
 		skills.get(skill).addLevels(levels);
 		sync();
 
+	}
+
+	public int getRegenRate() {
+		return regenRate;
+	}
+
+	public void setRegenRate(int regenRate) {
+		this.regenRate = regenRate;
 	}
 
 	public void sync(){

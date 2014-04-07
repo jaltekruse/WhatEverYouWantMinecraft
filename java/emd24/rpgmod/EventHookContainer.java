@@ -285,11 +285,11 @@ public class EventHookContainer {
 	 * @param event
 	 */
 	@SubscribeEvent
-	public void updateEntityThieving(LivingUpdateEvent event){
+	public void updateEntityData(LivingUpdateEvent event){
 
-
+		// Update thieving data on pickpocket-able NPCs
 		if(((SkillThieving) SkillRegistry.getSkill("Thieving")).
-				isThievable(EntityIdMapping.getEntityId(event.entityLiving))){
+				isThievable(EntityIdMapping.getEntityId(event.entityLiving)) && !event.entityLiving.worldObj.isRemote){
 
 			ExtendedEntityLivingData data = ExtendedEntityLivingData.get((EntityLiving) event.entityLiving);
 			if(data.stealCoolDown > 0){
@@ -302,6 +302,18 @@ public class EventHookContainer {
 				data.alertLevel--;
 				data.alertTimer = 1200;
 			}
+		}
+		// Regenerate the player's mana
+		if(event.entity instanceof EntityPlayer && !event.entityLiving.worldObj.isRemote){
+			ExtendedPlayerData data = ExtendedPlayerData.get((EntityPlayer) event.entityLiving);
+			data.manaTicks--;
+			if(data.manaTicks == 0){
+				data.recoverMana(1);
+				data.manaTicks = data.getRegenRate();
+			}
+			
+			
+			
 		}
 	}
 

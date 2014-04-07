@@ -22,18 +22,18 @@ public class LightningSpell extends Spell{
 		this.onItemRightClick = false;
 		this.onItemUse = true;
 	}
-	
+
 	/**
 	 * Method that is called when lightning spell is used on a block. Summons a bolt of lightning at the coordinates.
 	 * 
 	 */
-	
+
 	@Override
 	public boolean castSpell(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10){
 		par3World.playSoundEffect((double)par4 + 0.5D, (double)par5 + 0.5D, (double)par6 + 0.5D, "fire.ignite", 1.0F, itemRand.nextFloat() * 0.4F + 0.8F);
-    	par3World.spawnEntityInWorld(new MagicLightning(par3World, par4, par5, par6, this.getBasePower()));
-    	return true;
+		par3World.spawnEntityInWorld(new MagicLightning(par3World, par4, par5, par6, this.getBasePower()));
+		return true;
 	}
-	
+
 
 }

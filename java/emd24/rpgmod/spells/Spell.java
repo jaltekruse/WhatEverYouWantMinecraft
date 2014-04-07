@@ -103,7 +103,7 @@ public abstract class Spell extends Item {
 						--par1ItemStack.stackSize;
 					}
 					if(!par3World.isRemote){
-						par2EntityPlayer.addChatMessage((new ChatComponentText("Mana remaining: " + properties.getCurrMana())));
+						par2EntityPlayer.addChatMessage(new ChatComponentText("Mana remaining: " + properties.getCurrMana()));
 					}
 				}
 			}  		
