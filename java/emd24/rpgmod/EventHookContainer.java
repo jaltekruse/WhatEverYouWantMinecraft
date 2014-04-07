@@ -8,6 +8,7 @@ import emd24.rpgmod.EntityIdMapping.EntityId;
 import emd24.rpgmod.combatitems.HolyHandGrenade;
 import emd24.rpgmod.packets.PlayerDataPacket;
 import emd24.rpgmod.party.PartyManagerServer;
+import emd24.rpgmod.quest.ExtendedEntityLivingDialogueData;
 import emd24.rpgmod.skills.Skill;
 import emd24.rpgmod.skills.SkillManagerServer;
 import emd24.rpgmod.skills.SkillRegistry;
@@ -58,6 +59,12 @@ public class EventHookContainer {
 		if (event.entity instanceof EntityPlayer && ExtendedPlayerData.get(event.entity) == null) {
 			ExtendedPlayerData.register((EntityPlayer) event.entity);
 
+		}
+		
+		// Register Dialogue data
+		if(event.entity instanceof EntityLiving) {
+			EntityLiving ent = (EntityLiving) event.entity;
+			ExtendedEntityLivingDialogueData.register(ent);
 		}
 
 		// Register Data on thieving

@@ -20,7 +20,7 @@ public class DialogueTreeNode {
 	
 	public DialogueTreeNode() {
 		children = new ArrayList<DialogueTreeNode>();
-		dialogueText = "blank";
+		dialogueText = "";
 		itemNeeded = "";
 		itemQuantity = 0;
 		isReply = false;
