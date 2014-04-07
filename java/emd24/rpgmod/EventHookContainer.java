@@ -6,7 +6,9 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import emd24.rpgmod.EntityIdMapping.EntityId;
 import emd24.rpgmod.combatitems.HolyHandGrenade;
+import emd24.rpgmod.gui.GUIDialogue;
 import emd24.rpgmod.gui.GUIDialogueEditor;
+import emd24.rpgmod.gui.GUIKeyHandler;
 import emd24.rpgmod.packets.PlayerDataPacket;
 import emd24.rpgmod.party.PartyManagerServer;
 import emd24.rpgmod.quest.ExtendedEntityLivingDialogueData;
@@ -220,10 +222,15 @@ public class EventHookContainer {
 			else{
 				//check for NPC dialogue
 				ExtendedEntityLivingDialogueData nbtDialogue = ExtendedEntityLivingDialogueData.get(target);
-				Minecraft.getMinecraft().displayGuiScreen(new GUIDialogueEditor(target));
+				
+				if(GUIKeyHandler.npcAdminMode) {
+					Minecraft.getMinecraft().displayGuiScreen(new GUIDialogueEditor(target));
+				} else {
+					Minecraft.getMinecraft().displayGuiScreen(new GUIDialogue(target));
+				}
 				
 				// Regular method call
-				player.interactWith(event.entity);
+				//player.interactWith(event.entity);
 			}
 
 		}
