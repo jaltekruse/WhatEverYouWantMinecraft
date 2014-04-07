@@ -40,12 +40,12 @@ public class SummonCreatureSpell extends Spell{
 	 * ItemMonsterPlacer class, with some modifications made.
 	 */
 	@Override
-	public void castSpell(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
+	public boolean castSpell(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
 	{
 		if (par3World.isRemote)
         {
-            return;
-        }
+            return false;
+        } 
         else
         {
             Block block = par3World.getBlock(par4, par5, par6);
@@ -74,6 +74,7 @@ public class SummonCreatureSpell extends Spell{
                 }
             }
         }
+		return true;
 	}
 	
 }

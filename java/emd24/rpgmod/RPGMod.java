@@ -8,6 +8,7 @@ import java.util.HashMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockOre;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityZombie;
@@ -35,6 +36,7 @@ import emd24.rpgmod.EntityIdMapping.EntityId;
 import emd24.rpgmod.combatitems.HolyHandGrenade;
 import emd24.rpgmod.combatitems.HolyHandGrenadeEntity;
 import emd24.rpgmod.gui.GUIKeyHandler;
+import emd24.rpgmod.gui.GUIManaBar;
 import emd24.rpgmod.packets.PacketPipeline;
 import emd24.rpgmod.skills.Skill;
 import emd24.rpgmod.skills.SkillPlayer;
@@ -52,6 +54,8 @@ public class RPGMod {
 	public static final String MOD_ID = "rpgmod";
 	public static final String VERSION = "0.1";
 
+	
+	
 	// List where client and server proxy code is located
 	@SidedProxy(clientSide="emd24." + MOD_ID + ".ClientProxy",
 			serverSide="emd24." + MOD_ID + ".CommonProxy")
@@ -65,6 +69,7 @@ public class RPGMod {
 	public static Item summonZombie;
 	public static Item healMana;
 	public static Item holyHandGrenade;
+	public static Item healSelf;
 
 	public static Block sodium;
 	public static Block elementium;
@@ -115,6 +120,10 @@ public class RPGMod {
 
 		sodium = new BlockOre().setHardness(0.5F).setResistance(5.0F).setStepSound(Block.soundTypeGravel)
 				.setBlockName("sodium").setBlockTextureName(MOD_ID + ":dirt");
+		
+		healSelf = new HealSpell(5, CreativeTabs.tabCombat, false).setManaCost(10).setUnlocalizedName("heal_self");
+		
+		
 
 
 
@@ -158,6 +167,8 @@ public class RPGMod {
 		GameRegistry.registerItem(becomeUndead, becomeUndead.getUnlocalizedName());
 		GameRegistry.registerItem(summonZombie, summonZombie.getUnlocalizedName());
 		GameRegistry.registerItem(healMana, healMana.getUnlocalizedName());
+		GameRegistry.registerItem(healSelf, healSelf.getUnlocalizedName());
+		
 		GameRegistry.registerItem(holyHandGrenade, holyHandGrenade.getUnlocalizedName());
 
 		// Register Entities
@@ -180,6 +191,9 @@ public class RPGMod {
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 
+		if (FMLCommonHandler.instance().getEffectiveSide().isClient())
+			MinecraftForge.EVENT_BUS.register(new GUIManaBar(Minecraft.getMinecraft()));
+		
 		packetPipeline.postInitialise();
 	}
 }
