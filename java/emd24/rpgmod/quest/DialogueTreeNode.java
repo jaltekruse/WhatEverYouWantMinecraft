@@ -68,25 +68,33 @@ public class DialogueTreeNode {
 		load(lines, 0, "");
 	}
 	
-	/*
+	/**
 	 * Recursive load method for dialogue tree
+	 * 
+	 * @return resuling line number
 	 */
-	protected void load(String[] lines, int lineNumber, String spaces) {
-		String[] values = lines[lineNumber].split("`");
+	protected int load(String[] lines, int lineNumber, String spaces) {
+		String line = lines[lineNumber].trim();
+		String[] values = line.split("`");
 		
 		int i = 0;
 		dialogueText = values[i++];
 		itemNeeded = values[i++];
 		itemQuantity = Integer.parseInt(values[i++]);
 		isReply = Boolean.parseBoolean(values[i++]);
+		action = values[i++];
 		int childrenSize = Integer.parseInt(values[i++]);
+		
+		lineNumber++;
 		
 		spaces += " ";
 		for(int j = 0; j < childrenSize; j++) {
 			DialogueTreeNode child = new DialogueTreeNode();
-			child.load(lines, lineNumber + j, spaces);
+			lineNumber = child.load(lines, lineNumber, spaces);
 			children.add(child);
 		}
+		
+		return lineNumber;
 	}
 	
 	/*

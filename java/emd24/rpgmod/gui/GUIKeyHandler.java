@@ -35,7 +35,7 @@ public class GUIKeyHandler{
 			} else if(whateverMenu.isPressed()) {
 				Minecraft.getMinecraft().displayGuiScreen(new GUIWhatever());
 			}else if(dialogueEditor.isPressed()) {
-				Minecraft.getMinecraft().displayGuiScreen(new GUIDialogueEditor());
+				Minecraft.getMinecraft().displayGuiScreen(new GUIDialogueEditor(null));
 			}
 		}
 	}

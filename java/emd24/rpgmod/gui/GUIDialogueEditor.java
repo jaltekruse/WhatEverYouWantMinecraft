@@ -13,11 +13,15 @@ import java.util.List;
 
 import org.lwjgl.input.Keyboard;
 
+import emd24.rpgmod.ExtendedPlayerData;
 import emd24.rpgmod.quest.DialogueTreeNode;
+import emd24.rpgmod.quest.ExtendedEntityLivingDialogueData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
 
@@ -38,12 +42,11 @@ public class GUIDialogueEditor extends GuiScreen
 	
 	GuiTextField dialogueTextbox, itemTextbox, quantityTextbox, actionTextbox;
 	
+	EntityLiving target;
+	ExtendedEntityLivingDialogueData data;
 	
-	public GUIDialogueEditor()
+	public GUIDialogueEditor(EntityLiving target)
 	{
-		npcName = "NPC NAME HERE";
-		
-		tree = new DialogueTreeNode();
 		
 		selectedNode = tree;
 		selectedIndex = 0;
@@ -51,6 +54,16 @@ public class GUIDialogueEditor extends GuiScreen
 		numListElements = 12;
 		
 		backgroundColor = 0x60ff0000;
+		
+		this.target = target;
+		if(target.hasCustomNameTag())
+			npcName = target.getCustomNameTag();
+		else
+			npcName = "NPC NAME NOT AVAILABLE!";
+		
+		data = ExtendedEntityLivingDialogueData.get(target);
+		
+		tree = data.dialogueTree;
 	}
 	
 	public void initGui()
@@ -206,6 +219,9 @@ public class GUIDialogueEditor extends GuiScreen
 		super.onGuiClosed();
 		Keyboard.enableRepeatEvents(false);
 		
+		//Save NBT Data
+		NBTTagCompound compound = new NBTTagCompound(); 
+		data.saveNBTData(compound);
 	}
 	
 	/*
