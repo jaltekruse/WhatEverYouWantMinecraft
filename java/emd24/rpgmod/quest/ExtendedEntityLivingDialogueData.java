@@ -31,6 +31,7 @@ public class ExtendedEntityLivingDialogueData implements IExtendedEntityProperti
 	public int stealCoolDown; // number of ticks until entity can be stolen from
 	public int alertTimer; // number of ticks until alert level decreases
 	
+	public DialogueTreeNode dialogueTree;	//The dialogue-tree data structure
 	
 	// Sets whether player is undead
 	
@@ -39,6 +40,8 @@ public class ExtendedEntityLivingDialogueData implements IExtendedEntityProperti
 		this.alertLevel = 0;
 		this.stealCoolDown = 0;
 		this.alertTimer = 0;
+		
+		this.dialogueTree = new DialogueTreeNode();
 		
 		// TODO: sync data
 	}
@@ -66,6 +69,9 @@ public class ExtendedEntityLivingDialogueData implements IExtendedEntityProperti
 		rbt.setInteger("stealTicks", this.stealCoolDown);
 		rbt.setInteger("alertTicks", this.alertTimer);
 		
+		String dialogueString = dialogueTree.store();
+		System.out.println("store() output:\n" + dialogueString);
+		rbt.setString("dialogueInfo", dialogueString);
 		
 		compound.setTag(IDENTIFIER, rbt);
 	
@@ -78,6 +84,9 @@ public class ExtendedEntityLivingDialogueData implements IExtendedEntityProperti
 		NBTTagCompound rbt = compound.getCompoundTag(IDENTIFIER);
 		this.alertLevel = rbt.getInteger("alertLvl");
 		this.stealCoolDown = rbt.getInteger("stealTicks");
+		
+		String dialogueString = rbt.getString("dialogueInfo");
+		this.dialogueTree.load(dialogueString);
 	}
 	
 }

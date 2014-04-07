@@ -6,13 +6,16 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import emd24.rpgmod.EntityIdMapping.EntityId;
 import emd24.rpgmod.combatitems.HolyHandGrenade;
+import emd24.rpgmod.gui.GUIDialogueEditor;
 import emd24.rpgmod.packets.PlayerDataPacket;
 import emd24.rpgmod.party.PartyManagerServer;
+import emd24.rpgmod.quest.ExtendedEntityLivingDialogueData;
 import emd24.rpgmod.skills.Skill;
 import emd24.rpgmod.skills.SkillManagerServer;
 import emd24.rpgmod.skills.SkillRegistry;
 import emd24.rpgmod.skills.SkillThieving;
 import emd24.rpgmod.spells.entities.MagicLightning;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
@@ -43,6 +46,7 @@ import net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent;
  * events that occur in-game, and add code to run when those events happen
  * 
  * @author Evan Dyke
+ * @author Wesley Reardan
  *
  */
 public class EventHookContainer {
@@ -58,6 +62,12 @@ public class EventHookContainer {
 		if (event.entity instanceof EntityPlayer && ExtendedPlayerData.get(event.entity) == null) {
 			ExtendedPlayerData.register((EntityPlayer) event.entity);
 
+		}
+		
+		// Register Dialogue data
+		if(event.entity instanceof EntityLiving) {
+			EntityLiving ent = (EntityLiving) event.entity;
+			ExtendedEntityLivingDialogueData.register(ent);
 		}
 
 		// Register Data on thieving
@@ -156,9 +166,9 @@ public class EventHookContainer {
 		if(event.target instanceof EntityLiving && !event.entityPlayer.worldObj.isRemote){
 			EntityPlayer player = event.entityPlayer;
 
-			if(player.isSneaking() && (SkillRegistry.getSkill("Thieving") instanceof SkillThieving)){
+			EntityLiving target = (EntityLiving) event.target;
 
-				EntityLiving target = (EntityLiving) event.target;
+			if(player.isSneaking() && (SkillRegistry.getSkill("Thieving") instanceof SkillThieving)){
 				ExtendedEntityLivingData dataTarget = ExtendedEntityLivingData.get(target); 
 				SkillThieving s = (SkillThieving) SkillRegistry.getSkill("Thieving");
 
@@ -208,6 +218,10 @@ public class EventHookContainer {
 
 			}
 			else{
+				//check for NPC dialogue
+				ExtendedEntityLivingDialogueData nbtDialogue = ExtendedEntityLivingDialogueData.get(target);
+				Minecraft.getMinecraft().displayGuiScreen(new GUIDialogueEditor(target));
+				
 				// Regular method call
 				player.interactWith(event.entity);
 			}
