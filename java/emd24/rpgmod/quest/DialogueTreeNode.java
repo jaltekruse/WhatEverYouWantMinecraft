@@ -1,3 +1,8 @@
+/**
+ * A class that is used to represent a dialogue between a player and an NPC
+ * 
+ * @author Wesley Reardan
+ */
 package emd24.rpgmod.quest;
 
 import java.util.ArrayList;
@@ -92,6 +97,17 @@ public class DialogueTreeNode {
 		strings.add(spaces + isReplyText + dialogueText);
 		for(DialogueTreeNode child : children) {
 			child.getList(strings, spaces + " ");
+		}
+	}
+	
+	/*
+	 * Get a list of Nodes in tree for displaying in list
+	 */
+	public void getList(List<DialogueTreeNode> nodes) {
+		nodes.add(this);
+		for(DialogueTreeNode child : children) {
+			//nodes.add(child);
+			child.getList(nodes);
 		}
 	}
 }

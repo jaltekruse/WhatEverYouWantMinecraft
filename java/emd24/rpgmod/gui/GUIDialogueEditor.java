@@ -1,3 +1,11 @@
+/**
+ * A GUI Editor used to change dialogue items between a player and an NPC
+ * 
+ * @author Wesley Reardan
+ * 
+ * @references https://www.youtube.com/watch?v=lDBuknMB014 for GuiTextField stuff
+ */
+
 package emd24.rpgmod.gui;
 
 import java.util.ArrayList;
@@ -9,6 +17,7 @@ import emd24.rpgmod.quest.DialogueTreeNode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
 
@@ -25,7 +34,10 @@ public class GUIDialogueEditor extends GuiScreen
 	
 	int backgroundColor;
 	
-	ArrayList<DialogueTreeNode> list;
+	List<DialogueTreeNode> list;
+	
+	GuiTextField dialogueTextbox, itemTextbox, quantityTextbox, actionTextbox;
+	
 	
 	public GUIDialogueEditor()
 	{
@@ -43,8 +55,18 @@ public class GUIDialogueEditor extends GuiScreen
 	
 	public void initGui()
 	{
+		super.initGui();
+		Keyboard.enableRepeatEvents(true);
+		
 		buttonList.clear();
 		buttonList.add(new GuiButton(1, width - 240, height - 60, "New Reply/Dialogue"));
+		
+		this.dialogueTextbox = new GuiTextField(this.fontRendererObj, width / 2, 75, width/2 - 30, 12);
+		this.dialogueTextbox.setTextColor(-1);
+		this.dialogueTextbox.setDisabledTextColour(-1);
+		this.dialogueTextbox.setEnableBackgroundDrawing(true);
+		this.dialogueTextbox.setMaxStringLength(30);
+		dialogueTextbox.setFocused(true);
 	}
 	
 	protected void actionPerformed(GuiButton guibutton)
@@ -52,12 +74,12 @@ public class GUIDialogueEditor extends GuiScreen
 		switch(guibutton.id)
 		{
 		case 1:
-			//selectedNode.addChild();
+			selectedNode.addChild();
 			
-			selectedNode = selectedNode.addChild();
+			//selectedNode = selectedNode.addChild();
 			//selectedIndex++;
 			
-			Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("New reply created"));
+			//Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("New reply created"));
 			break;
 		default:
 			break;
@@ -66,12 +88,21 @@ public class GUIDialogueEditor extends GuiScreen
 	
 	public boolean doesGuiPauseGame()
 	{
-		return false;
+		return true;
+	}
+	
+	protected void mouseClicked(int par1, int par2, int par3)
+	{
+		super.mouseClicked(par1, par2, par3);
+		this.dialogueTextbox.mouseClicked(par1, par2, par3);
 	}
 	
 	public void drawScreen(int par1, int j, float f)
 	{
 		drawDefaultBackground();
+		
+		//draw text boxes
+		this.dialogueTextbox.drawTextBox();
 
 		//draw header
 		drawRect(20, 20, width - 20, height - 20, 0x60ff0000);
@@ -81,14 +112,19 @@ public class GUIDialogueEditor extends GuiScreen
 
 		//draw selected item
 		int adjusted_index = (selectedIndex - firstListItem);
-		if(adjusted_index > numListElements)
-			firstListItem++;
+		if(adjusted_index >= numListElements)
+			//if(selectedIndex + numListElements < list.size() - 1)
+				firstListItem++;
 		if(adjusted_index < 0)
 			firstListItem--;
 		
 		int y = adjusted_index * 15 + 40;
 		drawRect(20, y, width/2, y + 15, 0xff0000ff);
 		
+		//update list of tree
+		this.list = new ArrayList<DialogueTreeNode>();
+		tree.getList(this.list);
+
 		//draw tree
 		List<String> list = new ArrayList<String>();
 		tree.getList(list, "");
@@ -103,7 +139,8 @@ public class GUIDialogueEditor extends GuiScreen
 		
 		//Selected Node Drawing (right side of Window)
 		h = 30;
-		String dialogue = "dialogue: " + selectedNode.dialogueText;
+		String dialogue = "dialogue: ";// + selectedNode.dialogueText;
+		dialogueTextbox.setText(selectedNode.dialogueText);
 		h += 30;
 		drawString(fontRendererObj, dialogue, width / 2, h, 0xffffffff);
 
@@ -123,21 +160,44 @@ public class GUIDialogueEditor extends GuiScreen
 		super.drawScreen(par1, j, f);
 	}
 	
+	public void onGuiClosed()
+	{
+		super.onGuiClosed();
+		Keyboard.enableRepeatEvents(false);
+		
+	}
+	
 	/*
 	 * Handle Keyboard Input - 
 	 * @see net.minecraft.client.gui.GuiScreen#handleKeyboardInput()
 	 */
 	public void keyTyped(char par1, int key) {
-		String chat = par1 + ", " + key;
-		Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(chat));
+		//String chat = par1 + ", " + key;
+		//Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(chat));
+		
+		if(this.dialogueTextbox.textboxKeyTyped(par1, key)) {
+			selectedNode.dialogueText = this.dialogueTextbox.getText();
+		}
 		
 		switch(key) {
 		case Keyboard.KEY_DOWN:
-			selectedIndex++;
+			if(selectedIndex < list.size() - 1) {
+				selectedIndex++;
+				selectedNode = list.get(selectedIndex);
+				
+				dialogueTextbox.setFocused(true);
+			}
 			break;
 		case Keyboard.KEY_UP:
-			selectedIndex--;
+			if(selectedIndex > 0) {
+				selectedIndex--;
+				selectedNode = list.get(selectedIndex);
+				
+				dialogueTextbox.setFocused(true);
+			}
 			break;
+		case Keyboard.KEY_RETURN:
+			selectedNode.addChild();
 		}
 		
 		super.keyTyped(par1, key);
