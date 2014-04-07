@@ -17,6 +17,8 @@ public class GUIKeyHandler{
 	public static KeyBinding whateverMenu = new KeyBinding("Whatever",Keyboard.KEY_L, "GUI_open");
 	public static KeyBinding dialogueEditor = new KeyBinding("DialogueEditor",Keyboard.KEY_K, "GUI_open");
 	
+	public static boolean npcAdminMode = false;
+	
 	public GUIKeyHandler() {
 		ClientRegistry.registerKeyBinding(GUIKeyHandler.skillMenu);
 		ClientRegistry.registerKeyBinding(GUIKeyHandler.partyMenu);
@@ -34,8 +36,8 @@ public class GUIKeyHandler{
 				Minecraft.getMinecraft().displayGuiScreen(new GUIParty(Minecraft.getMinecraft().thePlayer));
 			} else if(whateverMenu.isPressed()) {
 				Minecraft.getMinecraft().displayGuiScreen(new GUIWhatever());
-			}else if(dialogueEditor.isPressed()) {
-				Minecraft.getMinecraft().displayGuiScreen(new GUIDialogueEditor(null));
+			}else if(GUIKeyHandler.dialogueEditor.isPressed()) {
+				npcAdminMode = ! npcAdminMode;
 			}
 		}
 	}
