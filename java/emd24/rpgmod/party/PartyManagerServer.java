@@ -48,7 +48,7 @@ public class PartyManagerServer {
 		int partyID = playerParty.get(invitingPlayer);
 		if(partyID == 0) {
 			partyID = autoincrement++;
-			playerParty.put(invitingPlayer, partyID);
+			playerParty.put(invitingPlayer, -partyID);
 		}
 		addPlayerToParty(playerName, partyID);
 	}

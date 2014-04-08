@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.ArrayList;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.input.Keyboard;
 
 import emd24.rpgmod.ExtendedPlayerData;
 import emd24.rpgmod.RPGMod;
@@ -45,7 +46,7 @@ public class GUIParty extends GuiScreen {
 	private EntityPlayer player;
 	private int playerPartyID;
 	
-	List<PartyPlayerNode> list;
+	ArrayList<PartyPlayerNode> list;
 	private final int pageSize = 7;
 	private int currentPage;
 	private int maxPage;
@@ -78,25 +79,6 @@ public class GUIParty extends GuiScreen {
 		
 		buttonList.clear();
 		
-		/* TODO: MOVE THIS CODE TO DRAWSCREEN AND MAKE SURE THAT DOESN'T
-		 * BREAK ANYTHING. THAT WILL GIVE US DYNAMIC UPDATING OF PARTIES
-		 */
-		list = new ArrayList<PartyPlayerNode>();
-		PartyPlayerNode currNode;
-		Set<Map.Entry<String, Integer>> papEntrySet = pAP.entrySet();
-		Iterator itr = papEntrySet.iterator();
-		while(itr.hasNext()){
-			Map.Entry<String, Integer> entry = (Entry<String, Integer>) itr.next();
-			if (entry.getKey().compareTo(player.getCommandSenderName()) == 0){
-				this.playerPartyID = entry.getValue();
-			}
-			list.add(new PartyPlayerNode(entry.getKey(), entry.getValue()));
-		}
-		
-		//UNTESTED LINE: maxPage = list.size() % pageSize;
-		Collections.sort(list);
-		/*END OF TODO*/
-		
 		// Set up promote and kick/invite buttons
 		int i = 1;
 		for(GuiButton e: promoteBtns){
@@ -122,9 +104,9 @@ public class GUIParty extends GuiScreen {
 			buttonList.add(inviteBtns[i - 1]);
 			i++;
 		}
-		leaveBtn = new GuiButton(0, 90, 195, 100, 20, leave);
+		leaveBtn = new GuiButton(0, width - 140, 195, 100, 20, leave);
 		buttonList.add(leaveBtn);
-		buttonList.add(new GuiButton(-1, 210, 195, 100, 20, done);		
+		buttonList.add(new GuiButton(-1, width / 2 - 50, 195, 100, 20, done));		
 	}
 	
 	protected void actionPerformed(GuiButton guibutton)
@@ -135,7 +117,7 @@ public class GUIParty extends GuiScreen {
 		PartyInvitePacket packet;
 		PartyPlayerNode curr;
 		int type;
-		//System.out.println("Party guibutton.id: " + guibutton.id);
+		//System.out.println("\n\nParty guibutton.id: " + guibutton.id);
 		switch(guibutton.id){
 		// Close the gui
 		case -1:
@@ -208,41 +190,62 @@ public class GUIParty extends GuiScreen {
 		RPGMod.packetPipeline.sendToServer(packet);*/
 	}
 	
-	/* TODO: TEST THIS CODE FOR IT IS UNTESTED
+
 	// Many thanks to Wes for this code structure.
 	public void keyTyped(char par1, int key) {
 		switch(key) {
 		case Keyboard.KEY_UP:
 		case Keyboard.KEY_LEFT:
-			if(currentPage < maxPage {
-				currentPage++;
-			}
-			break;
-		case Keyboard.KEY_DOWN:
-		case Keyboard.KEY_RIGHT:
 			if(currentPage > 0) {
 				currentPage--;
 			}
 			break;
+		case Keyboard.KEY_DOWN:
+		case Keyboard.KEY_RIGHT:
+			if(currentPage < maxPage){
+				currentPage++;
+			}
+			break;
+		case Keyboard.KEY_P:
+			this.mc.displayGuiScreen(null);
+			break;
 		}
 
 		super.keyTyped(par1, key);
-	}*/
+	}
 	
 	
 	@Override
 	public void drawScreen(int i, int j, float f){
-		/* TODO: MOVE LIST MAKING CODE HERE TO DYNAMICALLY UPDATE PARTYID */
+		
 		/* TODO: ADD CURRENT_PAGE/MAX_PAGE DISPLAY */
+		list = new ArrayList<PartyPlayerNode>();
+		PartyPlayerNode currNode;
+		Set<Map.Entry<String, Integer>> papEntrySet = pAP.entrySet();
+		Iterator itr = papEntrySet.iterator();
+		while(itr.hasNext()){
+			Map.Entry<String, Integer> entry = (Entry<String, Integer>) itr.next();
+			if (entry.getKey().compareTo(player.getCommandSenderName()) == 0){
+				this.playerPartyID = entry.getValue();
+			}
+			list.add(new PartyPlayerNode(entry.getKey(), entry.getValue()));
+		}
+		
+		maxPage = list.size() / pageSize;
+		
+		Collections.sort(list);
 		
 		// Draw background and header
 		drawDefaultBackground();
 		drawRect(20, 20, width - 20, height - 20, 0xffdddddd);
-		drawCenteredString(fontRendererObj, "Party", width / 2, 30, 0xffffffff);
-		
+		drawCenteredString(fontRendererObj, "Party", width / 2 - 10, 30, 0xffffffff);
+		drawString(fontRendererObj, "Page: " + (currentPage + 1) + " of " + 
+				(maxPage + 1), 60, 200, 0xffffffff);
 		// Check for Leave Party Button
 		if (playerPartyID == 0){
 			leaveBtn.enabled = false;
+		} else {
+			leaveBtn.enabled = true;
 		}
 		
 		for(int k = 0; k < 7; k++){
@@ -250,7 +253,7 @@ public class GUIParty extends GuiScreen {
 			if(k + currentPage * pageSize < list.size()){
 				PartyPlayerNode curr = list.get(k + currentPage * pageSize);
 				drawString(fontRendererObj, curr.playerName, 50, (k + 1) * 20 + 35, 0xffffffff);
-				drawString(fontRendererObj, "" + curr.partyID, 150, (k + 1) * 20 + 35, 0xffffffff);
+				drawString(fontRendererObj, "" + Math.abs(curr.partyID), 150, (k + 1) * 20 + 35, 0xffffffff);
 				// We are the leader and this person is in our party
 				if(playerPartyID < 0 && Math.abs(playerPartyID) == curr.partyID){
 					promoteBtns[k].enabled = true;
@@ -261,21 +264,21 @@ public class GUIParty extends GuiScreen {
 					//inviteBtns[k].enabled = false;
 					inviteBtns[k].visible = false;
 				} 
+				// Hey! It's ourself.
+				else if (curr.playerName.compareTo(player.getCommandSenderName()) == 0){
+					//promoteBtns[k].enabled = false;
+					promoteBtns[k].visible = false;
+					//kickBtns[k].enabled = false;
+					kickBtns[k].visible = false;
+					//inviteBtns[k].enabled = false;
+					inviteBtns[k].visible = false;
+				} 
 				// We aren't the leader, but this person is in our party
 				else if (playerPartyID != 0 && playerPartyID == Math.abs(curr.partyID)){ 
 					promoteBtns[k].enabled = false;
 					promoteBtns[k].visible = true;
 					kickBtns[k].enabled = false;
 					kickBtns[k].visible = true;
-					//inviteBtns[k].enabled = false;
-					inviteBtns[k].visible = false;
-				} 
-				// Hey! It's ourself.
-				else if (curr.playerName.compareTo(player.getDisplayName()) == 0){
-					//promoteBtns[k].enabled = false;
-					promoteBtns[k].visible = false;
-					//kickBtns[k].enabled = false;
-					kickBtns[k].visible = false;
 					//inviteBtns[k].enabled = false;
 					inviteBtns[k].visible = false;
 				} 
