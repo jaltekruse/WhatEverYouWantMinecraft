@@ -1,8 +1,10 @@
-lightning_spell.name=Lightning Spell
+item.lightning_spell.name=Lightning Spell
 item.become_undead.name=Become Undead
 item.summon_zombie.name=Summon Zombie
 item.heal_mana.name=Mana Heal
 itle.elementium_ore.name=Elementium
 tile.sodium.name=Sodium
 item.holy_hand_grenade.name=Holy Hand Grenade of Antioch
+item.stone_battleaxe=Stone Battleaxe
+item.axe_of_revenge=Axe of Revenge
 

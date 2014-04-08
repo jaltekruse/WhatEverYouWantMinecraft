@@ -6,6 +6,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import emd24.rpgmod.EntityIdMapping.EntityId;
 import emd24.rpgmod.combatitems.HolyHandGrenade;
+import emd24.rpgmod.combatitems.ItemBattleaxe;
 import emd24.rpgmod.gui.GUIDialogue;
 import emd24.rpgmod.gui.GUIDialogueEditor;
 import emd24.rpgmod.gui.GUIKeyHandler;
@@ -40,6 +41,7 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.player.EntityInteractEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent;
 
