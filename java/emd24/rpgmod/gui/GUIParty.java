@@ -48,21 +48,25 @@ public class GUIParty extends GuiScreen {
 	List<PartyPlayerNode> list;
 	private final int pageSize = 7;
 	private int currentPage;
+	private int maxPage;
 	
 	HashMap<String, Integer> pAP = PartyManagerClient.playerParty;
 	
+	/* TODO: IF WE GET MORE/LESS SCREEN REAL ESTATE WITH RESOLUTION CHANGES
+	 * THESE ARRAYS NEED TO TURN INTO ARRAY LISTS AND WE NEED TO EDIT SOME 
+	 * MATH SO WE GET A NICE LOOKING GUI */
 	GuiButton leaveBtn;
 	GuiButton pBtn1, pBtn2, pBtn3, pBtn4, pBtn5, pBtn6, pBtn7;
 	GuiButton kBtn1, kBtn2, kBtn3, kBtn4, kBtn5, kBtn6, kBtn7;
 	GuiButton iBtn1, iBtn2, iBtn3, iBtn4, iBtn5, iBtn6, iBtn7;
-	String kiString1, kiString2, kiString3, kiString4, kiString5, 
-	kiString6, kiString7;
 	GuiButton[] promoteBtns = {pBtn1, pBtn2, pBtn3, pBtn4, pBtn5, pBtn6, pBtn7};
 	GuiButton[] kickBtns = {kBtn1, kBtn2, kBtn3, kBtn4, kBtn5, kBtn6, kBtn7};
 	GuiButton[] inviteBtns = {iBtn1, iBtn2, iBtn3, iBtn4, iBtn5, iBtn6, iBtn7};
 	String promote = "Promote";
 	String kick = "Kick";
 	String invite = "Invite";
+	String leave = "Leave Party";
+	String done = "Done";
 	
 	public GUIParty(EntityPlayer player){
 		this.player = player;
@@ -74,6 +78,9 @@ public class GUIParty extends GuiScreen {
 		
 		buttonList.clear();
 		
+		/* TODO: MOVE THIS CODE TO DRAWSCREEN AND MAKE SURE THAT DOESN'T
+		 * BREAK ANYTHING. THAT WILL GIVE US DYNAMIC UPDATING OF PARTIES
+		 */
 		list = new ArrayList<PartyPlayerNode>();
 		PartyPlayerNode currNode;
 		Set<Map.Entry<String, Integer>> papEntrySet = pAP.entrySet();
@@ -86,7 +93,10 @@ public class GUIParty extends GuiScreen {
 			list.add(new PartyPlayerNode(entry.getKey(), entry.getValue()));
 		}
 		
+		//UNTESTED LINE: maxPage = list.size() % pageSize;
 		Collections.sort(list);
+		/*END OF TODO*/
+		
 		// Set up promote and kick/invite buttons
 		int i = 1;
 		for(GuiButton e: promoteBtns){
@@ -112,21 +122,20 @@ public class GUIParty extends GuiScreen {
 			buttonList.add(inviteBtns[i - 1]);
 			i++;
 		}
-		leaveBtn = new GuiButton(0, 90, 195, 100, 20, "Leave Party");
+		leaveBtn = new GuiButton(0, 90, 195, 100, 20, leave);
 		buttonList.add(leaveBtn);
-		buttonList.add(new GuiButton(-1, 210, 195, 100, 20, "Done"));		
+		buttonList.add(new GuiButton(-1, 210, 195, 100, 20, done);		
 	}
 	
 	protected void actionPerformed(GuiButton guibutton)
 	{
 		//We need to take the button id, figure out which player that entry maps
 		//to and then send the invite to the player.
-		//TODO: UPDATE THIS TO HANDLE THE NEW LIST
 		String invitingPlayer = Minecraft.getMinecraft().thePlayer.getCommandSenderName();
 		PartyInvitePacket packet;
 		PartyPlayerNode curr;
 		int type;
-		System.out.println("Party guibutton.id: " + guibutton.id);
+		//System.out.println("Party guibutton.id: " + guibutton.id);
 		switch(guibutton.id){
 		// Close the gui
 		case -1:
@@ -162,6 +171,7 @@ public class GUIParty extends GuiScreen {
 			packet = new PartyInvitePacket(type, curr.playerName, invitingPlayer);
 			RPGMod.packetPipeline.sendToServer(packet);
 			break;
+		// Invite Buttons
 		case 15:
 		case 16:
 		case 17:
@@ -198,8 +208,33 @@ public class GUIParty extends GuiScreen {
 		RPGMod.packetPipeline.sendToServer(packet);*/
 	}
 	
+	/* TODO: TEST THIS CODE FOR IT IS UNTESTED
+	// Many thanks to Wes for this code structure.
+	public void keyTyped(char par1, int key) {
+		switch(key) {
+		case Keyboard.KEY_UP:
+		case Keyboard.KEY_LEFT:
+			if(currentPage < maxPage {
+				currentPage++;
+			}
+			break;
+		case Keyboard.KEY_DOWN:
+		case Keyboard.KEY_RIGHT:
+			if(currentPage > 0) {
+				currentPage--;
+			}
+			break;
+		}
+
+		super.keyTyped(par1, key);
+	}*/
+	
+	
 	@Override
 	public void drawScreen(int i, int j, float f){
+		/* TODO: MOVE LIST MAKING CODE HERE TO DYNAMICALLY UPDATE PARTYID */
+		/* TODO: ADD CURRENT_PAGE/MAX_PAGE DISPLAY */
+		
 		// Draw background and header
 		drawDefaultBackground();
 		drawRect(20, 20, width - 20, height - 20, 0xffdddddd);
@@ -210,8 +245,6 @@ public class GUIParty extends GuiScreen {
 			leaveBtn.enabled = false;
 		}
 		
-		//TODO: Update this to do scrolling list
-		//TODO: Update this to dynamically update partyID.
 		for(int k = 0; k < 7; k++){
 			// Make sure that we have somebody to put in this slot
 			if(k + currentPage * pageSize < list.size()){
@@ -224,7 +257,8 @@ public class GUIParty extends GuiScreen {
 					promoteBtns[k].visible = true;
 					kickBtns[k].enabled = true;
 					kickBtns[k].visible = true;
-					inviteBtns[k].enabled = false;
+					//TODO: Untested, but if it isn't visible, it shouldn't be enabled.
+					//inviteBtns[k].enabled = false;
 					inviteBtns[k].visible = false;
 				} 
 				// We aren't the leader, but this person is in our party
@@ -233,23 +267,23 @@ public class GUIParty extends GuiScreen {
 					promoteBtns[k].visible = true;
 					kickBtns[k].enabled = false;
 					kickBtns[k].visible = true;
-					inviteBtns[k].enabled = false;
+					//inviteBtns[k].enabled = false;
 					inviteBtns[k].visible = false;
 				} 
 				// Hey! It's ourself.
 				else if (curr.playerName.compareTo(player.getDisplayName()) == 0){
-					promoteBtns[k].enabled = false;
+					//promoteBtns[k].enabled = false;
 					promoteBtns[k].visible = false;
-					kickBtns[k].enabled = false;
+					//kickBtns[k].enabled = false;
 					kickBtns[k].visible = false;
-					inviteBtns[k].enabled = false;
+					//inviteBtns[k].enabled = false;
 					inviteBtns[k].visible = false;
 				} 
 				// This person isn't any our party
 				else {
-					promoteBtns[k].enabled = false;
+					//promoteBtns[k].enabled = false;
 					promoteBtns[k].visible = false;
-					kickBtns[k].enabled = false;
+					//kickBtns[k].enabled = false;
 					kickBtns[k].visible = false;
 					inviteBtns[k].enabled = true;
 					inviteBtns[k].visible = true;
@@ -257,11 +291,11 @@ public class GUIParty extends GuiScreen {
 			} 
 			// We don't have a list item to fill this spot
 			else {
-				promoteBtns[k].enabled = false;
+				//promoteBtns[k].enabled = false;
 				promoteBtns[k].visible = false;
-				kickBtns[k].enabled = false;
+				//kickBtns[k].enabled = false;
 				kickBtns[k].visible = false;
-				inviteBtns[k].enabled = false;
+				//inviteBtns[k].enabled = false;
 				inviteBtns[k].visible = false;
 			}
 		}
