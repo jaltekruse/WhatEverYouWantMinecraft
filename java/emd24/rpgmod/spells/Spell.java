@@ -27,7 +27,7 @@ public abstract class Spell extends Item {
 	public enum DamageType{
 		WIND, WATER, EARTH, FIRE, HOLY, POS_ENERGY, NEG_ENERGY  
 	}
-	
+
 	private DamageType spellType;
 	private int basePower;
 	private int manaCost = 0; 
@@ -96,14 +96,15 @@ public abstract class Spell extends Item {
 			}
 
 			else{
-				castSpell(par1ItemStack, par2EntityPlayer, par3World, par4, par5, par6, par7, par8, par9, par10);
-				properties.useMana(this.manaCost);
-				if (!par2EntityPlayer.capabilities.isCreativeMode)
-				{
-					--par1ItemStack.stackSize;
-				}
-				if(!par3World.isRemote){
-					par2EntityPlayer.addChatMessage((new ChatComponentText("Mana remaining: " + properties.getCurrMana())));
+				if(castSpell(par1ItemStack, par2EntityPlayer, par3World, par4, par5, par6, par7, par8, par9, par10)){
+					properties.useMana(this.manaCost);
+					if (!par2EntityPlayer.capabilities.isCreativeMode)
+					{
+						--par1ItemStack.stackSize;
+					}
+					if(!par3World.isRemote){
+						par2EntityPlayer.addChatMessage(new ChatComponentText("Mana remaining: " + properties.getCurrMana()));
+					}
 				}
 			}  		
 
@@ -112,12 +113,12 @@ public abstract class Spell extends Item {
 	}
 
 	public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
-    {
-		
+	{
+
 		if(!this.onItemRightClick){
 			return par1ItemStack;
 		}
-		
+
 		ExtendedPlayerData properties = ExtendedPlayerData.get(par3EntityPlayer);
 		if(properties.getCurrMana() < this.manaCost){
 			if(!par2World.isRemote)
@@ -125,19 +126,20 @@ public abstract class Spell extends Item {
 		}
 
 		else{
-			castSpell(par1ItemStack, par2World, par3EntityPlayer);
-			properties.useMana(this.manaCost);
-			if (!par3EntityPlayer.capabilities.isCreativeMode)
-			{
-				--par1ItemStack.stackSize;
-			}
-			if(!par2World.isRemote){
-				par3EntityPlayer.addChatMessage(new ChatComponentText("Mana remaining: " + properties.getCurrMana()));
+			if(castSpell(par1ItemStack, par2World, par3EntityPlayer)){
+				properties.useMana(this.manaCost);
+				if (!par3EntityPlayer.capabilities.isCreativeMode)
+				{
+					--par1ItemStack.stackSize;
+				}
+				if(!par2World.isRemote){
+					par3EntityPlayer.addChatMessage(new ChatComponentText("Mana remaining: " + properties.getCurrMana()));
+				}
 			}
 		}
 		return par1ItemStack;
-    }
-	
+	}
+
 	/**
 	 * Spell that is activated on player right clicking on an entity
 	 * 
@@ -145,9 +147,9 @@ public abstract class Spell extends Item {
 	 * @param par2World
 	 * @param par3EntityPlayer
 	 */
-	public void castSpell(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer) {
+	public boolean castSpell(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer) {
 		// TODO Auto-generated method stub
-		
+		return true;
 	}
 
 	/**
@@ -164,11 +166,12 @@ public abstract class Spell extends Item {
 	 * @param par9
 	 * @param par10
 	 */
-	public void castSpell(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10){
+	public boolean castSpell(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10){
 		System.out.println("FAIL");
+		return true;
 	}
-	
-	
+
+
 
 	public boolean onDroppedByPlayer(ItemStack item, EntityPlayer player)
 	{

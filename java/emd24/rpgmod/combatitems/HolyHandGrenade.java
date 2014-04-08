@@ -7,6 +7,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
+/**
+ * Class that represents the almighty Holy Hand Grenade of Antioch Item 
+ * 
+ * @author Evan DYke
+ *
+ */
 public class HolyHandGrenade extends Item{
 	
 	public HolyHandGrenade(){
@@ -27,7 +33,8 @@ public class HolyHandGrenade extends Item{
 
         if (!par2World.isRemote)
         {
-            par2World.playSoundAtEntity(par3EntityPlayer, RPGMod.MOD_ID + ":holyhandgrenadethrow", 1.0F, 1.0F);
+            // Create a projectile entity for the thrown hand grenade
+        	par2World.playSoundAtEntity(par3EntityPlayer, RPGMod.MOD_ID + ":holyhandgrenadethrow", 1.0F, 1.0F);
         	par2World.spawnEntityInWorld(new HolyHandGrenadeEntity(par2World, par3EntityPlayer));
         }
 

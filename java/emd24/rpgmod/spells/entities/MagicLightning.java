@@ -63,17 +63,17 @@ public class MagicLightning extends EntityLightningBolt
                 par1World.setBlock(i, j, k, Blocks.fire);
             }
 
-            for (i = 0; i < 4; ++i)
-            {
-                j = MathHelper.floor_double(par2) + this.rand.nextInt(3) - 1;
-                k = MathHelper.floor_double(par4) + this.rand.nextInt(3) - 1;
-                int l = MathHelper.floor_double(par6) + this.rand.nextInt(3) - 1;
-
-                if (par1World.getBlock(j, k, l).getMaterial() == Material.air && Blocks.fire.canPlaceBlockAt(par1World, j, k, l))
-                {
-                    par1World.setBlock(j, k, l, Blocks.fire);
-                }
-            }
+//            for (i = 0; i < 4; ++i)
+//            {
+//                j = MathHelper.floor_double(par2) + this.rand.nextInt(3) - 1;
+//                k = MathHelper.floor_double(par4) + this.rand.nextInt(3) - 1;
+//                int l = MathHelper.floor_double(par6) + this.rand.nextInt(3) - 1;
+//
+//                if (par1World.getBlock(j, k, l).getMaterial() == Material.air && Blocks.fire.canPlaceBlockAt(par1World, j, k, l))
+//                {
+//                    par1World.setBlock(j, k, l, Blocks.fire);
+//                }
+//            }
         }
     }
 
@@ -110,10 +110,10 @@ public class MagicLightning extends EntityLightningBolt
                     int j = MathHelper.floor_double(this.posY);
                     int k = MathHelper.floor_double(this.posZ);
 
-                    if (this.worldObj.getBlock(i, j, k).getMaterial() == Material.air && Blocks.fire.canPlaceBlockAt(this.worldObj, i, j, k))
-                    {
-                        this.worldObj.setBlock(i, j, k, Blocks.fire);
-                    }
+//                    if (this.worldObj.getBlock(i, j, k).getMaterial() == Material.air && Blocks.fire.canPlaceBlockAt(this.worldObj, i, j, k))
+//                    {
+//                        this.worldObj.setBlock(i, j, k, Blocks.fire);
+//                    }
                 }
             }
         }
@@ -126,7 +126,7 @@ public class MagicLightning extends EntityLightningBolt
             }
             else
             {
-                double d0 = 1.0D;
+                double d0 = 0.5D;
                 List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, AxisAlignedBB.getAABBPool().getAABB(this.posX - d0, this.posY - d0, this.posZ - d0, this.posX + d0, this.posY + 6.0D + d0, this.posZ + d0));
 
                 for (int l = 0; l < list.size(); ++l)

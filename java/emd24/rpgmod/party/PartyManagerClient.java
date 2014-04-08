@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import emd24.rpgmod.PacketHandlerServer;
 
 @SideOnly(Side.CLIENT)
 public class PartyManagerClient {

@@ -12,8 +12,6 @@ import java.util.ArrayList;
 import org.lwjgl.opengl.GL11;
 
 import emd24.rpgmod.ExtendedPlayerData;
-import emd24.rpgmod.PacketHandlerClient;
-import emd24.rpgmod.PacketHandlerServer;
 import emd24.rpgmod.RPGMod;
 import emd24.rpgmod.packets.PartyDataPacket;
 import emd24.rpgmod.packets.PartyInvitePacket;
