@@ -12,6 +12,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatStyle;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
 
@@ -179,10 +182,18 @@ public class ExtendedPlayerData implements IExtendedEntityProperties{
 	 * @param amount in amount of experience to give
 	 * @return boolean whether player leveled up
 	 */
-	public boolean addExp(String skill, int amount){
+	public void addExp(String skill, int amount){
+		
 		boolean levelUp = skills.get(skill).addExperience(amount);
+		
+		// Notify player of exp gain and leveling up
+		this.player.addChatMessage(new ChatComponentText("Gained " + amount 
+				+ " " + skill + " exp"));
+		if(levelUp){
+			this.player.addChatMessage((new ChatComponentText("Congrats! Reached " + skill + " Level " 
+					+ skills.get(skill).getLevel()).setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GREEN))));
+		}
 		sync();
-		return levelUp;
 	}
 
 	/**

@@ -112,21 +112,14 @@ public class EventHookContainer {
 
 		ExtendedPlayerData data = ExtendedPlayerData.get(event.harvester);
 		for(String skill : SkillRegistry.getSkillNames()){
-
+			
+			// Add experience
 			int experience = SkillRegistry.getSkill(skill).getExpForBlockBreak(event.block);
 
 			if(experience > 0){ 
-
-				boolean levelUp = data.addExp(skill, experience);
-
-				// Notify the player
-				event.harvester.addChatMessage(new ChatComponentText("Gained " + experience 
-						+ " " + skill + " exp"));
-				if(levelUp){
-					event.harvester.addChatMessage((new ChatComponentText("Congrats! Reached " + skill + " Level " 
-							+ data.getSkill(skill).getLevel()).setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GREEN))));
-				}
+				data.addExp(skill, experience);
 			}
+			
 			// Determine if player harvests extra items
 			Random rnd = new Random();
 			if(rnd.nextDouble() <= SkillRegistry.getSkill(skill).getHarvestPerkProbability(event.block, 
@@ -194,6 +187,8 @@ public class EventHookContainer {
 				// Give player item and exp if successful, damage player if not
 				if(loot != null){
 
+					// Update data on NPC stolen from, raise alert level
+					
 					player.inventory.addItemStackToInventory(loot);
 					player.worldObj.playSoundEffect(player.posX, player.posY, player.posZ, "random.pop", 10000.0F, 0.8F + this.rand.nextFloat() * 0.2F);
 
@@ -201,18 +196,12 @@ public class EventHookContainer {
 					dataTarget.alertTimer = 1200;
 					dataTarget.stealCoolDown = 200;
 
+					// Add experience
+					
 					int experience = s.getExperience(id);
 
-
 					if(experience > 0){ 
-						boolean levelUp = data.addExp(s.name, experience);
-
-						// Notify the player
-						player.addChatMessage((new ChatComponentText("Gained " + experience + " " + s.name + " exp")));
-						if(levelUp){
-							player.addChatMessage((new ChatComponentText("Congrats! Reached " + s.name + " Level " + data.getSkill(s.name).getLevel())
-							.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GREEN))));
-						}
+						data.addExp(s.name, experience);
 					}
 				} 
 				else{
@@ -305,8 +294,16 @@ public class EventHookContainer {
 			EntityPlayer player = (EntityPlayer) event.source.getSourceOfDamage();
 			ExtendedPlayerData playerData = ExtendedPlayerData.get(player);
 			
-			// For each additional level, player deals 5% more damage
-			event.ammount += (playerData.getSkill("Strength").getLevel() - 1) * .05;
+			/* For each additional level, player deals 5% more damage, rounded down. An int
+			* cast is probably happening deep in the vanilla code somewheres
+			*/
+			event.ammount *= (1.0 + (playerData.getSkill("Strength").getLevel() - 1) * .05);
+			
+			/* Adds experience, 4 for each point of damage dealt (in half-hearts). Cannot
+			 * gain more exp for damage than the target has health.
+			 */
+			playerData.addExp("Strength", 4 * Math.min((int) event.ammount, Math.round(event.entityLiving.getHealth())));
+			
 		}
 	}
 	
