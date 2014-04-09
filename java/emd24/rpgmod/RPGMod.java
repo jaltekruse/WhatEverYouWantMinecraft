@@ -147,18 +147,23 @@ public class RPGMod {
 		// Initialize magic spells
 		
 		lightningSpell = new LightningSpell(10, CreativeTabs.tabCombat)
-		.setManaCost(25).setUnlocalizedName("lightning_spell")
+		.setManaCost(25).setExperience(50).setUnlocalizedName("lightning")
 		.setTextureName(MOD_ID + ":lightningSpell");
-
+		
+		superLightningSpell = new LightningSpell(20, CreativeTabs.tabCombat)
+		.setManaCost(40).setExperience(100).setLevelRequired(3).setUnlocalizedName("super_lightning")
+		.setTextureName(MOD_ID + ":superLightning");
+		
 		becomeUndead = new BecomeUndeadSpell(CreativeTabs.tabCombat)
-		.setManaCost(10).setUnlocalizedName("become_undead")
+		.setManaCost(10).setExperience(10).setUnlocalizedName("become_undead")
 		.setTextureName(MOD_ID + ":becomeundead");
 
 		summonZombie = new SummonCreatureSpell(0, CreativeTabs.tabCombat)
-		.setManaCost(20).setUnlocalizedName("summon_zombie")
+		.setManaCost(20).setExperience(20).setUnlocalizedName("summon_zombie")
 		.setTextureName(MOD_ID + ":summonzombie");
 
-		healSelf = new HealSpell(5, CreativeTabs.tabCombat, false).setManaCost(10).setUnlocalizedName("heal_self");
+		healSelf = new HealSpell(5, CreativeTabs.tabCombat, false).setManaCost(10)
+				.setExperience(10).setUnlocalizedName("heal_self");
 		
 		healParty = new HealSpell(15, CreativeTabs.tabCombat, true).setManaCost(35).setUnlocalizedName("heal_party");
 		
@@ -188,10 +193,12 @@ public class RPGMod {
 		// Register items				
 		
 		GameRegistry.registerItem(lightningSpell, lightningSpell.getUnlocalizedName());
+		GameRegistry.registerItem(superLightningSpell, superLightningSpell.getUnlocalizedName());
 		GameRegistry.registerItem(becomeUndead, becomeUndead.getUnlocalizedName());
 		GameRegistry.registerItem(summonZombie, summonZombie.getUnlocalizedName());
 		GameRegistry.registerItem(healMana, healMana.getUnlocalizedName());
 		GameRegistry.registerItem(healSelf, healSelf.getUnlocalizedName());
+		
 		GameRegistry.registerItem(battleAxeStone, battleAxeStone.getUnlocalizedName());
 		
 		GameRegistry.registerItem(holyHandGrenade, holyHandGrenade.getUnlocalizedName());
@@ -237,5 +244,6 @@ public class RPGMod {
 		SkillRegistry.registerSkill(treepunching);
 		SkillRegistry.registerSkill(thieving);
 		SkillRegistry.registerSkill(new Skill("Strength"));
+		SkillRegistry.registerSkill(new Skill("Magic"));
 	}
 }

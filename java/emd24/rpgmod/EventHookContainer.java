@@ -65,7 +65,7 @@ public class EventHookContainer {
 	 */
 	@SubscribeEvent
 	public void onEntityConstruct(EntityEvent.EntityConstructing event) {
-		if (event.entity instanceof EntityPlayer && ExtendedPlayerData.get(event.entity) == null) {
+		if (event.entity instanceof EntityPlayer && ExtendedPlayerData.get((EntityPlayer) event.entity) == null) {
 			ExtendedPlayerData.register((EntityPlayer) event.entity);
 
 		}
@@ -134,8 +134,11 @@ public class EventHookContainer {
 	@SubscribeEvent 
 	public void onLivingDeathEvent(LivingDeathEvent event){
 		if (!event.entity.worldObj.isRemote && event.entity instanceof EntityPlayer){
+			EntityPlayer player = (EntityPlayer) event.entity;
 			NBTTagCompound compound = new NBTTagCompound(); 
-			ExtendedPlayerData.get(event.entity).saveNBTData(compound);
+			ExtendedPlayerData.get(player).saveNBTData(compound);
+			// Needed to save skill data on death
+			RPGMod.proxy.storeEntityData(player.getCommandSenderName(), compound);
 		}
 
 	}
@@ -145,12 +148,15 @@ public class EventHookContainer {
 		if (!event.entity.worldObj.isRemote && event.entity instanceof EntityPlayer){
 			EntityPlayer player = (EntityPlayer) event.entity;
 			PartyManagerServer.addPlayerToParty(player.getCommandSenderName(), 0);
-			NBTTagCompound data = RPGMod.proxy.getEntityData(player.getCommandSenderName());
+			NBTTagCompound proxyData = RPGMod.proxy.getEntityData(player.getCommandSenderName());
 
-			if(data != null){
-				ExtendedPlayerData.get(event.entity).loadNBTData(data);
+			if(proxyData != null){
+				ExtendedPlayerData playerData = ExtendedPlayerData.get(player);
+				playerData.loadNBTData(proxyData);
+				playerData.setCurrMana(playerData.getMaxMana());
+				
 			}
-			ExtendedPlayerData.get(event.entity).sync();
+			ExtendedPlayerData.get(player).sync();
 		}
 	}
 
@@ -353,8 +359,15 @@ public class EventHookContainer {
 	 * @param event the Forge onStruckByLightning event
 	 */
 	@SubscribeEvent
-	public void lightningStrike(EntityStruckByLightningEvent event){
-
+	public void onLightningStrike(EntityStruckByLightningEvent event){
+		
+		/* Bug occurring where the onLIghtningstrike occurs twice at random times,
+		 * not sure as to why. One thought was this method being called on client side???
+		 * This avoids that,  but likely to be something else
+		 */
+		if(event.entity.worldObj.isRemote){
+			return;
+		}
 		EntityLightningBolt lightning = event.lightning;
 		Entity entityAttacked = event.entity;
 

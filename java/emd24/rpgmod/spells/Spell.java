@@ -9,6 +9,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatStyle;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 
 /**
@@ -30,8 +32,12 @@ public abstract class Spell extends Item {
 
 	private DamageType spellType;
 	private int basePower;
+
 	private int manaCost = 0; 
+	private int levelRequired = 1;	
 	private int cooldown;
+	private int experience = 0;
+
 	protected boolean onItemUse;
 	protected boolean onItemRightClick;
 
@@ -94,10 +100,15 @@ public abstract class Spell extends Item {
 				if(!par3World.isRemote)
 					par2EntityPlayer.addChatMessage(new ChatComponentText("Not enough mana!"));
 			}
-
+			else if(this.getLevelRequired() > properties.getSkill("Magic").getLevel()){
+				if(!par3World.isRemote)
+					par2EntityPlayer.addChatMessage((new ChatComponentText("Magic Level " + this.getLevelRequired() + 
+							" required").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED))));
+			}
 			else{
 				if(castSpell(par1ItemStack, par2EntityPlayer, par3World, par4, par5, par6, par7, par8, par9, par10)){
 					properties.useMana(this.manaCost);
+					properties.addExp("Magic", this.getExperience());
 					if (!par2EntityPlayer.capabilities.isCreativeMode)
 					{
 						--par1ItemStack.stackSize;
@@ -124,10 +135,15 @@ public abstract class Spell extends Item {
 			if(!par2World.isRemote)
 				par3EntityPlayer.addChatMessage(new ChatComponentText("Not enough mana!"));
 		}
-
+		else if(this.getLevelRequired() > properties.getSkill("Magic").getLevel()){
+			if(!par2World.isRemote)
+				par3EntityPlayer.addChatMessage((new ChatComponentText("Magic Level " + this.getLevelRequired() + 
+						" required").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED))));
+		}
 		else{
 			if(castSpell(par1ItemStack, par2World, par3EntityPlayer)){
 				properties.useMana(this.manaCost);
+				properties.addExp("Magic", this.getExperience());
 				if (!par3EntityPlayer.capabilities.isCreativeMode)
 				{
 					--par1ItemStack.stackSize;
@@ -216,9 +232,23 @@ public abstract class Spell extends Item {
 		return this;
 	}
 
-	/**
-	 * Overrides method to make spell item disappear on dropping
-	 * 
-	 */
+	public int getLevelRequired() {
+		return levelRequired;
+	}
+
+	public Spell setLevelRequired(int levelRequired) {
+		this.levelRequired = levelRequired;
+		return this;
+	}
+
+	public int getExperience() {
+		return experience;
+	}
+
+	public Spell setExperience(int experience) {
+		this.experience = experience;
+		return this;
+	}
+
 
 }
