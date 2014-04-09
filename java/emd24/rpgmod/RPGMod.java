@@ -73,6 +73,7 @@ public class RPGMod {
 	public static Item healMana;
 	public static Item holyHandGrenade;
 	public static Item healSelf;
+	public static Item healParty;
 	
 	public static Item battleAxeStone;
 	public static Item axeRevenge;
@@ -100,14 +101,110 @@ public class RPGMod {
 
 		//Register Party Player Tracker
 		//GameRegistry.registerPlayerTracker(new PartyPlayerTracker());
-
-		// Define items
 		
 		initializeItems();
+		initializeSkills();
+
+		// Register Blocks
+
+		GameRegistry.registerBlock(elementium, elementium.getUnlocalizedName());
+		GameRegistry.registerBlock(sodium, sodium.getUnlocalizedName());
+
+		// Register Items
+		
 
 
-		// Add Skills
+		// Register Entities
+		
+		EntityRegistry.registerModEntity(HolyHandGrenadeEntity.class, "holy_hand_grenade", ++modEntityID, this, 64, 10, true);
 
+
+
+
+		proxy.registerRenderers();
+	}
+
+	@EventHandler
+	public void load(FMLInitializationEvent event){
+
+
+	}
+	@EventHandler
+	public void postInit(FMLPostInitializationEvent event) {
+
+		if (FMLCommonHandler.instance().getEffectiveSide().isClient())
+			MinecraftForge.EVENT_BUS.register(new GUIManaBar(Minecraft.getMinecraft()));
+		
+		packetPipeline.postInitialise();
+	}
+	
+	/**
+	 * Responsible for creating and initializing items for the mod.
+	 * 
+	 */
+	private void initializeItems(){
+		
+		// Initialize magic spells
+		
+		lightningSpell = new LightningSpell(10, CreativeTabs.tabCombat)
+		.setManaCost(25).setUnlocalizedName("lightning_spell")
+		.setTextureName(MOD_ID + ":lightningSpell");
+
+		becomeUndead = new BecomeUndeadSpell(CreativeTabs.tabCombat)
+		.setManaCost(10).setUnlocalizedName("become_undead")
+		.setTextureName(MOD_ID + ":becomeundead");
+
+		summonZombie = new SummonCreatureSpell(0, CreativeTabs.tabCombat)
+		.setManaCost(20).setUnlocalizedName("summon_zombie")
+		.setTextureName(MOD_ID + ":summonzombie");
+
+		healSelf = new HealSpell(5, CreativeTabs.tabCombat, false).setManaCost(10).setUnlocalizedName("heal_self");
+		
+		healParty = new HealSpell(15, CreativeTabs.tabCombat, true).setManaCost(35).setUnlocalizedName("heal_party");
+		
+		// Initialize weapons
+		
+		holyHandGrenade = new HolyHandGrenade().setUnlocalizedName("holy_hand_grenade")
+				.setTextureName(MOD_ID + ":holyhandgrenade");
+		
+		battleAxeStone = new ItemBattleaxe(ToolMaterial.STONE).setUnlocalizedName("stone_battleaxe")
+				.setTextureName(MOD_ID + ":stone_battleaxe");
+		
+		axeRevenge = new ItemAxeOfRevenge().setUnlocalizedName("axe_of_revenge")
+				.setTextureName(MOD_ID + ":axe_of_revenge");
+
+		// Initialize miscellaneous items
+		
+		healMana = new ItemManaHeal().setCreativeTab(CreativeTabs.tabMisc).setUnlocalizedName("heal_mana");
+
+
+		elementium = new BlockOre().setHardness(5.0F).setResistance(5.0F).setStepSound(Block.soundTypeStone)
+				.setBlockName("elementium_ore").setBlockTextureName(MOD_ID + ":elementium_ore").setCreativeTab(CreativeTabs.tabMaterials);
+
+		sodium = new BlockOre().setHardness(0.5F).setResistance(5.0F).setStepSound(Block.soundTypeGravel)
+				.setBlockName("sodium").setBlockTextureName(MOD_ID + ":dirt");
+		
+		
+		// Register items				
+		
+		GameRegistry.registerItem(lightningSpell, lightningSpell.getUnlocalizedName());
+		GameRegistry.registerItem(becomeUndead, becomeUndead.getUnlocalizedName());
+		GameRegistry.registerItem(summonZombie, summonZombie.getUnlocalizedName());
+		GameRegistry.registerItem(healMana, healMana.getUnlocalizedName());
+		GameRegistry.registerItem(healSelf, healSelf.getUnlocalizedName());
+		GameRegistry.registerItem(battleAxeStone, battleAxeStone.getUnlocalizedName());
+		
+		GameRegistry.registerItem(holyHandGrenade, holyHandGrenade.getUnlocalizedName());
+		GameRegistry.registerItem(axeRevenge, axeRevenge.getUnlocalizedName());
+		GameRegistry.registerItem(healParty, healParty.getUnlocalizedName());
+	}
+	
+	/**
+	 * Initializes all the skills in the game, adding the correct perks.
+	 * 
+	 */
+	private void initializeSkills(){
+		
 		// Mining
 
 		Skill mining = new Skill("Mining");
@@ -134,88 +231,11 @@ public class RPGMod {
 
 		ThievingData villagerThievingData = new ThievingData(EntityId.VILLAGER,	25, 1, 0.9, villagerLoot);
 		thieving.addThievingData(villagerThievingData);
-
-		// Register Blocks
-
-		GameRegistry.registerBlock(elementium, elementium.getUnlocalizedName());
-		GameRegistry.registerBlock(sodium, sodium.getUnlocalizedName());
-
-		// Register Items
 		
-
-
-		// Register Entities
 		
-		EntityRegistry.registerModEntity(HolyHandGrenadeEntity.class, "holy_hand_grenade", ++modEntityID, this, 64, 10, true);
-
 		SkillRegistry.registerSkill(mining);
 		SkillRegistry.registerSkill(treepunching);
 		SkillRegistry.registerSkill(thieving);
-
-
-		proxy.registerRenderers();
-	}
-
-	@EventHandler
-	public void load(FMLInitializationEvent event){
-
-
-	}
-	@EventHandler
-	public void postInit(FMLPostInitializationEvent event) {
-
-		if (FMLCommonHandler.instance().getEffectiveSide().isClient())
-			MinecraftForge.EVENT_BUS.register(new GUIManaBar(Minecraft.getMinecraft()));
-		
-		packetPipeline.postInitialise();
-	}
-	
-	/**
-	 * Responsible for creating and initializing items for the mod.
-	 * 
-	 */
-	private void initializeItems(){
-		lightningSpell = new LightningSpell(10, CreativeTabs.tabCombat)
-		.setManaCost(25).setUnlocalizedName("lightning_spell")
-		.setTextureName(MOD_ID + ":lightningSpell");
-
-		becomeUndead = new BecomeUndeadSpell(CreativeTabs.tabCombat)
-		.setManaCost(10).setUnlocalizedName("become_undead")
-		.setTextureName(MOD_ID + ":becomeundead");
-
-		summonZombie = new SummonCreatureSpell(0, CreativeTabs.tabCombat)
-		.setManaCost(20).setUnlocalizedName("summon_zombie")
-		.setTextureName(MOD_ID + ":summonzombie");
-
-		holyHandGrenade = new HolyHandGrenade().setUnlocalizedName("holy_hand_grenade")
-				.setTextureName(MOD_ID + ":holyhandgrenade");
-
-		healMana = new ItemManaHeal().setCreativeTab(CreativeTabs.tabMisc).setUnlocalizedName("heal_mana");
-
-
-		elementium = new BlockOre().setHardness(5.0F).setResistance(5.0F).setStepSound(Block.soundTypeStone)
-				.setBlockName("elementium_ore").setBlockTextureName(MOD_ID + ":elementium_ore").setCreativeTab(CreativeTabs.tabMaterials);
-
-		sodium = new BlockOre().setHardness(0.5F).setResistance(5.0F).setStepSound(Block.soundTypeGravel)
-				.setBlockName("sodium").setBlockTextureName(MOD_ID + ":dirt");
-		
-		healSelf = new HealSpell(5, CreativeTabs.tabCombat, false).setManaCost(10).setUnlocalizedName("heal_self");
-		
-		battleAxeStone = new ItemBattleaxe(ToolMaterial.STONE).setUnlocalizedName("stone_battleaxe")
-				.setTextureName(MOD_ID + ":stone_battleaxe");
-		
-		axeRevenge = new ItemAxeOfRevenge().setUnlocalizedName("axe_of_revenge")
-				.setTextureName(MOD_ID + ":axe_of_revenge");
-				
-		
-		GameRegistry.registerItem(lightningSpell, lightningSpell.getUnlocalizedName());
-		GameRegistry.registerItem(becomeUndead, becomeUndead.getUnlocalizedName());
-		GameRegistry.registerItem(summonZombie, summonZombie.getUnlocalizedName());
-		GameRegistry.registerItem(healMana, healMana.getUnlocalizedName());
-		GameRegistry.registerItem(healSelf, healSelf.getUnlocalizedName());
-		GameRegistry.registerItem(battleAxeStone, battleAxeStone.getUnlocalizedName());
-		
-		GameRegistry.registerItem(holyHandGrenade, holyHandGrenade.getUnlocalizedName());
-		GameRegistry.registerItem(axeRevenge, axeRevenge.getUnlocalizedName());
+		SkillRegistry.registerSkill(new Skill("Strength"));
 	}
 }

@@ -4,6 +4,8 @@ import java.util.HashMap;
 
 import org.lwjgl.opengl.GL11;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import emd24.rpgmod.ExtendedPlayerData;
 import emd24.rpgmod.RPGMod;
 import emd24.rpgmod.skills.Skill;

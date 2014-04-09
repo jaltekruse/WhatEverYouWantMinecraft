@@ -4,6 +4,7 @@ import java.util.Random;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
+import cpw.mods.fml.relauncher.Side;
 import emd24.rpgmod.EntityIdMapping.EntityId;
 import emd24.rpgmod.combatitems.HolyHandGrenade;
 import emd24.rpgmod.combatitems.ItemBattleaxe;
@@ -39,6 +40,7 @@ import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.EntityInteractEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed;
@@ -67,7 +69,7 @@ public class EventHookContainer {
 			ExtendedPlayerData.register((EntityPlayer) event.entity);
 
 		}
-		
+
 		// Register Dialogue data
 		if(event.entity instanceof EntityLiving) {
 			EntityLiving ent = (EntityLiving) event.entity;
@@ -158,7 +160,7 @@ public class EventHookContainer {
 			ExtendedPlayerData.get(event.entity).sync();
 		}
 	}
-	
+
 	/**
 	 * Event that checks for entity interaction and attempts to pickpocket NPC if player is sneaking. 
 	 * 
@@ -224,13 +226,13 @@ public class EventHookContainer {
 			else{
 				//check for NPC dialogue
 				ExtendedEntityLivingDialogueData nbtDialogue = ExtendedEntityLivingDialogueData.get(target);
-				
+
 				if(GUIKeyHandler.npcAdminMode) {
 					Minecraft.getMinecraft().displayGuiScreen(new GUIDialogueEditor(target));
 				} else {
 					Minecraft.getMinecraft().displayGuiScreen(new GUIDialogue(target));
 				}
-				
+
 				// Regular method call
 				//player.interactWith(event.entity);
 			}
@@ -286,7 +288,28 @@ public class EventHookContainer {
 		}
 
 	}
-
+	
+	/**
+	 * This method activates an entity is attacked, and updates it with the
+	 * skill modifier
+	 * 
+	 * @param event
+	 */
+	@SubscribeEvent
+	public void onAttacked(LivingHurtEvent event){
+		
+		/* Only does a check if it is the player's skill, which is dynamic. Values
+		 * for mobs are hardcoded for their class, as they don't level up.
+		 */
+		if(event.source.getSourceOfDamage() instanceof EntityPlayer){
+			EntityPlayer player = (EntityPlayer) event.source.getSourceOfDamage();
+			ExtendedPlayerData playerData = ExtendedPlayerData.get(player);
+			
+			// For each additional level, player deals 5% more damage
+			event.ammount += (playerData.getSkill("Strength").getLevel() - 1) * .05;
+		}
+	}
+	
 	/**
 	 * This method updates the timer for thievable NPCs to allow their alert level  to gradually reduce
 	 * over  time
@@ -320,9 +343,9 @@ public class EventHookContainer {
 				data.recoverMana(1);
 				data.manaTicks = data.getRegenRate();
 			}
-			
-			
-			
+
+
+
 		}
 	}
 
@@ -357,15 +380,15 @@ public class EventHookContainer {
 			RPGMod.packetPipeline.sendTo(new PlayerDataPacket(player), (EntityPlayerMP) player);
 		}
 	}
-	
+
 	@SubscribeEvent
 	public void pickupHolyHandGrenade(EntityItemPickupEvent event){
 		if(event.item.getEntityItem().getItem() instanceof HolyHandGrenade){
 			event.entityPlayer.worldObj.playSoundAtEntity(event.entityPlayer, RPGMod.MOD_ID + ":holyhandgrenadepickup", 1.0F, 1.0F);
 		}
-		
+
 	}
-	
+
 	@SubscribeEvent
 	public void onPlayerLogout(PlayerLoggedOutEvent event){
 		PartyManagerServer.removePlayerFromGame(event.player.getCommandSenderName());

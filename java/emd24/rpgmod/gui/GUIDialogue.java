@@ -13,6 +13,8 @@ import java.util.List;
 
 import org.lwjgl.input.Keyboard;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import emd24.rpgmod.ExtendedPlayerData;
 import emd24.rpgmod.quest.DialogueTreeNode;
 import emd24.rpgmod.quest.ExtendedEntityLivingDialogueData;
