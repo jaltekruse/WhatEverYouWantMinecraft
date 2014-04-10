@@ -7,5 +7,5 @@ item.heal_mana.name=Mana Heal
 itle.elementium_ore.name=Elementium
 tile.sodium.name=Sodium
 item.holy_hand_grenade.name=Holy Hand Grenade of Antioch
-item.stone_battleaxe=Stone Battleaxe
-item.axe_of_revenge=Axe of Revenge
+item.stone_battleaxe.name=Stone Battleaxe
+item.axe_of_revenge.name=Axe of Revenge

@@ -32,6 +32,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -295,6 +296,8 @@ public class EventHookContainer {
 		
 		/* Only does a check if it is the player's skill, which is dynamic. Values
 		 * for mobs are hardcoded for their class, as they don't level up.
+		 * 
+		 * Alos, check to see if direct damage dealt by player
 		 */
 		if(event.source.getSourceOfDamage() instanceof EntityPlayer){
 			EntityPlayer player = (EntityPlayer) event.source.getSourceOfDamage();
@@ -311,6 +314,30 @@ public class EventHookContainer {
 			playerData.addExp("Strength", 4 * Math.min((int) event.ammount, Math.round(event.entityLiving.getHealth())));
 			
 		}
+		/* Check for indirect damage sources (such as spells or ranged items)
+		 * 
+		 */
+		else if(event.source instanceof EntityDamageSourceIndirect){
+			EntityDamageSourceIndirect indirectSource = (EntityDamageSourceIndirect) event.source;
+			
+			// Check if damaged by projectile thrown by player entity, ranged skill
+			if(indirectSource.isProjectile() && (indirectSource.getEntity() instanceof EntityPlayer)){
+				
+				EntityPlayer player = (EntityPlayer) indirectSource.getEntity();
+				ExtendedPlayerData playerData = ExtendedPlayerData.get(player);
+				
+				/* For each additional level, player deals 5% more damage, rounded down. An int
+				* cast is probably happening deep in the vanilla code somewheres
+				*/
+				event.ammount *= (1.0 + (playerData.getSkill("Ranged").getLevel() - 1) * .05);
+				
+				/* Adds experience, 4 for each point of damage dealt (in half-hearts). Cannot
+				 * gain more exp for damage than the target has health.
+				 */
+				playerData.addExp("Ranged", 4 * Math.min((int) event.ammount, Math.round(event.entityLiving.getHealth())));
+			}
+		}
+		
 	}
 	
 	/**

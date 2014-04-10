@@ -31,12 +31,11 @@ public class HealSpell extends Spell{
 		if(party){
 			boolean partyHealed = false;
 			ArrayList<String> partyNames = PartyManagerServer.getPlayerParty(par3EntityPlayer.getCommandSenderName());
-			
 			// Iterate through the player's party and heal the players
+			
 			for(String name : partyNames){
-				
-				EntityPlayer player = Minecraft.getMinecraft().getIntegratedServer().getConfigurationManager()
-				.getPlayerForUsername(name);
+				System.out.println(name);
+				EntityPlayer player = par2World.getPlayerEntityByName(name);
 				if(player.getHealth() < player.getMaxHealth()){
 					par3EntityPlayer.heal(this.getBasePower() / partyNames.size());
 					partyHealed = true;

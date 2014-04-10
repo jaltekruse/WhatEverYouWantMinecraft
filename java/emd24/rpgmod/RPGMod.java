@@ -245,5 +245,6 @@ public class RPGMod {
 		SkillRegistry.registerSkill(thieving);
 		SkillRegistry.registerSkill(new Skill("Strength"));
 		SkillRegistry.registerSkill(new Skill("Magic"));
+		SkillRegistry.registerSkill(new Skill("Ranged"));
 	}
 }
