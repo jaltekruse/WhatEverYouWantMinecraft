@@ -3,6 +3,7 @@ package emd24.rpgmod;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import emd24.rpgmod.combatitems.HolyHandGrenadeEntity;
+import emd24.rpgmod.combatitems.ItemThrowingKnifeEntity;
 import emd24.rpgmod.gui.GUIKeyHandler;
 import emd24.rpgmod.gui.GUISkills;
 import net.minecraft.client.renderer.entity.RenderSnowball;
@@ -17,6 +18,7 @@ public class ClientProxy extends CommonProxy {
 	public void registerRenderers() {
 			
 		RenderingRegistry.registerEntityRenderingHandler(HolyHandGrenadeEntity.class, new RenderSnowball(RPGMod.holyHandGrenade));
+		RenderingRegistry.registerEntityRenderingHandler(ItemThrowingKnifeEntity.class, new RenderSnowball(RPGMod.throwingKnifeStone));
 	}
 	
 }
