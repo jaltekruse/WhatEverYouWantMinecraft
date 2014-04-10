@@ -4,6 +4,7 @@ import java.util.Random;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
+import cpw.mods.fml.relauncher.Side;
 import emd24.rpgmod.EntityIdMapping.EntityId;
 import emd24.rpgmod.combatitems.HolyHandGrenade;
 import emd24.rpgmod.combatitems.ItemBattleaxe;
@@ -31,6 +32,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -39,6 +41,7 @@ import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.EntityInteractEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed;
@@ -63,11 +66,11 @@ public class EventHookContainer {
 	 */
 	@SubscribeEvent
 	public void onEntityConstruct(EntityEvent.EntityConstructing event) {
-		if (event.entity instanceof EntityPlayer && ExtendedPlayerData.get(event.entity) == null) {
+		if (event.entity instanceof EntityPlayer && ExtendedPlayerData.get((EntityPlayer) event.entity) == null) {
 			ExtendedPlayerData.register((EntityPlayer) event.entity);
 
 		}
-		
+
 		// Register Dialogue data
 		if(event.entity instanceof EntityLiving) {
 			EntityLiving ent = (EntityLiving) event.entity;
@@ -110,21 +113,14 @@ public class EventHookContainer {
 
 		ExtendedPlayerData data = ExtendedPlayerData.get(event.harvester);
 		for(String skill : SkillRegistry.getSkillNames()){
-
+			
+			// Add experience
 			int experience = SkillRegistry.getSkill(skill).getExpForBlockBreak(event.block);
 
 			if(experience > 0){ 
-
-				boolean levelUp = data.addExp(skill, experience);
-
-				// Notify the player
-				event.harvester.addChatMessage(new ChatComponentText("Gained " + experience 
-						+ " " + skill + " exp"));
-				if(levelUp){
-					event.harvester.addChatMessage((new ChatComponentText("Congrats! Reached " + skill + " Level " 
-							+ data.getSkill(skill).getLevel()).setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GREEN))));
-				}
+				data.addExp(skill, experience);
 			}
+			
 			// Determine if player harvests extra items
 			Random rnd = new Random();
 			if(rnd.nextDouble() <= SkillRegistry.getSkill(skill).getHarvestPerkProbability(event.block, 
@@ -139,8 +135,11 @@ public class EventHookContainer {
 	@SubscribeEvent 
 	public void onLivingDeathEvent(LivingDeathEvent event){
 		if (!event.entity.worldObj.isRemote && event.entity instanceof EntityPlayer){
+			EntityPlayer player = (EntityPlayer) event.entity;
 			NBTTagCompound compound = new NBTTagCompound(); 
-			ExtendedPlayerData.get(event.entity).saveNBTData(compound);
+			ExtendedPlayerData.get(player).saveNBTData(compound);
+			// Needed to save skill data on death
+			RPGMod.proxy.storeEntityData(player.getCommandSenderName(), compound);
 		}
 
 	}
@@ -150,15 +149,18 @@ public class EventHookContainer {
 		if (!event.entity.worldObj.isRemote && event.entity instanceof EntityPlayer){
 			EntityPlayer player = (EntityPlayer) event.entity;
 			PartyManagerServer.addPlayerToParty(player.getCommandSenderName(), 0);
-			NBTTagCompound data = RPGMod.proxy.getEntityData(player.getCommandSenderName());
+			NBTTagCompound proxyData = RPGMod.proxy.getEntityData(player.getCommandSenderName());
 
-			if(data != null){
-				ExtendedPlayerData.get(event.entity).loadNBTData(data);
+			if(proxyData != null){
+				ExtendedPlayerData playerData = ExtendedPlayerData.get(player);
+				playerData.loadNBTData(proxyData);
+				playerData.setCurrMana(playerData.getMaxMana());
+				
 			}
-			ExtendedPlayerData.get(event.entity).sync();
+			ExtendedPlayerData.get(player).sync();
 		}
 	}
-	
+
 	/**
 	 * Event that checks for entity interaction and attempts to pickpocket NPC if player is sneaking. 
 	 * 
@@ -192,6 +194,8 @@ public class EventHookContainer {
 				// Give player item and exp if successful, damage player if not
 				if(loot != null){
 
+					// Update data on NPC stolen from, raise alert level
+					
 					player.inventory.addItemStackToInventory(loot);
 					player.worldObj.playSoundEffect(player.posX, player.posY, player.posZ, "random.pop", 10000.0F, 0.8F + this.rand.nextFloat() * 0.2F);
 
@@ -199,18 +203,12 @@ public class EventHookContainer {
 					dataTarget.alertTimer = 1200;
 					dataTarget.stealCoolDown = 200;
 
+					// Add experience
+					
 					int experience = s.getExperience(id);
 
-
 					if(experience > 0){ 
-						boolean levelUp = data.addExp(s.name, experience);
-
-						// Notify the player
-						player.addChatMessage((new ChatComponentText("Gained " + experience + " " + s.name + " exp")));
-						if(levelUp){
-							player.addChatMessage((new ChatComponentText("Congrats! Reached " + s.name + " Level " + data.getSkill(s.name).getLevel())
-							.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GREEN))));
-						}
+						data.addExp(s.name, experience);
 					}
 				} 
 				else{
@@ -224,15 +222,17 @@ public class EventHookContainer {
 			else{
 				//check for NPC dialogue
 				ExtendedEntityLivingDialogueData nbtDialogue = ExtendedEntityLivingDialogueData.get(target);
-				
+
 				if(GUIKeyHandler.npcAdminMode) {
 					Minecraft.getMinecraft().displayGuiScreen(new GUIDialogueEditor(target));
-				} else {
+					event.setCanceled(true);
+				} else if(nbtDialogue.dialogueTree.children.size() > 0){
 					Minecraft.getMinecraft().displayGuiScreen(new GUIDialogue(target));
+					event.setCanceled(true);
+				} else {
+					// Regular method call
+					player.interactWith(event.entity);
 				}
-				
-				// Regular method call
-				//player.interactWith(event.entity);
 			}
 
 		}
@@ -286,7 +286,62 @@ public class EventHookContainer {
 		}
 
 	}
-
+	
+	/**
+	 * This method activates an entity is attacked, and updates it with the
+	 * skill modifier
+	 * 
+	 * @param event
+	 */
+	@SubscribeEvent
+	public void onAttacked(LivingHurtEvent event){
+		
+		/* Only does a check if it is the player's skill, which is dynamic. Values
+		 * for mobs are hardcoded for their class, as they don't level up.
+		 * 
+		 * Alos, check to see if direct damage dealt by player
+		 */
+		if(event.source.getSourceOfDamage() instanceof EntityPlayer){
+			EntityPlayer player = (EntityPlayer) event.source.getSourceOfDamage();
+			ExtendedPlayerData playerData = ExtendedPlayerData.get(player);
+			
+			/* For each additional level, player deals 5% more damage, rounded down. An int
+			* cast is probably happening deep in the vanilla code somewheres
+			*/
+			event.ammount *= (1.0 + (playerData.getSkill("Strength").getLevel() - 1) * .05);
+			
+			/* Adds experience, 4 for each point of damage dealt (in half-hearts). Cannot
+			 * gain more exp for damage than the target has health.
+			 */
+			playerData.addExp("Strength", 4 * Math.min((int) event.ammount, Math.round(event.entityLiving.getHealth())));
+			
+		}
+		/* Check for indirect damage sources (such as spells or ranged items)
+		 * 
+		 */
+		else if(event.source instanceof EntityDamageSourceIndirect){
+			EntityDamageSourceIndirect indirectSource = (EntityDamageSourceIndirect) event.source;
+			
+			// Check if damaged by projectile thrown by player entity, ranged skill
+			if(indirectSource.isProjectile() && (indirectSource.getEntity() instanceof EntityPlayer)){
+				
+				EntityPlayer player = (EntityPlayer) indirectSource.getEntity();
+				ExtendedPlayerData playerData = ExtendedPlayerData.get(player);
+				
+				/* For each additional level, player deals 5% more damage, rounded down. An int
+				* cast is probably happening deep in the vanilla code somewheres
+				*/
+				event.ammount *= (1.0 + (playerData.getSkill("Ranged").getLevel() - 1) * .05);
+				
+				/* Adds experience, 4 for each point of damage dealt (in half-hearts). Cannot
+				 * gain more exp for damage than the target has health.
+				 */
+				playerData.addExp("Ranged", 4 * Math.min((int) event.ammount, Math.round(event.entityLiving.getHealth())));
+			}
+		}
+		
+	}
+	
 	/**
 	 * This method updates the timer for thievable NPCs to allow their alert level  to gradually reduce
 	 * over  time
@@ -320,9 +375,9 @@ public class EventHookContainer {
 				data.recoverMana(1);
 				data.manaTicks = data.getRegenRate();
 			}
-			
-			
-			
+
+
+
 		}
 	}
 
@@ -333,8 +388,15 @@ public class EventHookContainer {
 	 * @param event the Forge onStruckByLightning event
 	 */
 	@SubscribeEvent
-	public void lightningStrike(EntityStruckByLightningEvent event){
-
+	public void onLightningStrike(EntityStruckByLightningEvent event){
+		
+		/* Bug occurring where the onLIghtningstrike occurs twice at random times,
+		 * not sure as to why. One thought was this method being called on client side???
+		 * This avoids that,  but likely to be something else
+		 */
+		if(event.entity.worldObj.isRemote){
+			return;
+		}
 		EntityLightningBolt lightning = event.lightning;
 		Entity entityAttacked = event.entity;
 
@@ -357,15 +419,15 @@ public class EventHookContainer {
 			RPGMod.packetPipeline.sendTo(new PlayerDataPacket(player), (EntityPlayerMP) player);
 		}
 	}
-	
+
 	@SubscribeEvent
 	public void pickupHolyHandGrenade(EntityItemPickupEvent event){
 		if(event.item.getEntityItem().getItem() instanceof HolyHandGrenade){
 			event.entityPlayer.worldObj.playSoundAtEntity(event.entityPlayer, RPGMod.MOD_ID + ":holyhandgrenadepickup", 1.0F, 1.0F);
 		}
-		
+
 	}
-	
+
 	@SubscribeEvent
 	public void onPlayerLogout(PlayerLoggedOutEvent event){
 		PartyManagerServer.removePlayerFromGame(event.player.getCommandSenderName());

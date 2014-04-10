@@ -31,8 +31,13 @@ public class DialogueTreeNode {
 	 * Function to add a new child
 	 */
 	public DialogueTreeNode addChild() {
+		if(this.isReply && this.children.size() != 0)
+			return null;
 		DialogueTreeNode child = new DialogueTreeNode();
 		child.isReply = !isReply;
+		if(child.isReply) {
+			child.addChild();
+		}
 		children.add(child);
 		return child;
 	}

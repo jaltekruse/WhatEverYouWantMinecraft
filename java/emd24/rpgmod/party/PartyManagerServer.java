@@ -24,6 +24,9 @@ public class PartyManagerServer {
 	public static ArrayList<String> getPlayerParty(String name){
 		ArrayList<String> partyPlayerList = new ArrayList<String>();
 		for(String playerName : playerParty.keySet()){
+			/* Since the leader has a negative partyID, we must do an absolute  
+			 * value equality check.
+			 */
 			if(Math.abs(playerParty.get(playerName)) == Math.abs(playerParty.get(name))){
 				partyPlayerList.add(playerName);
 			}
@@ -47,6 +50,12 @@ public class PartyManagerServer {
 	public static void addPlayerToPlayersParty(String playerName, String invitingPlayer) {
 		//lookup inviting player's party
 		int partyID = Math.abs(playerParty.get(invitingPlayer));
+		
+		/* For denoting the leader of a party, they will have the a negative PartyID. ALL
+		 * CHECKS FOR PARTY EQUALITY SHOULD BE DONE USING ABSOLUTE VALUE. This saves space,
+		 * and not use another field
+		 */
+
 		if(partyID == 0) {
 			partyID = autoincrement++;
 			playerParty.put(invitingPlayer, -partyID);

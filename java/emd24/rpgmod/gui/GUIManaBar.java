@@ -23,7 +23,6 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
  * @author Evan Dyke
  *
  */
-@SideOnly(Side.CLIENT)
 public class GUIManaBar extends Gui{
 
 	private Minecraft instance;

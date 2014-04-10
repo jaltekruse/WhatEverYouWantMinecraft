@@ -12,6 +12,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatStyle;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
 
@@ -29,7 +32,7 @@ public class ExtendedPlayerData implements IExtendedEntityProperties{
 
 	// Sets whether player is undead
 	private boolean undead;
-	
+
 	// regenRate is # of ticks to restore mana
 	private int currMana, maxMana, regenRate; 
 	public int manaTicks;
@@ -53,7 +56,7 @@ public class ExtendedPlayerData implements IExtendedEntityProperties{
 				new ExtendedPlayerData(player));
 	}
 
-	public static ExtendedPlayerData get(Entity player){
+	public static ExtendedPlayerData get(EntityPlayer player){
 		return (ExtendedPlayerData)player.getExtendedProperties(IDENTIFIER);
 	}
 
@@ -71,7 +74,7 @@ public class ExtendedPlayerData implements IExtendedEntityProperties{
 		rbt.setInteger("maxMana", this.maxMana);
 		rbt.setInteger("currMana", this.currMana);
 		rbt.setInteger("manaRegenRate", this.regenRate);
-		
+
 		for(SkillPlayer skill : skills.values()){
 			rbt.setInteger( skill.name  + ".lvl", skill.getLevel());
 			rbt.setInteger( skill.name  + ".exp", skill.getExperience());
@@ -125,7 +128,7 @@ public class ExtendedPlayerData implements IExtendedEntityProperties{
 		this.currMana -= mana;
 		sync();
 	}
-	
+
 	public void recoverMana(int mana){
 		this.currMana = Math.min(currMana + mana, maxMana);
 		sync();
@@ -135,7 +138,7 @@ public class ExtendedPlayerData implements IExtendedEntityProperties{
 		this.maxMana = maxMana;
 		sync();
 	}
-	
+
 	public boolean isFullMana(){
 		return (currMana == maxMana);
 	}
@@ -179,10 +182,24 @@ public class ExtendedPlayerData implements IExtendedEntityProperties{
 	 * @param amount in amount of experience to give
 	 * @return boolean whether player leveled up
 	 */
-	public boolean addExp(String skill, int amount){
+	public void addExp(String skill, int amount){
+
 		boolean levelUp = skills.get(skill).addExperience(amount);
+
+		// Notify player of exp gain and leveling up
+		if(!this.player.worldObj.isRemote)
+			this.player.addChatMessage(new ChatComponentText("Gained " + amount 
+					+ " " + skill + " exp"));
+		if(levelUp){
+			// If magic skill
+			if(skill == "Magic"){
+				this.maxMana = 50 + 10 * (skills.get(skill).getLevel() - 1);
+			}
+			if(!this.player.worldObj.isRemote)
+				this.player.addChatMessage((new ChatComponentText("Congrats! Reached " + skill + " Level " 
+						+ skills.get(skill).getLevel()).setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GREEN))));
+		}
 		sync();
-		return levelUp;
 	}
 
 	/**
@@ -193,6 +210,9 @@ public class ExtendedPlayerData implements IExtendedEntityProperties{
 	 */
 	public void addLevels(String skill, int levels){
 		skills.get(skill).addLevels(levels);
+		if(skill == "Magic"){
+			this.currMana = 50 + (10 * skills.get(skill).getLevel() - 1);
+		}
 		sync();
 
 	}

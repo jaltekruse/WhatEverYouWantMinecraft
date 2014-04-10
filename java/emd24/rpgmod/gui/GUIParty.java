@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.input.Keyboard;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import emd24.rpgmod.ExtendedPlayerData;
 import emd24.rpgmod.RPGMod;
 import emd24.rpgmod.packets.PartyDataPacket;
