@@ -66,7 +66,7 @@ public class GUIDialogue extends GuiScreen
 		buttonList.clear();
 		for(int i = 0; i < selectedNode.children.size(); i++) {
 			String text = selectedNode.children.get(i).dialogueText;
-			buttonList.add(new GuiButton(i, 40, i*30 + 50, text));
+			buttonList.add(new GuiButton(i, 50, i*30 + 80, text));
 		}
 		
 	}
@@ -102,7 +102,7 @@ public class GUIDialogue extends GuiScreen
 
 
 		//draw dialogue
-		drawCenteredString(fontRendererObj, selectedNode.dialogueText, width / 2, 40, 0xffffffff);
+		drawString(fontRendererObj, selectedNode.dialogueText, 30, 60, 0xffffffff);
 
 		super.drawScreen(par1, j, f);
 	}
