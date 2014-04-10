@@ -52,9 +52,6 @@ public class GUIParty extends GuiScreen {
 	
 	HashMap<String, Integer> pAP = PartyManagerClient.playerParty;
 	
-	/* TODO: IF WE GET MORE/LESS SCREEN REAL ESTATE WITH RESOLUTION CHANGES
-	 * THESE ARRAYS NEED TO TURN INTO ARRAY LISTS AND WE NEED TO EDIT SOME 
-	 * MATH SO WE GET A NICE LOOKING GUI */
 	GuiButton leaveBtn;
 	GuiButton[] promoteBtns;
 	GuiButton[] kickBtns;

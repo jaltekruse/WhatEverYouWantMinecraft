@@ -98,7 +98,8 @@ public class RPGMod {
 		packetPipeline.initialise();
 		
 		FMLCommonHandler.instance().bus().register(new GUIKeyHandler());
-
+		FMLCommonHandler.instance().bus().register(new EventHookContainer());
+		
 		// Register Event Handler
 		MinecraftForge.EVENT_BUS.register(new EventHookContainer());
 

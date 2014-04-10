@@ -88,12 +88,11 @@ public class PartyManagerServer {
 			playerParty.put(playerName, 0);
 		}
 		RPGMod.packetPipeline.sendToAll(new PartyDataPacket());
-		
-		//TODO: add check for player leader before kicking
 	}
 
 
 	public static void removePlayerFromGame(String playerName){
+		removePlayerFromParty(playerName, playerName);
 		playerParty.remove(playerName);
 		RPGMod.packetPipeline.sendToAll(new PartyDataPacket());
 	}
