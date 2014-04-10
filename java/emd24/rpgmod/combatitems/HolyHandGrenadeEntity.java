@@ -37,6 +37,7 @@ public class HolyHandGrenadeEntity extends EntityThrowable{
 	        if (!this.worldObj.isRemote)
 	        {
 	            	this.worldObj.createExplosion(this, this.posX, this.posY, this.posZ, 2.0F, true);
+	            	
 	        }
 
 	        for (int j = 0; j < 8; ++j)

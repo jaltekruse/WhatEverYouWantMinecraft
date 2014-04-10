@@ -38,6 +38,8 @@ import emd24.rpgmod.combatitems.HolyHandGrenade;
 import emd24.rpgmod.combatitems.HolyHandGrenadeEntity;
 import emd24.rpgmod.combatitems.ItemAxeOfRevenge;
 import emd24.rpgmod.combatitems.ItemBattleaxe;
+import emd24.rpgmod.combatitems.ItemThrowingKnife;
+import emd24.rpgmod.combatitems.ItemThrowingKnifeEntity;
 import emd24.rpgmod.gui.GUIKeyHandler;
 import emd24.rpgmod.gui.GUIManaBar;
 import emd24.rpgmod.packets.PacketPipeline;
@@ -77,6 +79,7 @@ public class RPGMod {
 	
 	public static Item battleAxeStone;
 	public static Item axeRevenge;
+	public static Item throwingKnifeStone;
 
 	public static Block sodium;
 	public static Block elementium;
@@ -117,6 +120,7 @@ public class RPGMod {
 		// Register Entities
 		
 		EntityRegistry.registerModEntity(HolyHandGrenadeEntity.class, "holy_hand_grenade", ++modEntityID, this, 64, 10, true);
+		EntityRegistry.registerModEntity(ItemThrowingKnifeEntity.class, "throwing_knife", ++modEntityID, this, 64, 10, true);
 
 
 
@@ -177,6 +181,9 @@ public class RPGMod {
 		
 		axeRevenge = new ItemAxeOfRevenge().setUnlocalizedName("axe_of_revenge")
 				.setTextureName(MOD_ID + ":axe_of_revenge");
+		
+		throwingKnifeStone = new ItemThrowingKnife(Item.ToolMaterial.STONE).setUnlocalizedName("stone_throwing_knife")
+				.setTextureName(RPGMod.MOD_ID + ":throwingKnife");
 
 		// Initialize miscellaneous items
 		
@@ -200,6 +207,7 @@ public class RPGMod {
 		GameRegistry.registerItem(healSelf, healSelf.getUnlocalizedName());
 		
 		GameRegistry.registerItem(battleAxeStone, battleAxeStone.getUnlocalizedName());
+		GameRegistry.registerItem(throwingKnifeStone, throwingKnifeStone.getUnlocalizedName());
 		
 		GameRegistry.registerItem(holyHandGrenade, holyHandGrenade.getUnlocalizedName());
 		GameRegistry.registerItem(axeRevenge, axeRevenge.getUnlocalizedName());
@@ -240,11 +248,16 @@ public class RPGMod {
 		thieving.addThievingData(villagerThievingData);
 		
 		
+		// Ranged weapon requirements
+		
+		Skill ranged = new Skill("Ranged");
+		ranged.addItemUseRequirement(holyHandGrenade, 3);
+		
 		SkillRegistry.registerSkill(mining);
 		SkillRegistry.registerSkill(treepunching);
 		SkillRegistry.registerSkill(thieving);
 		SkillRegistry.registerSkill(new Skill("Strength"));
 		SkillRegistry.registerSkill(new Skill("Magic"));
-		SkillRegistry.registerSkill(new Skill("Ranged"));
+		SkillRegistry.registerSkill(ranged);
 	}
 }

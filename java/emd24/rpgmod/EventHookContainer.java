@@ -45,6 +45,9 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.EntityInteractEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
+import net.minecraftforge.event.entity.player.PlayerUseItemEvent.Start;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent;
 
@@ -337,6 +340,18 @@ public class EventHookContainer {
 				playerData.addExp("Ranged", 4 * Math.min((int) event.ammount, Math.round(event.entityLiving.getHealth())));
 			}
 		}
+		
+	}
+	
+	/**
+	 * Event that checks if a melee weapon has a requirement to use in battle. 
+	 * 
+	 * TODO: write this method
+	 * 
+	 * @param event
+	 */
+	@SubscribeEvent
+	public void onItemUse(Start event){
 		
 	}
 	

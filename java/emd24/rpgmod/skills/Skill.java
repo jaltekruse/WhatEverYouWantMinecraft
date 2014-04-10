@@ -5,10 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 
 /**
  * Abstract class that represents a skill, what items give experience, and
- * perks. 
+ * perks. Responsible for registering things such as item or block level
+ * requirements.
  * 
  * @author Evan Dyke
  *
@@ -21,6 +23,7 @@ public class Skill {
 	private HashMap<Integer, Integer> expGivenOnBreak;
 	private HashMap<Integer, Integer> blockRequirements;
 	private HashMap<Integer, ArrayList<HarvestPerkEntry>> harvestPerks;
+	private HashMap<Integer, Integer> itemUseRequirements;
 	
 	/**
 	 * Connstructor for a skill.
@@ -32,6 +35,7 @@ public class Skill {
 		this.expGivenOnBreak = new HashMap<Integer, Integer>();
 		this.blockRequirements = new HashMap<Integer, Integer>();
 		this.harvestPerks = new HashMap<Integer, ArrayList<HarvestPerkEntry>>();
+		this.itemUseRequirements = new HashMap<Integer, Integer>();
 	}
 	/**
 	 * Adds to the skill a block that gives experience when destroyed.
@@ -93,6 +97,32 @@ public class Skill {
 			harvestPerks.put(Block.getIdFromBlock(block), new ArrayList<HarvestPerkEntry>());
 		}
 		harvestPerks.get(Block.getIdFromBlock(block)).add(new HarvestPerkEntry(level, prob));
+	}
+	
+	/**
+	 * Method that requires an item to have a level requirement upon using
+	 * (as in right-clicking).
+	 * 
+	 * @param item item to add requirement
+	 * @param level level needed to use item
+	 */
+	public void addItemUseRequirement(Item item, int level){
+		if(!itemUseRequirements.containsKey(Item.getIdFromItem(item))){
+			itemUseRequirements.put(Item.getIdFromItem(item), level);
+		}
+	}
+	
+	/**
+	 * Method that gets the level requirement for using an item
+	 * 
+	 * @param item item to check requirement for
+	 * @return level requirement for item
+	 */
+	public int getItemUseRequirement(Item item){
+		if(!this.itemUseRequirements.containsKey(Item.getIdFromItem(item))){
+			return 0;
+		}
+		return this.itemUseRequirements.get(Item.getIdFromItem(item));
 	}
 	
 	/**
