@@ -228,12 +228,14 @@ public class EventHookContainer {
 
 				if(GUIKeyHandler.npcAdminMode) {
 					Minecraft.getMinecraft().displayGuiScreen(new GUIDialogueEditor(target));
-				} else {
+					event.setCanceled(true);
+				} else if(nbtDialogue.dialogueTree.children.size() > 0){
 					Minecraft.getMinecraft().displayGuiScreen(new GUIDialogue(target));
+					event.setCanceled(true);
+				} else {
+					// Regular method call
+					player.interactWith(event.entity);
 				}
-
-				// Regular method call
-				//player.interactWith(event.entity);
 			}
 
 		}

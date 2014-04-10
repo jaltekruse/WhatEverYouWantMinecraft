@@ -70,7 +70,7 @@ public class ExtendedEntityLivingDialogueData implements IExtendedEntityProperti
 		rbt.setInteger("alertTicks", this.alertTimer);
 		
 		String dialogueString = dialogueTree.store();
-		System.out.println("store() output:\n" + dialogueString);
+		//System.out.println("store() output:\n" + dialogueString);
 		rbt.setString("dialogueInfo", dialogueString);
 		
 		compound.setTag(IDENTIFIER, rbt);
