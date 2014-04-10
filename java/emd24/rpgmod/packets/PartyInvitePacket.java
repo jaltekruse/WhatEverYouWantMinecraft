@@ -65,6 +65,10 @@ public class PartyInvitePacket extends AbstractPacket{
 		case 2:
 			PartyManagerServer.removePlayerFromParty(playerName, invitingPlayer);
 			break;
+		case 3:
+			//DEBUG
+			System.out.println("GOT TO CASE 3 IN HANDLE SERVER SIDE");
+			PartyManagerServer.promotePlayer(playerName,  invitingPlayer);
 		}
 	}
 
