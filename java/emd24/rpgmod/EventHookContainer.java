@@ -405,13 +405,6 @@ public class EventHookContainer {
 	@SubscribeEvent
 	public void onLightningStrike(EntityStruckByLightningEvent event){
 		
-		/* Bug occurring where the onLIghtningstrike occurs twice at random times,
-		 * not sure as to why. One thought was this method being called on client side???
-		 * This avoids that,  but likely to be something else
-		 */
-		if(event.entity.worldObj.isRemote){
-			return;
-		}
 		EntityLightningBolt lightning = event.lightning;
 		Entity entityAttacked = event.entity;
 

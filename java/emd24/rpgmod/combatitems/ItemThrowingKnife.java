@@ -30,6 +30,7 @@ public class ItemThrowingKnife extends ItemSword{
 		this.damage = 2.0F + material.getDamageVsEntity();
 	}
 	
+	
 	/**
      * Called whenever this item is equipped and the right mouse button is pressed. Args: itemStack, world, entityPlayer
      */
@@ -46,8 +47,10 @@ public class ItemThrowingKnife extends ItemSword{
         {
             // Create a projectile entity for the thrown hand grenade
         	
+        	ItemThrowingKnifeEntity knife = new ItemThrowingKnifeEntity(par2World, par3EntityPlayer).setDamage(this.damage); 
+        	
         	// TODO: Fix throwing knives
-        	par2World.spawnEntityInWorld(new ItemThrowingKnifeEntity(par2World, par3EntityPlayer, this.damage));
+        	par2World.spawnEntityInWorld(knife);
         }
 
         return par1ItemStack;

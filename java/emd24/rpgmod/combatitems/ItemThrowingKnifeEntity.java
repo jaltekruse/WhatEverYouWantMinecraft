@@ -10,22 +10,19 @@ public class ItemThrowingKnifeEntity extends EntityThrowable {
 	
 	private float damage;
 	
-	public ItemThrowingKnifeEntity(World par1World, float damage)
+	public ItemThrowingKnifeEntity(World par1World)
     {
         super(par1World);
-        this.damage = damage;
     }
 
-    public ItemThrowingKnifeEntity(World par1World, EntityLivingBase par2EntityLivingBase, float damage)
+    public ItemThrowingKnifeEntity(World par1World, EntityLivingBase par2EntityLivingBase)
     {
         super(par1World, par2EntityLivingBase);
-        this.damage = damage;
     }
 
-    public ItemThrowingKnifeEntity(World par1World, double par2, double par4, double par6, float damage)
+    public ItemThrowingKnifeEntity(World par1World, double par2, double par4, double par6)
     {
         super(par1World, par2, par4, par6);
-        this.damage = damage;
     }
 
     /**
@@ -43,4 +40,15 @@ public class ItemThrowingKnifeEntity extends EntityThrowable {
             this.setDead();
         }
     }
+
+	public float getDamage() {
+		return damage;
+	}
+
+	public ItemThrowingKnifeEntity setDamage(float damage) {
+		this.damage = damage;
+		return this;
+	}
+    
+    
 }

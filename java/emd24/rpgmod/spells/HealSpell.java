@@ -3,6 +3,7 @@ package emd24.rpgmod.spells;
 import java.util.ArrayList;
 
 import emd24.rpgmod.ExtendedPlayerData;
+import emd24.rpgmod.packets.PacketPipeline;
 import emd24.rpgmod.party.PartyManagerServer;
 import emd24.rpgmod.spells.entities.MagicLightning;
 import net.minecraft.client.Minecraft;

@@ -80,9 +80,10 @@ public class MagicLightning extends EntityLightningBolt
     /**
      * Called to update the entity's position/logic.
      */
+    @Override
     public void onUpdate()
     {
-        super.onUpdate();
+        //super.onUpdate();
 
         if (this.lightningState == 2)
         {
@@ -126,7 +127,7 @@ public class MagicLightning extends EntityLightningBolt
             }
             else
             {
-                double d0 = 0.5D;
+                double d0 = 1.5D;
                 List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, AxisAlignedBB.getAABBPool().getAABB(this.posX - d0, this.posY - d0, this.posZ - d0, this.posX + d0, this.posY + 6.0D + d0, this.posZ + d0));
 
                 for (int l = 0; l < list.size(); ++l)
