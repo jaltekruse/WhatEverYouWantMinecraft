@@ -55,12 +55,13 @@ public class TestDialogueTreeNode {
 	@Test
 	public void test_delete_child() {
 		tree_node.addChild();
-		assertEquals(tree_node.children.size(), 1);
+		tree_node.addChild();
+		assertEquals(tree_node.children.size(), 2);
 		
 		DialogueTreeNode child = tree_node.children.get(0);
 		
 		child.remove();
-		assertEquals(tree_node.children.size(), 0);	//can delete replies
+		assertEquals(tree_node.children.size(), 1);	//can delete replies
 	}
 
 	@Test

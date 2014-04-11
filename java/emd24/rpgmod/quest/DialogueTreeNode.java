@@ -47,7 +47,7 @@ public class DialogueTreeNode {
 	public DialogueTreeNode addChild() {
 		if(this.isReply && this.children.size() != 0)
 			return null;
-		DialogueTreeNode child = new DialogueTreeNode();
+		DialogueTreeNode child = new DialogueTreeNode(this);
 		child.isReply = !isReply;
 		if(child.isReply) {
 			child.addChild();
@@ -139,6 +139,11 @@ public class DialogueTreeNode {
 	}
 
 	public void remove() {
-		// TODO Auto-generated method stub
+		if(this.isReply && this.parent != null) {
+			if(parent.children.size() > 1) {
+				parent.children.remove(this);
+				this.parent = null;	
+			}
+		}
 	}
 }
