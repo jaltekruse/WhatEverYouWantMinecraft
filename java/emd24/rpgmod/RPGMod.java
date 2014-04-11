@@ -49,6 +49,7 @@ import emd24.rpgmod.skills.SkillRegistry;
 import emd24.rpgmod.skills.SkillThieving;
 import emd24.rpgmod.skills.ThievingData;
 import emd24.rpgmod.spells.*;
+import emd24.test.TestSpawner;
 /*
  * Basic needed forge stuff
  */
@@ -80,9 +81,13 @@ public class RPGMod {
 	public static Item battleAxeStone;
 	public static Item axeRevenge;
 	public static Item throwingKnifeStone;
+	
+	public static Item testSpawner;
 
 	public static Block sodium;
 	public static Block elementium;
+	public static Block clearerGlass;
+	
 
 	private static int modEntityID = 0;
 
@@ -113,6 +118,7 @@ public class RPGMod {
 
 		GameRegistry.registerBlock(elementium, elementium.getUnlocalizedName());
 		GameRegistry.registerBlock(sodium, sodium.getUnlocalizedName());
+		GameRegistry.registerBlock(clearerGlass, clearerGlass.getUnlocalizedName());
 
 		// Register Items
 		
@@ -190,6 +196,7 @@ public class RPGMod {
 		
 		healMana = new ItemManaHeal().setCreativeTab(CreativeTabs.tabMisc).setUnlocalizedName("heal_mana");
 
+		testSpawner = new TestSpawner().setUnlocalizedName("test_spawner").setTextureName(MOD_ID + ":test_spawner");
 
 		elementium = new BlockOre().setHardness(5.0F).setResistance(5.0F).setStepSound(Block.soundTypeStone)
 				.setBlockName("elementium_ore").setBlockTextureName(MOD_ID + ":elementium_ore").setCreativeTab(CreativeTabs.tabMaterials);
@@ -197,7 +204,15 @@ public class RPGMod {
 		sodium = new BlockOre().setHardness(0.5F).setResistance(5.0F).setStepSound(Block.soundTypeGravel)
 				.setBlockName("sodium").setBlockTextureName(MOD_ID + ":dirt");
 		
-		
+		clearerGlass =  new BlockOre(){
+			
+			public boolean isOpaqueCube(){
+				return false;
+			}
+		};
+		clearerGlass.setHardness(0.3F)
+			.setBlockName("clearer_glass2").setBlockTextureName(MOD_ID + ":clearer_glass2")
+			.setCreativeTab(CreativeTabs.tabMaterials);
 		// Register items				
 		
 		GameRegistry.registerItem(lightningSpell, lightningSpell.getUnlocalizedName());
@@ -213,6 +228,8 @@ public class RPGMod {
 		GameRegistry.registerItem(holyHandGrenade, holyHandGrenade.getUnlocalizedName());
 		GameRegistry.registerItem(axeRevenge, axeRevenge.getUnlocalizedName());
 		GameRegistry.registerItem(healParty, healParty.getUnlocalizedName());
+		
+		GameRegistry.registerItem(testSpawner, testSpawner.getUnlocalizedName());
 	}
 	
 	/**
