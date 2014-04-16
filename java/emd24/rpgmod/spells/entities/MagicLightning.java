@@ -40,7 +40,7 @@ public class MagicLightning extends EntityLightningBolt
      * Determines the time before the EntityLightningBolt is destroyed. It is a random integer decremented over time.
      */
     private int boltLivingTime;
-
+    
     private static final String __OBFID = "CL_00001666";
 
     public MagicLightning(World par1World, double par2, double par4, double par6, int power)
@@ -62,18 +62,6 @@ public class MagicLightning extends EntityLightningBolt
             {
                 par1World.setBlock(i, j, k, Blocks.fire);
             }
-
-//            for (i = 0; i < 4; ++i)
-//            {
-//                j = MathHelper.floor_double(par2) + this.rand.nextInt(3) - 1;
-//                k = MathHelper.floor_double(par4) + this.rand.nextInt(3) - 1;
-//                int l = MathHelper.floor_double(par6) + this.rand.nextInt(3) - 1;
-//
-//                if (par1World.getBlock(j, k, l).getMaterial() == Material.air && Blocks.fire.canPlaceBlockAt(par1World, j, k, l))
-//                {
-//                    par1World.setBlock(j, k, l, Blocks.fire);
-//                }
-//            }
         }
     }
 
@@ -83,7 +71,6 @@ public class MagicLightning extends EntityLightningBolt
     @Override
     public void onUpdate()
     {
-        //super.onUpdate();
 
         if (this.lightningState == 2)
         {
