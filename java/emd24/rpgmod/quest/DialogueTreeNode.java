@@ -12,19 +12,33 @@ import net.minecraft.client.gui.GuiScreen;
 
 public class DialogueTreeNode {
 	public List<DialogueTreeNode> children;	//List of children dialogue nodes
+	public DialogueTreeNode parent;	//Parent node
 	public String dialogueText;	//Text display to user, or choices if isReply
 	public String itemNeeded;		//The item ID needed to access this dialogue item
 	public int itemQuantity;		//The quantity of items needed to access this dialogue item
 	public boolean isReply;		//if the node is a reply to a statement made by the character
 	public String action;	//use in a factory to create action stuff
 	
-	public DialogueTreeNode() {
+	protected void Init()
+	{
 		children = new ArrayList<DialogueTreeNode>();
 		dialogueText = "";
 		itemNeeded = "";
 		itemQuantity = 0;
 		isReply = false;
 		action = "";
+		parent = null;
+	}
+	
+	public DialogueTreeNode()
+	{
+		Init();
+	}
+	
+	public DialogueTreeNode(DialogueTreeNode parent)
+	{
+		Init();
+		this.parent = parent;
 	}
 	
 	/*
@@ -33,7 +47,7 @@ public class DialogueTreeNode {
 	public DialogueTreeNode addChild() {
 		if(this.isReply && this.children.size() != 0)
 			return null;
-		DialogueTreeNode child = new DialogueTreeNode();
+		DialogueTreeNode child = new DialogueTreeNode(this);
 		child.isReply = !isReply;
 		if(child.isReply) {
 			child.addChild();
@@ -76,7 +90,7 @@ public class DialogueTreeNode {
 	/**
 	 * Recursive load method for dialogue tree
 	 * 
-	 * @return resuling line number
+	 * @return resulting line number
 	 */
 	protected int load(String[] lines, int lineNumber, String spaces) {
 		String line = lines[lineNumber].trim();
@@ -121,6 +135,15 @@ public class DialogueTreeNode {
 		for(DialogueTreeNode child : children) {
 			//nodes.add(child);
 			child.getList(nodes);
+		}
+	}
+
+	public void remove() {
+		if(this.isReply && this.parent != null) {
+			if(parent.children.size() > 1) {
+				parent.children.remove(this);
+				this.parent = null;	
+			}
 		}
 	}
 }
