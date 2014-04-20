@@ -86,6 +86,7 @@ public class ExtendedEntityLivingDialogueData implements IExtendedEntityProperti
 		this.stealCoolDown = rbt.getInteger("stealTicks");
 		
 		String dialogueString = rbt.getString("dialogueInfo");
+		//System.err.println("nbtData: " + dialogueString);
 		this.dialogueTree.load(dialogueString);
 	}
 	
