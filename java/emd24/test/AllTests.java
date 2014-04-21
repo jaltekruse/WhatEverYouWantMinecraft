@@ -76,6 +76,7 @@ import emd24.rpgmod.RPGMod;
 import emd24.rpgmod.combatitems.HolyHandGrenade;
 import emd24.rpgmod.combatitems.HolyHandGrenadeEntity;
 import emd24.rpgmod.packets.PacketPipeline;
+import emd24.rpgmod.party.PartyManagerServer;
 import emd24.rpgmod.spells.BecomeUndeadSpell;
 import emd24.rpgmod.spells.HealSpell;
 import emd24.rpgmod.spells.ItemManaHeal;
@@ -90,8 +91,12 @@ public class AllTests {
 	MovingObjectPosition hit;
 	CreativeTabs creativeTabs;
 	ItemStack itemS;
-	EntityPlayer mockPlayer;
+	EntityPlayer mockPlayer1;
+	EntityPlayer mockPlayer2;
 	ExtendedPlayerData exPlayerData;
+	
+	public static final String P1_NAME = "player1";
+	public static final String P2_NAME = "player2";
 	
 	private class BlockAirExposer extends BlockAir {}
 	Block airBlock = new BlockAirExposer().setBlockName("air");
@@ -109,6 +114,8 @@ public class AllTests {
 		Profiler mockP = mock(Profiler.class);
 		world = new WorldClient2(mockNHPC, mockWS, 1, EnumDifficulty.PEACEFUL, mockP);
 		world.isRemote = false;
+	    mockPlayer1 = getPlayer(P1_NAME);
+	    mockPlayer2 = getPlayer(P2_NAME);
 	    BlockDoublePlant mockBDP = mock(BlockDoublePlant.class);
 	    
 	    hit = mock(MovingObjectPosition.class);
@@ -116,20 +123,20 @@ public class AllTests {
 	    hit.entityHit = target;
 	    creativeTabs = mock(CreativeTabs.class);
 	    itemS = new ItemStack(theBlock, 3);
-		mockPlayer = mock(EntityPlayerMP.class);
+	}
+	
+	private EntityPlayer getPlayer(String name) {
+		EntityPlayer mockPlayer = mock(EntityPlayerMP.class);
 		mockPlayer.capabilities = new PlayerCapabilities();
 		mockPlayer.capabilities.isCreativeMode = false;
 		mockPlayer.worldObj = world;
-		Class cls = Entity.class;
-		Field f = cls.getDeclaredField("dataWatcher");
-		f.setAccessible(true);
-		f.set(mockPlayer, mock(DataWatcher.class));
-		when(mockPlayer.getEntityAttribute(SharedMonsterAttributes.maxHealth)).thenReturn(mock(IAttributeInstance.class));
 		when(mockPlayer.canPlayerEdit(anyInt(), anyInt(), anyInt(), anyInt(), any(ItemStack.class))).thenReturn(true);
 		exPlayerData = new ExtendedPlayerData(mockPlayer);
 		when(mockPlayer.getExtendedProperties(ExtendedPlayerData.IDENTIFIER)).thenReturn(exPlayerData);
+		when(mockPlayer.getCommandSenderName()).thenReturn(name);
+		return mockPlayer;
 	}
-
+	
 	@Test
 	public void holyHandGrenade(){
 
@@ -138,7 +145,7 @@ public class AllTests {
 		
 		HolyHandGrenade hhg = new HolyHandGrenade();
 		
-		hhg.onItemRightClick(itemS, world, mockPlayer);
+		hhg.onItemRightClick(itemS, world, mockPlayer1);
 	}
 	
 //	private class FMLServerTweaker2 extends FMLServerTweaker {
@@ -154,9 +161,75 @@ public class AllTests {
 //	    }
 //	}
 	
+	private void setPlayerHealth(EntityPlayer player, float health) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+		Class cls = Entity.class;
+		Field f = cls.getDeclaredField("dataWatcher");
+		f.setAccessible(true);
+		DataWatcher dw = mock(DataWatcher.class);
+		when(dw.getWatchableObjectFloat(6)).thenReturn(health);
+		f.set(mockPlayer1, dw);
+	}
+	
+	private void setPlayerMaxHealth(EntityPlayer player, float maxHealth) {
+		IAttributeInstance maxHealthAttr = mock(IAttributeInstance.class);
+		// max health > health, heal can be cast
+		when(maxHealthAttr.getAttributeValue()).thenReturn(8.0);
+		when(mockPlayer1.getEntityAttribute(SharedMonsterAttributes.maxHealth)).thenReturn(maxHealthAttr);
+	}
+	
 	/*
 	  -javaagent:/Users/jaltekruse/Downloads/jacoco-0.7.0.201403182114/lib/jacocoagent.jar="output=file,destfile=/Users/jaltekruse/jacoco.exec"
 	 */
+	@Test
+	public void testIndividualHeal() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+		setPlayerHealth(mockPlayer1, 6);
+		setPlayerMaxHealth(mockPlayer1, 8);
+		Spell spell = new HealSpell(0, creativeTabs, false);
+		spell.onItemRightClick(itemS, world, mockPlayer1);	
+	}
+	
+	@Test
+	public void testIndividualHealFails() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+		setPlayerHealth(mockPlayer1, 4);
+		setPlayerMaxHealth(mockPlayer1, 4);
+		Spell spell = new HealSpell(0, creativeTabs, false);
+		//max health < health, heal fails
+		world.isRemote = false;
+		spell.onItemRightClick(itemS, world, mockPlayer1);
+	}
+	
+	@Test
+	public void testPartyHeal() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+		setPlayerHealth(mockPlayer1, 4);
+		setPlayerHealth(mockPlayer2, 4);
+		setPlayerMaxHealth(mockPlayer1, 8);
+		setPlayerMaxHealth(mockPlayer2, 8);
+		PartyManagerServer.addPlayerToParty(mockPlayer1.getCommandSenderName(), 0);
+		PartyManagerServer.addPlayerToPlayersParty(mockPlayer2.getCommandSenderName(), mockPlayer1.getCommandSenderName());
+		world.isRemote = false;
+		Spell spell = new HealSpell(0, creativeTabs, true);
+
+		spell = new HealSpell(0, creativeTabs, true);
+		spell.onItemRightClick(itemS, world, mockPlayer1);
+		ItemManaHeal spellItem = new ItemManaHeal();
+		spellItem.onItemRightClick(itemS, world, mockPlayer1);
+		spell.onItemUse(itemS, mockPlayer1, world, 1, 1, 1, 1, 1, 1, 1);
+		spell.onItemRightClick(itemS, world, mockPlayer1);
+		mockPlayer1.worldObj.isRemote = false;
+	}
+	
+	@Test
+	public void testBecomeUndeadSpell() {
+		mockPlayer1.worldObj.isRemote = true;
+		Spell spell = new BecomeUndeadSpell(creativeTabs);
+		spell.onItemRightClick(itemS, world, mockPlayer1);
+	}
+	
+	@Test
+	public void summonCreateSpell() {
+		Spell spell = new SummonCreatureSpell(1, creativeTabs);
+		spell.onItemUse(itemS, mockPlayer1, world, 1, 1, 1, 1, 1, 1, 1);
+	}
 	
 	@Test
 	public void lightningSpell(){
@@ -174,22 +247,10 @@ public class AllTests {
 //		EntityPlayerMP mockPlayer = new EntityPlayerMP(null, mockWorldServer, mock(GameProfile.class), null);
 //		EntityPlayer mockPlayer = mock(EntityPlayer.class);
 //		mockPlayer.worldObj = getWorldServer();
-		Spell spell = new LightningSpell(3, creativeTabs);
-		mockPlayer.worldObj.isRemote = false;
-		spell.onItemUse(itemS, mockPlayer, world, 1, 1, 1, 1, 1, 1, 1);
-		spell = new BecomeUndeadSpell(creativeTabs);
-		spell.onItemRightClick(itemS, world, mockPlayer);
-		spell = new SummonCreatureSpell(1, creativeTabs);
-		spell.onItemUse(itemS, mockPlayer, world, 1, 1, 1, 1, 1, 1, 1);
-		spell = new HealSpell(0, creativeTabs, false);
-		spell.onItemRightClick(itemS, world, mockPlayer);
-		spell = new HealSpell(0, creativeTabs, true);
-		spell.onItemRightClick(itemS, world, mockPlayer);
-		ItemManaHeal spellItem = new ItemManaHeal();
-		spellItem.onItemRightClick(itemS, world, mockPlayer);
-		spell.onItemUse(itemS, mockPlayer, world, 1, 1, 1, 1, 1, 1, 1);
-		spell.onItemRightClick(itemS, world, mockPlayer);
-		mockPlayer.worldObj.isRemote = false;
+		Spell spell;
+		spell = new LightningSpell(3, creativeTabs);
+		mockPlayer1.worldObj.isRemote = false;
+		spell.onItemUse(itemS, mockPlayer1, world, 1, 1, 1, 1, 1, 1, 1);
 //		mcServer.stopServer();
 	}
 	
@@ -247,6 +308,16 @@ public class AllTests {
 		
 		public boolean setBlockToAir(int i, int j, int k) {
 			return this.setBlock(i, j, k, airBlock, 0, 3);
+		}
+		
+		public EntityPlayer getPlayerEntityByName(String name){
+			if (name.equals(P1_NAME)){
+				return mockPlayer1;
+			}
+			else if (name.equals(P2_NAME)){
+				return mockPlayer2;
+			}
+			throw new RuntimeException("no player with that name");
 		}
 		
 	}
