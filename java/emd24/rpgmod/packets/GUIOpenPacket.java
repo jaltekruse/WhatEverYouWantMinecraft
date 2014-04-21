@@ -5,6 +5,7 @@ import emd24.rpgmod.ExtendedPlayerData;
 import emd24.rpgmod.RPGMod;
 import emd24.rpgmod.gui.GUIDialogue;
 import emd24.rpgmod.gui.GUIDialogueEditor;
+import emd24.rpgmod.gui.GUIKeyHandler;
 import emd24.rpgmod.quest.ExtendedEntityLivingDialogueData;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -15,7 +16,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class GUIOpenPacket extends AbstractPacket {
 	private NBTTagCompound data;
-	private int type;
+	private int type;	//TODO: Remove
 	private int entityID;
 	private String dialogue;
 	
@@ -56,19 +57,10 @@ public class GUIOpenPacket extends AbstractPacket {
 		EntityLiving target = (EntityLiving) Minecraft.getMinecraft().theWorld.getEntityByID(entityID);
 		//System.err.println("entityID of target: " + target.getEntityId());
 		
-		switch(type)
-		{
-		//Open GUI Dialogue
-		case 0:
-			Minecraft.getMinecraft().displayGuiScreen(new GUIDialogue(target, dialogue));
-			break;
-		//Open GUI Dialogue Editor
-		case 1:
+		if(GUIKeyHandler.npcAdminMode)
 			Minecraft.getMinecraft().displayGuiScreen(new GUIDialogueEditor(target, dialogue));
-			break;
-		default:
-			assert(false);
-		}
+		else
+			Minecraft.getMinecraft().displayGuiScreen(new GUIDialogue(target, dialogue));
 
 	}
 

@@ -235,16 +235,8 @@ public class EventHookContainer {
 				else
 					dialogue = nbtDialogue.dialogueTree.store(); //Otherwise, get current state
 
-				if(GUIKeyHandler.npcAdminMode) {
-//					Minecraft.getMinecraft().displayGuiScreen(new GUIDialogueEditor(target, dialogue));
-					
-					GUIOpenPacket packet = new GUIOpenPacket(1, entityID, dialogue);
-					RPGMod.packetPipeline.sendTo(packet, (EntityPlayerMP)player);
-					
-					event.setCanceled(true);
-				} else if(nbtDialogue.dialogueTree.children.size() > 0){
-//					Minecraft.getMinecraft().displayGuiScreen(new GUIDialogue(target, dialogue));
-					
+				if(true) {
+					//TODO: add logic so that only NPC's hit this section of code
 					GUIOpenPacket packet = new GUIOpenPacket(0, entityID, dialogue);
 					RPGMod.packetPipeline.sendTo(packet, (EntityPlayerMP)player);
 					
