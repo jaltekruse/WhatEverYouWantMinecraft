@@ -67,6 +67,10 @@ public class GUIPartyHUD extends Gui {
 				}
 				
 				EntityPlayer currPlayer = this.instance.theWorld.getPlayerEntityByName(curr);
+				
+				if(currPlayer == null)
+					continue;
+				
 				ExtendedPlayerData data = ExtendedPlayerData.get(currPlayer);
 				
 				boolean drawMana = true;

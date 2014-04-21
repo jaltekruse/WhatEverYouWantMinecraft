@@ -48,8 +48,11 @@ public class GUIDialogueEditor extends GuiScreen
 	
 	EntityLiving target;
 	
+	boolean initialized;
+	
 	public GUIDialogueEditor(EntityLiving target, String dialogue)
 	{
+		initialized = false;
 		
 		selectedNode = tree;
 		selectedIndex = 0;
@@ -107,6 +110,8 @@ public class GUIDialogueEditor extends GuiScreen
 		this.actionTextbox.setDisabledTextColour(-1);
 		this.actionTextbox.setEnableBackgroundDrawing(true);
 		this.actionTextbox.setMaxStringLength(30);
+		
+		initialized = true;
 	}
 	
 	protected void actionPerformed(GuiButton guibutton)
@@ -238,6 +243,8 @@ public class GUIDialogueEditor extends GuiScreen
 	 * @see net.minecraft.client.gui.GuiScreen#handleKeyboardInput()
 	 */
 	public void keyTyped(char par1, int key) {
+		if(!initialized)
+			return;
 		//String chat = par1 + ", " + key;
 		//Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(chat));
 		
