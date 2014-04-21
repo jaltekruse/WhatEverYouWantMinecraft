@@ -11,6 +11,8 @@ import emd24.rpgmod.combatitems.ItemBattleaxe;
 import emd24.rpgmod.gui.GUIDialogue;
 import emd24.rpgmod.gui.GUIDialogueEditor;
 import emd24.rpgmod.gui.GUIKeyHandler;
+import emd24.rpgmod.packets.GUIOpenPacket;
+import emd24.rpgmod.packets.PartyInvitePacket;
 import emd24.rpgmod.packets.PlayerDataPacket;
 import emd24.rpgmod.party.PartyManagerServer;
 import emd24.rpgmod.quest.ExtendedEntityLivingDialogueData;
@@ -225,12 +227,19 @@ public class EventHookContainer {
 			else{
 				//check for NPC dialogue
 				ExtendedEntityLivingDialogueData nbtDialogue = ExtendedEntityLivingDialogueData.get(target);
+				int entityID = target.getEntityId();
+				//Load dialogue from CommonProxy if it exists
+				String dialogue = CommonProxy.getDialogueData(entityID);
+				if(dialogue != null)
+					nbtDialogue.dialogueTree.load(dialogue);
+				else
+					dialogue = nbtDialogue.dialogueTree.store(); //Otherwise, get current state
 
-				if(GUIKeyHandler.npcAdminMode) {
-					Minecraft.getMinecraft().displayGuiScreen(new GUIDialogueEditor(target));
-					event.setCanceled(true);
-				} else if(nbtDialogue.dialogueTree.children.size() > 0){
-					Minecraft.getMinecraft().displayGuiScreen(new GUIDialogue(target));
+				if(true) {
+					//TODO: add logic so that only NPC's hit this section of code
+					GUIOpenPacket packet = new GUIOpenPacket(0, entityID, dialogue);
+					RPGMod.packetPipeline.sendTo(packet, (EntityPlayerMP)player);
+					
 					event.setCanceled(true);
 				} else {
 					// Regular method call

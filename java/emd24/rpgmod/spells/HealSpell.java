@@ -35,13 +35,8 @@ public class HealSpell extends Spell{
 			// Iterate through the player's party and heal the players
 			
 			for(String name : partyNames){
-				//DEBUG
-				//System.out.println("\n\n\n"+name);
 				EntityPlayer player = par2World.getPlayerEntityByName(name);
 				assert(player != null);
-				//DEBUG
-				//System.out.println("player: "+ player.toString());
-				//System.out.println("is this health: " + player.getHealth() + " less than " + player.getMaxHealth());
 				if(player.getHealth() < player.getMaxHealth()){
 					player.heal(this.getBasePower() / partyNames.size());
 					partyHealed = true;
@@ -49,8 +44,6 @@ public class HealSpell extends Spell{
 				
 			}
 			if(!par2World.isRemote && !partyHealed)
-				//DEBUG
-				System.out.println("in that if statement");
 				par3EntityPlayer.addChatMessage(new ChatComponentText("Party fully healed!"));
 			return partyHealed;
 		}

@@ -42,6 +42,7 @@ import emd24.rpgmod.combatitems.ItemThrowingKnife;
 import emd24.rpgmod.combatitems.ItemThrowingKnifeEntity;
 import emd24.rpgmod.gui.GUIKeyHandler;
 import emd24.rpgmod.gui.GUIManaBar;
+import emd24.rpgmod.gui.GUIPartyHUD;
 import emd24.rpgmod.packets.PacketPipeline;
 import emd24.rpgmod.skills.Skill;
 import emd24.rpgmod.skills.SkillPlayer;
@@ -146,7 +147,7 @@ public class RPGMod {
 
 		if (FMLCommonHandler.instance().getEffectiveSide().isClient())
 			MinecraftForge.EVENT_BUS.register(new GUIManaBar(Minecraft.getMinecraft()));
-		
+			MinecraftForge.EVENT_BUS.register(new GUIPartyHUD(Minecraft.getMinecraft()));
 		packetPipeline.postInitialise();
 	}
 	

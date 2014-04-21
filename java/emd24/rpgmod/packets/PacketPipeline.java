@@ -118,6 +118,7 @@ public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, Abstra
 		registerPacket(PlayerDataPacket.class);
 		registerPacket(PartyDataPacket.class);
 		registerPacket(PartyInvitePacket.class);
+		registerPacket(GUIOpenPacket.class);
 	}
 
 	// Method to call from FMLPostInitializationEvent

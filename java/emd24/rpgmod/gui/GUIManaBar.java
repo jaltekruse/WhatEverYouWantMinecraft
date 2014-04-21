@@ -73,7 +73,7 @@ public class GUIManaBar extends Gui{
 		
 		// Draw the inner rectangle
 		this.drawTexturedModalRect(xPos + 1, yPos + 1, 0, 4, pixelLength, 2);
-		
+
 		// Draw Mana value
 		this.drawString(this.instance.fontRenderer, data.getCurrMana() + "/" + data.getMaxMana(), xPos + 72, yPos, 0xffffffff);
 

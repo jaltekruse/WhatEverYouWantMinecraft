@@ -2,6 +2,7 @@ package emd24.rpgmod.gui;
 
 import java.util.HashMap;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.relauncher.Side;
@@ -36,6 +37,16 @@ public class GUISkills extends GuiScreen{
 	
 	public GUISkills(EntityPlayer player){
 		this.player = player;
+	}
+	
+	public void keyTyped(char par1, int key) {
+		switch(key) {
+		// Close
+		case Keyboard.KEY_O:
+			this.mc.displayGuiScreen(null);
+			break;
+		}
+		super.keyTyped(par1, key);
 	}
 	
 	@Override

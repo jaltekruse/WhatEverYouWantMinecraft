@@ -83,6 +83,7 @@ public class DialogueTreeNode {
 	 * Function to retrieve a tree from a string
 	 */
 	public void load(String value) {
+		children.clear();
 		String[] lines = value.split("\n");
 		load(lines, 0, "");
 	}
@@ -95,6 +96,8 @@ public class DialogueTreeNode {
 	protected int load(String[] lines, int lineNumber, String spaces) {
 		String line = lines[lineNumber].trim();
 		String[] values = line.split("`");
+		if(values.length < 6)
+			return 0;
 		
 		int i = 0;
 		dialogueText = values[i++];

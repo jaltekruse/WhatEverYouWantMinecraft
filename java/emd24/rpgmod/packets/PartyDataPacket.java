@@ -53,8 +53,8 @@ public class PartyDataPacket extends AbstractPacket{
 			int party = playerData.getInteger("partyID");
 			PartyManagerClient.setPlayerParty(name, party);
 			
-			String message = "partydata pak: " + name + " : " + party;
-			player.addChatMessage(new ChatComponentText(message));
+			//String message = "partydata pak: " + name + " : " + party;
+			//player.addChatMessage(new ChatComponentText(message));
 		}
 		
 	}
