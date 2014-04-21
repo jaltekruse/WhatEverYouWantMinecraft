@@ -69,14 +69,15 @@ public class RPGMod {
 
 	//Telling forge that we are creating these
 	//items
-	public static Item lightningSpell;
-	public static Item superLightningSpell;
-	public static Item becomeUndead;
-	public static Item summonZombie;
+	public static Spell lightningSpell;
+	public static Spell superLightningSpell;
+	public static Spell becomeUndead;
+	public static Spell summonZombie;
+	public static Spell healSelf;
+	public static Spell healParty;
+	
 	public static Item healMana;
 	public static Item holyHandGrenade;
-	public static Item healSelf;
-	public static Item healParty;
 	
 	public static Item battleAxeStone;
 	public static Item axeRevenge;
@@ -157,26 +158,26 @@ public class RPGMod {
 		
 		// Initialize magic spells
 		
-		lightningSpell = new LightningSpell(10, CreativeTabs.tabCombat)
+		lightningSpell = (Spell) new LightningSpell(10, CreativeTabs.tabCombat)
 		.setManaCost(25).setExperience(50).setUnlocalizedName("lightning")
-		.setTextureName(MOD_ID + ":lightningSpell");
+		.setTextureName(MOD_ID + ":lightning");
 		
-		superLightningSpell = new LightningSpell(20, CreativeTabs.tabCombat)
+		superLightningSpell = (Spell) new LightningSpell(20, CreativeTabs.tabCombat)
 		.setManaCost(40).setExperience(100).setLevelRequired(3).setUnlocalizedName("super_lightning")
-		.setTextureName(MOD_ID + ":superLightning");
+		.setTextureName(MOD_ID + ":super_lightning");
 		
-		becomeUndead = new BecomeUndeadSpell(CreativeTabs.tabCombat)
+		becomeUndead = (Spell) new BecomeUndeadSpell(CreativeTabs.tabCombat)
 		.setManaCost(10).setExperience(10).setUnlocalizedName("become_undead")
-		.setTextureName(MOD_ID + ":becomeundead");
+		.setTextureName(MOD_ID + ":become_undead");
 
-		summonZombie = new SummonCreatureSpell(0, CreativeTabs.tabCombat)
+		summonZombie = (Spell) new SummonCreatureSpell(0, CreativeTabs.tabCombat)
 		.setManaCost(20).setExperience(20).setUnlocalizedName("summon_zombie")
-		.setTextureName(MOD_ID + ":summonzombie");
+		.setTextureName(MOD_ID + ":summon_zombie");
 
-		healSelf = new HealSpell(5, CreativeTabs.tabCombat, false).setManaCost(10)
+		healSelf = (Spell) new HealSpell(5, CreativeTabs.tabCombat, false).setManaCost(10)
 				.setExperience(10).setUnlocalizedName("heal_self");
 		
-		healParty = new HealSpell(15, CreativeTabs.tabCombat, true).setManaCost(35).setUnlocalizedName("heal_party");
+		healParty = (Spell) new HealSpell(15, CreativeTabs.tabCombat, true).setManaCost(35).setUnlocalizedName("heal_party");
 		
 		// Initialize weapons
 		
@@ -215,19 +216,20 @@ public class RPGMod {
 			.setCreativeTab(CreativeTabs.tabMaterials);
 		// Register items				
 		
-		GameRegistry.registerItem(lightningSpell, lightningSpell.getUnlocalizedName());
-		GameRegistry.registerItem(superLightningSpell, superLightningSpell.getUnlocalizedName());
-		GameRegistry.registerItem(becomeUndead, becomeUndead.getUnlocalizedName());
-		GameRegistry.registerItem(summonZombie, summonZombie.getUnlocalizedName());
+		SpellRegistry.registerSpell(lightningSpell);
+		SpellRegistry.registerSpell(superLightningSpell);
+		SpellRegistry.registerSpell(becomeUndead);
+		SpellRegistry.registerSpell(summonZombie);
+		SpellRegistry.registerSpell(healSelf);
+		SpellRegistry.registerSpell(healParty);
+		
 		GameRegistry.registerItem(healMana, healMana.getUnlocalizedName());
-		GameRegistry.registerItem(healSelf, healSelf.getUnlocalizedName());
 		
 		GameRegistry.registerItem(battleAxeStone, battleAxeStone.getUnlocalizedName());
 		GameRegistry.registerItem(throwingKnifeStone, throwingKnifeStone.getUnlocalizedName());
 		
 		GameRegistry.registerItem(holyHandGrenade, holyHandGrenade.getUnlocalizedName());
 		GameRegistry.registerItem(axeRevenge, axeRevenge.getUnlocalizedName());
-		GameRegistry.registerItem(healParty, healParty.getUnlocalizedName());
 		
 		GameRegistry.registerItem(testSpawner, testSpawner.getUnlocalizedName());
 	}

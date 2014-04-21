@@ -24,7 +24,7 @@ import net.minecraft.world.World;
  * @author Evan Dyke
  */
 
-public abstract class Spell extends Item {
+public abstract class Spell extends Item implements Comparable {
 
 	public enum DamageType{
 		WIND, WATER, EARTH, FIRE, HOLY, POS_ENERGY, NEG_ENERGY  
@@ -249,6 +249,24 @@ public abstract class Spell extends Item {
 		this.experience = experience;
 		return this;
 	}
-
+	
+	/**
+	 * Compares two  spells for list sorting. A spell is rated first
+	 * by required level, then by name.
+	 * 
+	 */
+	@Override
+	public int compareTo(Object o) {
+		Spell s = (Spell) o;
+		if(this.levelRequired < s.getLevelRequired()){
+			return -1;
+		}
+		else if(this.levelRequired > s.getLevelRequired()){
+			return 1;
+		}
+		else{
+			return this.getUnlocalizedName().compareTo(s.getUnlocalizedName());
+		}
+	}	
 
 }

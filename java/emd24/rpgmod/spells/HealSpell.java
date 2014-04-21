@@ -63,6 +63,8 @@ public class HealSpell extends Spell{
 				par3EntityPlayer.addChatMessage(new ChatComponentText("At full health!"));
 			return false;
 		}
-	}	
+	}
+
+
 
 }

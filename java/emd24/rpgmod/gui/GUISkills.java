@@ -28,6 +28,8 @@ public class GUISkills extends GuiScreen{
 	public final int xSizeOfTexture = 176;
 	public final int ySizeOfTexture = 166;
 	
+
+	
 	public static final ResourceLocation resource = new ResourceLocation("RPGMod", "textures/gui/"); 
 	private EntityPlayer player;
 	
