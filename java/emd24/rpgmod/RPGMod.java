@@ -47,6 +47,7 @@ import emd24.rpgmod.combatitems.ItemBattleaxe;
 import emd24.rpgmod.combatitems.ItemMageKiller;
 import emd24.rpgmod.combatitems.ItemThrowingKnife;
 import emd24.rpgmod.combatitems.ItemThrowingKnifeEntity;
+import emd24.rpgmod.food.TomatoFood;
 import emd24.rpgmod.gui.GUIKeyHandler;
 import emd24.rpgmod.gui.GUIManaBar;
 import emd24.rpgmod.gui.GUIPartyHUD;
@@ -105,8 +106,12 @@ public class RPGMod {
 	public static Block elementium;
 	public static Block clearerGlass;
 
+
 	public static Potion flyingPotion;
 	public static Potion manaDrain;
+	
+	//FoodItems
+	public static ItemFood tomatoFood;
 
 	private static int modEntityID = 0;
 
@@ -172,8 +177,8 @@ public class RPGMod {
 
 		// Register Items
 
-
-
+		//We're actually doing this in a method below, so we should eventually clean this up...
+		
 		// Register Entities
 
 		EntityRegistry.registerModEntity(HolyHandGrenadeEntity.class, "holy_hand_grenade", ++modEntityID, this, 64, 10, true);
@@ -304,6 +309,14 @@ public class RPGMod {
 
 		//		GameRegistry.registerItem(testSpawner, testSpawner.getUnlocalizedName());
 
+		GameRegistry.registerItem(healParty, healParty.getUnlocalizedName());
+		
+		GameRegistry.registerItem(testSpawner, testSpawner.getUnlocalizedName());
+		
+		//FoodItems
+		GameRegistry.registerItem(tomatoFood, tomatoFood.getUnlocalizedName());
+		tomatoFood = new TomatoFood(4, 2.4f, false);//apple stats once again...
+		
 	}
 
 	/**
