@@ -3,7 +3,10 @@ package emd24.rpgmod;
 /*
  * Basic importing
  */
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
+import java.util.Objects;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockOre;
@@ -17,6 +20,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Potion;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -40,6 +44,7 @@ import emd24.rpgmod.combatitems.ItemAxeOfRevenge;
 import emd24.rpgmod.combatitems.ItemBattleaxe;
 import emd24.rpgmod.combatitems.ItemThrowingKnife;
 import emd24.rpgmod.combatitems.ItemThrowingKnifeEntity;
+import emd24.rpgmod.effects.PotionFly;
 import emd24.rpgmod.gui.GUIKeyHandler;
 import emd24.rpgmod.gui.GUIManaBar;
 import emd24.rpgmod.gui.GUIPartyHUD;
@@ -76,6 +81,7 @@ public class RPGMod {
 	public static Spell summonZombie;
 	public static Spell healSelf;
 	public static Spell healParty;
+	public static Spell flySpell;
 
 	public static Item healMana;
 	public static Item holyHandGrenade;
@@ -89,9 +95,11 @@ public class RPGMod {
 	public static Block sodium;
 	public static Block elementium;
 	public static Block clearerGlass;
-
+	
+	public static Potion flyingPotion;
 
 	private static int modEntityID = 0;
+
 
 	public static final PacketPipeline packetPipeline = new PacketPipeline();
 
@@ -110,6 +118,36 @@ public class RPGMod {
 		// Register Event Handler
 		MinecraftForge.EVENT_BUS.register(new EventHookContainer());
 
+		/* Code below is used to create a new array that makes it easier to modify
+		 * and add potions and effects. Code found in Spartan322's Forge tutorial and
+		 * authored by Lolcroc.
+		 * Tutorial: http://www.minecraftforge.net/wiki/Potion_Tutorial
+		 * Original Forge Forum Post: http://www.minecraftforum.net/topic/1682889-forge-creating-custom-potion-effects/
+		 */
+		Potion[] potionTypes = null;
+
+		for (Field f : Potion.class.getDeclaredFields()) {
+			f.setAccessible(true);
+			try {
+				if (f.getName().equals("potionTypes") || f.getName().equals("field_76425_a")) {
+					Field modfield = Field.class.getDeclaredField("modifiers");
+					modfield.setAccessible(true);
+					modfield.setInt(f, f.getModifiers() & ~Modifier.FINAL);
+
+					potionTypes = (Potion[])f.get(null);
+					final Potion[] newPotionTypes = new Potion[256];
+					System.arraycopy(potionTypes, 0, newPotionTypes, 0, potionTypes.length);
+					f.set(null, newPotionTypes);
+				}
+			}
+			catch (Exception e) {
+				System.err.println("Severe error, please report this to the mod author:");
+				System.err.println(e);
+			}
+		}
+		// End code
+
+		
 		//Register Party Player Tracker
 		//GameRegistry.registerPlayerTracker(new PartyPlayerTracker());
 
@@ -181,6 +219,9 @@ public class RPGMod {
 
 		healParty = (Spell) new HealSpell(15, CreativeTabs.tabCombat, true).setManaCost(35).setUnlocalizedName("heal_party");
 
+		flySpell = (Spell) new SpellFly(0, CreativeTabs.tabCombat).setManaCost(30).setExperience(15).setLevelRequired(2)
+				.setUnlocalizedName("fly").setTextureName(MOD_ID + ":fly");
+
 		// Initialize weapons
 
 		holyHandGrenade = new HolyHandGrenade().setUnlocalizedName("holy_hand_grenade")
@@ -216,7 +257,10 @@ public class RPGMod {
 		clearerGlass.setHardness(0.3F)
 		.setBlockName("clearer_glass2").setBlockTextureName(MOD_ID + ":clearer_glass2")
 		.setCreativeTab(CreativeTabs.tabMaterials);
-		// Register items				
+		
+		flyingPotion = (new PotionFly(32, false, 0)).setIconIndex(0, 0).setPotionName("potion.potion_fly");
+		
+		// Add items to registry				
 
 		SpellRegistry.registerSpell(lightningSpell);
 		SpellRegistry.registerSpell(superLightningSpell);
@@ -224,6 +268,8 @@ public class RPGMod {
 		SpellRegistry.registerSpell(summonZombie);
 		SpellRegistry.registerSpell(healSelf);
 		SpellRegistry.registerSpell(healParty);
+		SpellRegistry.registerSpell(flySpell);
+
 
 		GameRegistry.registerItem(healMana, healMana.getUnlocalizedName());
 

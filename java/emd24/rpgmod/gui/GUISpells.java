@@ -3,6 +3,8 @@ package emd24.rpgmod.gui;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.lwjgl.input.Keyboard;
+
 import emd24.rpgmod.ExtendedPlayerData;
 import emd24.rpgmod.RPGMod;
 import emd24.rpgmod.party.PartyPlayerNode;
@@ -45,6 +47,30 @@ public class GUISpells extends GuiScreen{
 		pageSize = (int) ((height * 1.6) / slotHeight);
 		//System.out.println("\n\nScreenwidth: " + this.width + "\nScreenHeight: " + this.height);
 		buttonList.clear();
+	}
+	
+	public void keyTyped(char par1, int key) {
+		switch(key) {
+		// Move back a page
+		case Keyboard.KEY_UP:
+		case Keyboard.KEY_LEFT:
+			if(currentPage > 0) {
+				currentPage--;
+			}
+			break;
+		// Move forward a page
+		case Keyboard.KEY_DOWN:
+		case Keyboard.KEY_RIGHT:
+			if(currentPage < maxPage){
+				currentPage++;
+			}
+			break;
+		// Close
+		case Keyboard.KEY_P:
+			this.mc.displayGuiScreen(null);
+			break;
+		}
+		super.keyTyped(par1, key);
 	}
 	
 	@Override

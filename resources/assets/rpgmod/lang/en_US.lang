@@ -4,6 +4,9 @@ item.become_undead.name=Become Undead
 item.summon_zombie.name=Summon Zombie
 item.heal_self.name=Heal Self
 item.heal_party.name=Heal Party
+item.fly.name=Fly
+
+potion.potion.potion_fly = Fly
 
 item.heal_mana.name=Mana Heal 
 itle.elementium_ore.name=Elementium

@@ -118,14 +118,14 @@ public class EventHookContainer {
 
 		ExtendedPlayerData data = ExtendedPlayerData.get(event.harvester);
 		for(String skill : SkillRegistry.getSkillNames()){
-			
+
 			// Add experience
 			int experience = SkillRegistry.getSkill(skill).getExpForBlockBreak(event.block);
 
 			if(experience > 0){ 
 				data.addExp(skill, experience);
 			}
-			
+
 			// Determine if player harvests extra items
 			Random rnd = new Random();
 			if(rnd.nextDouble() <= SkillRegistry.getSkill(skill).getHarvestPerkProbability(event.block, 
@@ -160,7 +160,7 @@ public class EventHookContainer {
 				ExtendedPlayerData playerData = ExtendedPlayerData.get(player);
 				playerData.loadNBTData(proxyData);
 				playerData.setCurrMana(playerData.getMaxMana());
-				
+
 			}
 			ExtendedPlayerData.get(player).sync();
 		}
@@ -200,7 +200,7 @@ public class EventHookContainer {
 				if(loot != null){
 
 					// Update data on NPC stolen from, raise alert level
-					
+
 					player.inventory.addItemStackToInventory(loot);
 					player.worldObj.playSoundEffect(player.posX, player.posY, player.posZ, "random.pop", 10000.0F, 0.8F + this.rand.nextFloat() * 0.2F);
 
@@ -209,7 +209,7 @@ public class EventHookContainer {
 					dataTarget.stealCoolDown = 200;
 
 					// Add experience
-					
+
 					int experience = s.getExperience(id);
 
 					if(experience > 0){ 
@@ -239,7 +239,7 @@ public class EventHookContainer {
 					//TODO: add logic so that only NPC's hit this section of code
 					GUIOpenPacket packet = new GUIOpenPacket(0, entityID, dialogue);
 					RPGMod.packetPipeline.sendTo(packet, (EntityPlayerMP)player);
-					
+
 					event.setCanceled(true);
 				} else {
 					// Regular method call
@@ -259,10 +259,28 @@ public class EventHookContainer {
 	 * @param event
 	 */
 	@SubscribeEvent
-	public void undeadPlayerBurn(LivingUpdateEvent event){
+	public void updatePlayer(LivingUpdateEvent event){
 		if (event.entity instanceof EntityPlayer) {
+
+
+
+			// Make the player catch fire if in sunlight or undead
 			EntityPlayer ent = (EntityPlayer) event.entityLiving;
 			ExtendedPlayerData data = ExtendedPlayerData.get(ent);
+
+			// Check if the fly spell is in effect
+			if (ent.isPotionActive(RPGMod.flyingPotion.id)) {
+				ent.capabilities.allowFlying = true;
+			}
+			else{
+				ent.capabilities.allowFlying = false;
+				ent.capabilities.isFlying = false;
+			}
+
+			if (ent.getActivePotionEffect(RPGMod.flyingPotion) != null &&
+					ent.getActivePotionEffect(RPGMod.flyingPotion).getDuration() == 0) {
+				ent.removePotionEffect(RPGMod.flyingPotion.id);
+			}
 
 			if (data.isUndead() && ent.worldObj.isDaytime() && !ent.worldObj.isRemote)
 			{
@@ -298,7 +316,7 @@ public class EventHookContainer {
 		}
 
 	}
-	
+
 	/**
 	 * This method activates an entity is attacked, and updates it with the
 	 * skill modifier
@@ -307,7 +325,7 @@ public class EventHookContainer {
 	 */
 	@SubscribeEvent
 	public void onAttacked(LivingHurtEvent event){
-		
+
 		/* Only does a check if it is the player's skill, which is dynamic. Values
 		 * for mobs are hardcoded for their class, as they don't level up.
 		 * 
@@ -316,44 +334,44 @@ public class EventHookContainer {
 		if(event.source.getSourceOfDamage() instanceof EntityPlayer){
 			EntityPlayer player = (EntityPlayer) event.source.getSourceOfDamage();
 			ExtendedPlayerData playerData = ExtendedPlayerData.get(player);
-			
+
 			/* For each additional level, player deals 5% more damage, rounded down. An int
-			* cast is probably happening deep in the vanilla code somewheres
-			*/
+			 * cast is probably happening deep in the vanilla code somewheres
+			 */
 			event.ammount *= (1.0 + (playerData.getSkill("Strength").getLevel() - 1) * .05);
-			
+
 			/* Adds experience, 4 for each point of damage dealt (in half-hearts). Cannot
 			 * gain more exp for damage than the target has health.
 			 */
 			playerData.addExp("Strength", 4 * Math.min((int) event.ammount, Math.round(event.entityLiving.getHealth())));
-			
+
 		}
 		/* Check for indirect damage sources (such as spells or ranged items)
 		 * 
 		 */
 		else if(event.source instanceof EntityDamageSourceIndirect){
 			EntityDamageSourceIndirect indirectSource = (EntityDamageSourceIndirect) event.source;
-			
+
 			// Check if damaged by projectile thrown by player entity, ranged skill
 			if(indirectSource.isProjectile() && (indirectSource.getEntity() instanceof EntityPlayer)){
-				
+
 				EntityPlayer player = (EntityPlayer) indirectSource.getEntity();
 				ExtendedPlayerData playerData = ExtendedPlayerData.get(player);
-				
+
 				/* For each additional level, player deals 5% more damage, rounded down. An int
-				* cast is probably happening deep in the vanilla code somewheres
-				*/
+				 * cast is probably happening deep in the vanilla code somewheres
+				 */
 				event.ammount *= (1.0 + (playerData.getSkill("Ranged").getLevel() - 1) * .05);
-				
+
 				/* Adds experience, 4 for each point of damage dealt (in half-hearts). Cannot
 				 * gain more exp for damage than the target has health.
 				 */
 				playerData.addExp("Ranged", 4 * Math.min((int) event.ammount, Math.round(event.entityLiving.getHealth())));
 			}
 		}
-		
+
 	}
-	
+
 	/**
 	 * Event that checks if a melee weapon has a requirement to use in battle. 
 	 * 
@@ -363,9 +381,9 @@ public class EventHookContainer {
 	 */
 	@SubscribeEvent
 	public void onItemUse(Start event){
-		
+
 	}
-	
+
 	/**
 	 * This method updates the timer for thievable NPCs to allow their alert level  to gradually reduce
 	 * over  time
@@ -391,6 +409,9 @@ public class EventHookContainer {
 				data.alertTimer = 1200;
 			}
 		}
+
+
+
 		// Regenerate the player's mana
 		if(event.entity instanceof EntityPlayer && !event.entityLiving.worldObj.isRemote){
 			ExtendedPlayerData data = ExtendedPlayerData.get((EntityPlayer) event.entityLiving);
@@ -413,7 +434,7 @@ public class EventHookContainer {
 	 */
 	@SubscribeEvent
 	public void onLightningStrike(EntityStruckByLightningEvent event){
-		
+
 		EntityLightningBolt lightning = event.lightning;
 		Entity entityAttacked = event.entity;
 
