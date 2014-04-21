@@ -16,6 +16,8 @@ import org.lwjgl.input.Keyboard;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import emd24.rpgmod.ExtendedPlayerData;
+import emd24.rpgmod.RPGMod;
+import emd24.rpgmod.packets.GUIOpenPacket;
 import emd24.rpgmod.quest.DialogueTreeNode;
 import emd24.rpgmod.quest.ExtendedEntityLivingDialogueData;
 import net.minecraft.client.Minecraft;
@@ -45,9 +47,8 @@ public class GUIDialogueEditor extends GuiScreen
 	GuiTextField dialogueTextbox, itemTextbox, quantityTextbox, actionTextbox;
 	
 	EntityLiving target;
-	ExtendedEntityLivingDialogueData data;
 	
-	public GUIDialogueEditor(EntityLiving target)
+	public GUIDialogueEditor(EntityLiving target, String dialogue)
 	{
 		
 		selectedNode = tree;
@@ -63,9 +64,9 @@ public class GUIDialogueEditor extends GuiScreen
 		else
 			npcName = "NPC NAME NOT AVAILABLE!";
 		
-		data = ExtendedEntityLivingDialogueData.get(target);
 		
-		tree = data.dialogueTree;
+		tree = new DialogueTreeNode();
+		tree.load(dialogue);
 	}
 	
 	public void initGui()
@@ -221,9 +222,15 @@ public class GUIDialogueEditor extends GuiScreen
 		super.onGuiClosed();
 		Keyboard.enableRepeatEvents(false);
 		
-		//Save NBT Data
-		NBTTagCompound compound = new NBTTagCompound(); 
-		data.saveNBTData(compound);
+		//Send new Dialogue String to server
+		String dialogue = tree.store();
+		
+		int entityID = target.getEntityId();
+		GUIOpenPacket message = new GUIOpenPacket(0, entityID, dialogue);
+		RPGMod.packetPipeline.sendToServer(message);
+
+//		ExtendedEntityLivingDialogueData eeldd = ExtendedEntityLivingDialogueData.get(target);
+//		eeldd.dialogueTree.load(tree.store());
 	}
 	
 	/*

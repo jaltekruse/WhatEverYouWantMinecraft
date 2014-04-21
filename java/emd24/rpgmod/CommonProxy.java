@@ -20,12 +20,25 @@ public class CommonProxy {
 	
 	public static void storeEntityData(String name, NBTTagCompound compound)
 	{
-	extendedPlayerData.put(name, compound);
+		extendedPlayerData.put(name, compound);
 	}
 
 	public static NBTTagCompound getEntityData(String name)
 	{
-	return extendedPlayerData.remove(name);
+		return extendedPlayerData.remove(name);
+	}
+	
+	//Data structure for temporary NBT Data
+	private static final Map<Integer, String> dialogueData = new HashMap<Integer, String>();
+	
+	public static void storeDialogueData(Integer id, String dialogue)
+	{
+		dialogueData.put(id, dialogue);
+	}
+
+	public static String getDialogueData(Integer id)
+	{
+		return dialogueData.remove(id);
 	}
 
 }

@@ -16,6 +16,8 @@ import org.lwjgl.input.Keyboard;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import emd24.rpgmod.ExtendedPlayerData;
+import emd24.rpgmod.RPGMod;
+import emd24.rpgmod.packets.GUIOpenPacket;
 import emd24.rpgmod.quest.DialogueTreeNode;
 import emd24.rpgmod.quest.ExtendedEntityLivingDialogueData;
 import net.minecraft.client.Minecraft;
@@ -38,9 +40,8 @@ public class GUIDialogue extends GuiScreen
 	int backgroundColor;
 	
 	EntityLiving target;
-	ExtendedEntityLivingDialogueData data;
 	
-	public GUIDialogue(EntityLiving target)
+	public GUIDialogue(EntityLiving target, String dialogue)
 	{
 		
 		backgroundColor = 0x60ff0000;
@@ -51,9 +52,8 @@ public class GUIDialogue extends GuiScreen
 		else
 			npcName = "NPC NAME NOT AVAILABLE!";
 		
-		data = ExtendedEntityLivingDialogueData.get(target);
-		
-		tree = data.dialogueTree;
+		tree = new DialogueTreeNode();
+		tree.load(dialogue);
 		
 		selectedNode = tree;
 	}
@@ -111,10 +111,6 @@ public class GUIDialogue extends GuiScreen
 	{
 		super.onGuiClosed();
 		Keyboard.enableRepeatEvents(false);
-		
-		//Save NBT Data
-		NBTTagCompound compound = new NBTTagCompound(); 
-		data.saveNBTData(compound);
 	}
 	
 	/*

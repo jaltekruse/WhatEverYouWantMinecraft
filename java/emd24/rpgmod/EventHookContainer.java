@@ -227,16 +227,25 @@ public class EventHookContainer {
 			else{
 				//check for NPC dialogue
 				ExtendedEntityLivingDialogueData nbtDialogue = ExtendedEntityLivingDialogueData.get(target);
+				int entityID = target.getEntityId();
+				//Load dialogue from CommonProxy if it exists
+				String dialogue = CommonProxy.getDialogueData(entityID);
+				if(dialogue != null)
+					nbtDialogue.dialogueTree.load(dialogue);
+				else
+					dialogue = nbtDialogue.dialogueTree.store(); //Otherwise, get current state
 
 				if(GUIKeyHandler.npcAdminMode) {
-					Minecraft.getMinecraft().displayGuiScreen(new GUIDialogueEditor(target));
+//					Minecraft.getMinecraft().displayGuiScreen(new GUIDialogueEditor(target, dialogue));
+					
+					GUIOpenPacket packet = new GUIOpenPacket(1, entityID, dialogue);
+					RPGMod.packetPipeline.sendTo(packet, (EntityPlayerMP)player);
+					
 					event.setCanceled(true);
 				} else if(nbtDialogue.dialogueTree.children.size() > 0){
-					//Minecraft.getMinecraft().displayGuiScreen(new GUIDialogue(target));
-					int entityID = target.getEntityId();
-					System.err.println("entityID sent: " + entityID);
-					GUIOpenPacket packet = new GUIOpenPacket(0, entityID);
+//					Minecraft.getMinecraft().displayGuiScreen(new GUIDialogue(target, dialogue));
 					
+					GUIOpenPacket packet = new GUIOpenPacket(0, entityID, dialogue);
 					RPGMod.packetPipeline.sendTo(packet, (EntityPlayerMP)player);
 					
 					event.setCanceled(true);
