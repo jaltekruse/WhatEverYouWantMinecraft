@@ -18,6 +18,10 @@ public class CommonProxy {
 		// Nothing here as the server doesn't render graphics or entities!
 	}
 	
+	public void registerKeys(){
+		// Nothing happens here as we want keystuff to happen on client side
+	}
+	
 	public static void storeEntityData(String name, NBTTagCompound compound)
 	{
 		extendedPlayerData.put(name, compound);

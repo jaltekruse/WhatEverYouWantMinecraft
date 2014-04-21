@@ -52,8 +52,7 @@ public class ExtendedPlayerData implements IExtendedEntityProperties{
 	}
 
 	public final static void register(EntityPlayer player){
-		player.registerExtendedProperties(ExtendedPlayerData.IDENTIFIER, 
-				new ExtendedPlayerData(player));
+		player.registerExtendedProperties(ExtendedPlayerData.IDENTIFIER, new ExtendedPlayerData(player));
 	}
 
 	public static ExtendedPlayerData get(EntityPlayer player){
@@ -69,7 +68,7 @@ public class ExtendedPlayerData implements IExtendedEntityProperties{
 	public void saveNBTData(NBTTagCompound compound) {
 		// TODO Auto-generated method stub
 		NBTTagCompound rbt = new NBTTagCompound();
-
+		
 		rbt.setBoolean("undead", this.undead);
 		rbt.setInteger("maxMana", this.maxMana);
 		rbt.setInteger("currMana", this.currMana);
@@ -227,7 +226,7 @@ public class ExtendedPlayerData implements IExtendedEntityProperties{
 
 	public void sync(){
 		if(!player.worldObj.isRemote){
-			RPGMod.packetPipeline.sendTo(new PlayerDataPacket(player), (EntityPlayerMP) player);
+			RPGMod.packetPipeline.sendToAll(new PlayerDataPacket(player));
 		}
 	}
 }

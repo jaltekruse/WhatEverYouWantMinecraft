@@ -61,8 +61,8 @@ public class RPGMod {
 	public static final String MOD_ID = "rpgmod";
 	public static final String VERSION = "0.1";
 
-	
-	
+
+
 	// List where client and server proxy code is located
 	@SidedProxy(clientSide="emd24." + MOD_ID + ".ClientProxy",
 			serverSide="emd24." + MOD_ID + ".CommonProxy")
@@ -76,20 +76,20 @@ public class RPGMod {
 	public static Spell summonZombie;
 	public static Spell healSelf;
 	public static Spell healParty;
-	
+
 	public static Item healMana;
 	public static Item holyHandGrenade;
-	
+
 	public static Item battleAxeStone;
 	public static Item axeRevenge;
 	public static Item throwingKnifeStone;
-	
+
 	public static Item testSpawner;
 
 	public static Block sodium;
 	public static Block elementium;
 	public static Block clearerGlass;
-	
+
 
 	private static int modEntityID = 0;
 
@@ -103,16 +103,16 @@ public class RPGMod {
 
 		// Initialize packet pipeline
 		packetPipeline.initialise();
-		
-		FMLCommonHandler.instance().bus().register(new GUIKeyHandler());
+		this.proxy.registerKeys();
+
 		FMLCommonHandler.instance().bus().register(new EventHookContainer());
-		
+
 		// Register Event Handler
 		MinecraftForge.EVENT_BUS.register(new EventHookContainer());
 
 		//Register Party Player Tracker
 		//GameRegistry.registerPlayerTracker(new PartyPlayerTracker());
-		
+
 		initializeItems();
 		initializeSkills();
 
@@ -123,11 +123,11 @@ public class RPGMod {
 		GameRegistry.registerBlock(clearerGlass, clearerGlass.getUnlocalizedName());
 
 		// Register Items
-		
+
 
 
 		// Register Entities
-		
+
 		EntityRegistry.registerModEntity(HolyHandGrenadeEntity.class, "holy_hand_grenade", ++modEntityID, this, 64, 10, true);
 		EntityRegistry.registerModEntity(ItemThrowingKnifeEntity.class, "throwing_knife", ++modEntityID, this, 64, 10, true);
 
@@ -145,28 +145,29 @@ public class RPGMod {
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 
-		if (FMLCommonHandler.instance().getEffectiveSide().isClient())
+		if (FMLCommonHandler.instance().getEffectiveSide().isClient()){
 			MinecraftForge.EVENT_BUS.register(new GUIManaBar(Minecraft.getMinecraft()));
 			MinecraftForge.EVENT_BUS.register(new GUIPartyHUD(Minecraft.getMinecraft()));
+		}
 		packetPipeline.postInitialise();
 	}
-	
+
 	/**
 	 * Responsible for creating and initializing items for the mod.
 	 * 
 	 */
 	private void initializeItems(){
-		
+
 		// Initialize magic spells
-		
+
 		lightningSpell = (Spell) new LightningSpell(10, CreativeTabs.tabCombat)
 		.setManaCost(25).setExperience(50).setUnlocalizedName("lightning")
 		.setTextureName(MOD_ID + ":lightning");
-		
+
 		superLightningSpell = (Spell) new LightningSpell(20, CreativeTabs.tabCombat)
 		.setManaCost(40).setExperience(100).setLevelRequired(3).setUnlocalizedName("super_lightning")
 		.setTextureName(MOD_ID + ":super_lightning");
-		
+
 		becomeUndead = (Spell) new BecomeUndeadSpell(CreativeTabs.tabCombat)
 		.setManaCost(10).setExperience(10).setUnlocalizedName("become_undead")
 		.setTextureName(MOD_ID + ":become_undead");
@@ -177,25 +178,25 @@ public class RPGMod {
 
 		healSelf = (Spell) new HealSpell(5, CreativeTabs.tabCombat, false).setManaCost(10)
 				.setExperience(10).setUnlocalizedName("heal_self");
-		
+
 		healParty = (Spell) new HealSpell(15, CreativeTabs.tabCombat, true).setManaCost(35).setUnlocalizedName("heal_party");
-		
+
 		// Initialize weapons
-		
+
 		holyHandGrenade = new HolyHandGrenade().setUnlocalizedName("holy_hand_grenade")
 				.setTextureName(MOD_ID + ":holyhandgrenade");
-		
+
 		battleAxeStone = new ItemBattleaxe(ToolMaterial.STONE).setUnlocalizedName("stone_battleaxe")
 				.setTextureName(MOD_ID + ":stone_battleaxe");
-		
+
 		axeRevenge = new ItemAxeOfRevenge().setUnlocalizedName("axe_of_revenge")
 				.setTextureName(MOD_ID + ":axe_of_revenge");
-		
+
 		throwingKnifeStone = new ItemThrowingKnife(Item.ToolMaterial.STONE).setUnlocalizedName("stone_throwing_knife")
 				.setTextureName(RPGMod.MOD_ID + ":throwingKnife");
 
 		// Initialize miscellaneous items
-		
+
 		healMana = new ItemManaHeal().setCreativeTab(CreativeTabs.tabMisc).setUnlocalizedName("heal_mana");
 
 		testSpawner = new TestSpawner().setUnlocalizedName("test_spawner").setTextureName(MOD_ID + ":test_spawner");
@@ -205,42 +206,42 @@ public class RPGMod {
 
 		sodium = new BlockOre().setHardness(0.5F).setResistance(5.0F).setStepSound(Block.soundTypeGravel)
 				.setBlockName("sodium").setBlockTextureName(MOD_ID + ":dirt");
-		
+
 		clearerGlass =  new BlockOre(){
-			
+
 			public boolean isOpaqueCube(){
 				return false;
 			}
 		};
 		clearerGlass.setHardness(0.3F)
-			.setBlockName("clearer_glass2").setBlockTextureName(MOD_ID + ":clearer_glass2")
-			.setCreativeTab(CreativeTabs.tabMaterials);
+		.setBlockName("clearer_glass2").setBlockTextureName(MOD_ID + ":clearer_glass2")
+		.setCreativeTab(CreativeTabs.tabMaterials);
 		// Register items				
-		
+
 		SpellRegistry.registerSpell(lightningSpell);
 		SpellRegistry.registerSpell(superLightningSpell);
 		SpellRegistry.registerSpell(becomeUndead);
 		SpellRegistry.registerSpell(summonZombie);
 		SpellRegistry.registerSpell(healSelf);
 		SpellRegistry.registerSpell(healParty);
-		
+
 		GameRegistry.registerItem(healMana, healMana.getUnlocalizedName());
-		
+
 		GameRegistry.registerItem(battleAxeStone, battleAxeStone.getUnlocalizedName());
 		GameRegistry.registerItem(throwingKnifeStone, throwingKnifeStone.getUnlocalizedName());
-		
+
 		GameRegistry.registerItem(holyHandGrenade, holyHandGrenade.getUnlocalizedName());
 		GameRegistry.registerItem(axeRevenge, axeRevenge.getUnlocalizedName());
-		
+
 		GameRegistry.registerItem(testSpawner, testSpawner.getUnlocalizedName());
 	}
-	
+
 	/**
 	 * Initializes all the skills in the game, adding the correct perks.
 	 * 
 	 */
 	private void initializeSkills(){
-		
+
 		// Mining
 
 		Skill mining = new Skill("Mining");
@@ -267,13 +268,13 @@ public class RPGMod {
 
 		ThievingData villagerThievingData = new ThievingData(EntityId.VILLAGER,	25, 1, 0.9, villagerLoot);
 		thieving.addThievingData(villagerThievingData);
-		
-		
+
+
 		// Ranged weapon requirements
-		
+
 		Skill ranged = new Skill("Ranged");
 		ranged.addItemUseRequirement(holyHandGrenade, 3);
-		
+
 		SkillRegistry.registerSkill(mining);
 		SkillRegistry.registerSkill(treepunching);
 		SkillRegistry.registerSkill(thieving);

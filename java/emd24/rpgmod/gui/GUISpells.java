@@ -10,6 +10,7 @@ import emd24.rpgmod.spells.Spell;
 import emd24.rpgmod.spells.SpellRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -71,7 +72,7 @@ public class GUISpells extends GuiScreen{
 				ExtendedPlayerData data = ExtendedPlayerData.get(player);
 				int color = 0xffffffff;
 				if(data.getSkill("Magic").getLevel() < s.getLevelRequired()){
-					color = 0xff0000ff;
+					color = 0xffff0000;
 				}
 				// Check which side of screen to draw on
 				if(k % 2 == 0){
@@ -79,17 +80,24 @@ public class GUISpells extends GuiScreen{
 					ResourceLocation r = new ResourceLocation(RPGMod.MOD_ID, "textures/items/" + s.getUnlocalizedName().substring(5) + ".png");
 					this.instance.getTextureManager().bindTexture(r);
 					
-					this.drawTexturedModalRect(50, (k + 1) * slotHeight + 30, 0, 0, 16, 16);
+					this.itemRender.renderItemIntoGUI(this.fontRendererObj, this.mc.getTextureManager(), 
+							new ItemStack(s), 50, (k + 1) * slotHeight + 30);
 					drawString(fontRendererObj, s.getItemStackDisplayName(new ItemStack(s)), 75,
 							(k + 1) * slotHeight + 30, color);
+					drawString(fontRendererObj, "Cost: " + s.getManaCost(), 75,
+							(k + 1) * slotHeight + 45, color);
 				}
+					
 				else{
 					ResourceLocation r = new ResourceLocation(RPGMod.MOD_ID, "textures/items/" + s.getUnlocalizedName().substring(5) + ".png");
 					this.instance.getTextureManager().bindTexture(r);
 					
-					this.drawTexturedModalRect(200, k * slotHeight + 30, 0, 0, 16, 16);
+					this.itemRender.renderItemIntoGUI(this.fontRendererObj, this.mc.getTextureManager(), 
+							new ItemStack(s), 200, k * slotHeight + 30);
 					drawString(fontRendererObj, s.getItemStackDisplayName(new ItemStack(s)), 225,
 							k * slotHeight + 30, color);
+					drawString(fontRendererObj, "Cost: " + s.getManaCost(), 225,
+							k * slotHeight + 45, color);
 				}
 			}
 		}
