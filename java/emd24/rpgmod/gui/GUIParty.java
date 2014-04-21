@@ -34,28 +34,35 @@ import emd24.rpgmod.party.PartyPlayerNode;
  */
 public class GUIParty extends GuiScreen {
 
+	// Keep track of who we are
 	private EntityPlayer player;
 	private int playerPartyID;
 	
+	// List of all players and their parties on the server
 	ArrayList<PartyPlayerNode> list;
+	
+	// Variables for large-focused layout
 	private int pageSize;
 	private int currentPage;
 	private int maxPage;
 	private final int textHeight = 20;
 	private final int slotHeight = 30;
-	private int eightyPercentWidth;
+	
+	// Hold screen space co-ords to aid readability
+	private int fivePercentWidth;
 	private int tenPercentWidth;
 	private int fifteenPercentWidth;
-	private int fivePercentWidth;
+	private int eightyPercentWidth;
 	private int fivePercentHeight;
+	private int tenPercentHeight = fivePercentHeight * 2;
 	private int nintyPercentHeight;
 	
-	HashMap<String, Integer> pAP = PartyManagerClient.playerParty;
-	
+	// Buttons
 	GuiButton leaveBtn;
 	GuiButton[] promoteBtns;
 	GuiButton[] kickBtns;
 	GuiButton[] inviteBtns;
+	
 	String promote = "Promote";
 	String kick = "Kick";
 	String invite = "Invite";
@@ -68,9 +75,9 @@ public class GUIParty extends GuiScreen {
 	
 	public void initGui()
 	{
+		//Initialize and figure out page size
 		currentPage = 0;
 		pageSize = (int)(height * 0.8) / slotHeight;
-		//System.out.println("\n\nScreenwidth: " + this.width + "\nScreenHeight: " + this.height);
 		buttonList.clear();
 	}
 	
@@ -82,7 +89,6 @@ public class GUIParty extends GuiScreen {
 		PartyInvitePacket packet = null;
 		PartyPlayerNode curr = null;
 		int type = 0;
-		//System.out.println("\n\nParty guibutton.id: " + guibutton.id);
 		
 		// Close the gui
 		if (guibutton.id == -1){
@@ -104,7 +110,6 @@ public class GUIParty extends GuiScreen {
 		// Kick buttons
 		else if (guibutton.id <= pageSize * 2){
 			curr = list.get(guibutton.id - pageSize - 1 + currentPage * pageSize);
-			// They're from the same party, so it's a kick.
 			type = 2;
 			packet = new PartyInvitePacket(type, curr.playerName, invitingPlayer);
 			RPGMod.packetPipeline.sendToServer(packet);
@@ -112,7 +117,6 @@ public class GUIParty extends GuiScreen {
 		// Invite Buttons
 		else {
 			curr = list.get(guibutton.id - (pageSize * 2) - 1 + currentPage * pageSize);
-			// It's an invite!
 			type = 1;	
 			packet = new PartyInvitePacket(type, curr.playerName, invitingPlayer);
 			RPGMod.packetPipeline.sendToServer(packet);
@@ -120,9 +124,10 @@ public class GUIParty extends GuiScreen {
 	}
 	
 
-	// Many thanks to Wes for this code structure.
+
 	public void keyTyped(char par1, int key) {
 		switch(key) {
+		// Move back a page
 		case Keyboard.KEY_UP:
 		case Keyboard.KEY_LEFT:
 			if(currentPage > 0) {
@@ -130,6 +135,7 @@ public class GUIParty extends GuiScreen {
 				addButtons();
 			}
 			break;
+		// Move forward a page
 		case Keyboard.KEY_DOWN:
 		case Keyboard.KEY_RIGHT:
 			if(currentPage < maxPage){
@@ -137,6 +143,7 @@ public class GUIParty extends GuiScreen {
 				addButtons();
 			}
 			break;
+		// Close
 		case Keyboard.KEY_P:
 			this.mc.displayGuiScreen(null);
 			break;
@@ -147,11 +154,12 @@ public class GUIParty extends GuiScreen {
 	
 	@Override
 	public void drawScreen(int i, int j, float f){
-		
+		// Get the map of players
 		list = new ArrayList<PartyPlayerNode>();
 		PartyPlayerNode currNode;
-		Set<Map.Entry<String, Integer>> papEntrySet = pAP.entrySet();
+		Set<Map.Entry<String, Integer>> papEntrySet = PartyManagerClient.playerParty.entrySet();
 		Iterator itr = papEntrySet.iterator();
+		// Translate the map to a list and catch what our party number is
 		while(itr.hasNext()){
 			Map.Entry<String, Integer> entry = (Entry<String, Integer>) itr.next();
 			if (entry.getKey().compareTo(player.getCommandSenderName()) == 0){
@@ -160,10 +168,9 @@ public class GUIParty extends GuiScreen {
 			list.add(new PartyPlayerNode(entry.getKey(), entry.getValue()));
 		}
 		
+		// Figure out our pages and add the buttons for that
 		maxPage = list.size() / pageSize;
-		
 		Collections.sort(list);
-		
 		addButtons();
 
 		// Draw background and header
@@ -173,6 +180,7 @@ public class GUIParty extends GuiScreen {
 		drawCenteredString(fontRendererObj, "Party", width / 2, fivePercentHeight * 2, 0xffffffff);
 		drawString(fontRendererObj, "Page: " + (currentPage + 1) + " of " + 
 				(maxPage + 1), tenPercentWidth, nintyPercentHeight - textHeight, 0xffffffff);
+		
 		// Check for Leave Party Button
 		if (playerPartyID == 0){
 			leaveBtn.enabled = false;
@@ -180,16 +188,18 @@ public class GUIParty extends GuiScreen {
 			leaveBtn.enabled = true;
 		}
 		
+		// Fill out each slot
 		for(int k = 0; k < pageSize; k++){
 			// Make sure that we have somebody to put in this slot
 			if(k + currentPage * pageSize < list.size()){
+				//Add the player name and their party number to the display
 				PartyPlayerNode curr = list.get(k + currentPage * pageSize);
 				drawString(fontRendererObj, curr.playerName, tenPercentWidth,
 						(k + 1) * slotHeight + fivePercentHeight * 2, 0xffffffff);
-				drawString(fontRendererObj, "" + curr.partyID, 
+				drawString(fontRendererObj, "" + Math.abs(curr.partyID), 
 						(int)(tenPercentWidth + eightyPercentWidth * .25), 
 						(k + 1) * slotHeight + fivePercentHeight * 2, 0xffffffff);
-				// We are the leader and this person is in our party
+				// If we are the leader and this person is in our party
 				if(playerPartyID < 0 && Math.abs(playerPartyID) == curr.partyID){
 					promoteBtns[k].enabled = true;
 					promoteBtns[k].visible = true;
@@ -198,7 +208,7 @@ public class GUIParty extends GuiScreen {
 					inviteBtns[k].enabled = false;
 					inviteBtns[k].visible = false;
 				} 
-				// Hey! It's ourself.
+				// If it's ourself
 				else if (curr.playerName.compareTo(player.getCommandSenderName()) == 0){
 					promoteBtns[k].enabled = false;
 					promoteBtns[k].visible = false;
@@ -256,14 +266,18 @@ public class GUIParty extends GuiScreen {
 	}
 	
 	void addButtons(){
+		// Reset our buttons
 		buttonList.clear();
+		// Add our two sets of buttons
 		addDoneLeaveButtons();
 		addPromoteKickInviteButtons();
 	}
 	
 	void addDoneLeaveButtons(){
+		// Make sure that our percents are for the current screen dimensions
 		setPercentVariables();
-		leaveBtn = new GuiButton(0, (int)(tenPercentWidth + eightyPercentWidth * .75),
+		// The leave party and leave menu buttons aren't in slots
+		this.leaveBtn = new GuiButton(0, (int)(tenPercentWidth + eightyPercentWidth * .75),
 				nintyPercentHeight - textHeight, 
 				fifteenPercentWidth + fivePercentWidth, textHeight, leave);
 		this.buttonList.add(leaveBtn);
@@ -273,13 +287,17 @@ public class GUIParty extends GuiScreen {
 	}
 	
 	void addPromoteKickInviteButtons(){
+		// Make sure that our percents are for the current screen dimensions
 		setPercentVariables();
+		
+		// Initialize our arrays for the buttons
 		promoteBtns = new GuiButton[pageSize];
 		kickBtns = new GuiButton[pageSize];
 		inviteBtns = new GuiButton[pageSize];
 
-		int z = 1;
-		for(GuiButton e: promoteBtns){
+		// Populate the arrays/slots
+		for(int z = 1; z <= pageSize; z++){
+			// Set up the promote buttons
 			promoteBtns[z - 1] = new GuiButton(z, 
 					(int) (tenPercentWidth + eightyPercentWidth * 0.5), 
 					z * slotHeight + fivePercentHeight * 2, 
@@ -287,10 +305,8 @@ public class GUIParty extends GuiScreen {
 			promoteBtns[z - 1].enabled = false;
 			promoteBtns[z - 1].visible = false;
 			buttonList.add(promoteBtns[z - 1]);
-			z++;
-		}
-		z = 1;
-		for(GuiButton e: kickBtns){
+			
+			// Set up the kick buttons
 			kickBtns[z - 1] = new GuiButton(z + pageSize,
 					(int) (tenPercentWidth + eightyPercentWidth * 0.75),
 					z * slotHeight + fivePercentHeight * 2,
@@ -298,10 +314,8 @@ public class GUIParty extends GuiScreen {
 			kickBtns[z - 1].enabled = false;
 			kickBtns[z - 1].visible = false;
 			buttonList.add(kickBtns[z - 1]);
-			z++;
-		}
-		z = 1;
-		for(GuiButton e: inviteBtns){
+			
+			// Set up the invite buttons
 			inviteBtns[z - 1] = new GuiButton(z + 2 * pageSize,
 					(int) (tenPercentWidth + eightyPercentWidth * 0.75),
 					z * slotHeight + fivePercentHeight * 2,
@@ -309,7 +323,6 @@ public class GUIParty extends GuiScreen {
 			inviteBtns[z - 1].enabled = false;
 			inviteBtns[z - 1].visible = false;
 			buttonList.add(inviteBtns[z - 1]);
-			z++;
 		}
 	}
 }

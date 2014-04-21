@@ -23,6 +23,8 @@ public class PartyManagerServer {
 	 */
 	public static ArrayList<String> getPlayerParty(String name){
 		ArrayList<String> partyPlayerList = new ArrayList<String>();
+		// If the player is not in a party, don't pass back everyone in the
+		// general party by short circuiting the search.
 		for(String playerName : playerParty.keySet()){
 			/* Since the leader has a negative partyID, we must do an absolute  
 			 * value equality check.
@@ -92,9 +94,13 @@ public class PartyManagerServer {
 
 
 	public static void removePlayerFromGame(String playerName){
+		if (playerName == null){
+			return;
+		} else {
 		removePlayerFromParty(playerName, playerName);
 		playerParty.remove(playerName);
 		RPGMod.packetPipeline.sendToAll(new PartyDataPacket());
+		}
 	}
 
 	public static void promotePlayer(String playerName, String oldLeader) {
