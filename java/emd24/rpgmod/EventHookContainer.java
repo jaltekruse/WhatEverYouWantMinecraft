@@ -11,6 +11,8 @@ import emd24.rpgmod.combatitems.ItemBattleaxe;
 import emd24.rpgmod.gui.GUIDialogue;
 import emd24.rpgmod.gui.GUIDialogueEditor;
 import emd24.rpgmod.gui.GUIKeyHandler;
+import emd24.rpgmod.packets.GUIOpenPacket;
+import emd24.rpgmod.packets.PartyInvitePacket;
 import emd24.rpgmod.packets.PlayerDataPacket;
 import emd24.rpgmod.party.PartyManagerServer;
 import emd24.rpgmod.quest.ExtendedEntityLivingDialogueData;
@@ -230,7 +232,13 @@ public class EventHookContainer {
 					Minecraft.getMinecraft().displayGuiScreen(new GUIDialogueEditor(target));
 					event.setCanceled(true);
 				} else if(nbtDialogue.dialogueTree.children.size() > 0){
-					Minecraft.getMinecraft().displayGuiScreen(new GUIDialogue(target));
+					//Minecraft.getMinecraft().displayGuiScreen(new GUIDialogue(target));
+					int entityID = target.getEntityId();
+					System.err.println("entityID sent: " + entityID);
+					GUIOpenPacket packet = new GUIOpenPacket(0, entityID);
+					
+					RPGMod.packetPipeline.sendTo(packet, (EntityPlayerMP)player);
+					
 					event.setCanceled(true);
 				} else {
 					// Regular method call
