@@ -1,5 +1,27 @@
 WhatEverYouWantMinecraft
 ========================
+Note: this instructions assume that you are using Windows, slight modifications will be needed for other operating systems.
+
+<h1>Installing the Mod</h1>
+<ol>
+	<li>This asssumes you already have a Minecraft account with Minecraft installed on your computer</li>
+	<li>Install Minecraft Forge 1.7.2 according to <a href="https://www.youtube.com/watch?v=VfcX9ucyT7s">this video</a></li>
+	<li><a href="http://pages.cs.wisc.edu/~wreardan/rpgmod-1.7.2-0.1.jar">Download the rpgmod jar file</a></li>
+	<li>Put this file into your %appdata%\.minecraft\mods\ folder (~/.minecraft/mods/ on other os)</li>
+	<li>Select the Forge profile and play!</li>
+	<li>You can connect to the server we have set up with the following address: minecraft.4kdev.com</li>
+</ol>
+
+<h1>Setting up a server</h1>
+<ol>
+	<li>Run the Minecraft Forge installer</li>
+	<li>Select the server option</li>
+	<li>Pick an empty directory where you want your server to reside</li>
+	<li>Run the forge jar file</li>
+	<li>Close the server once it finishes loading</li>
+	<li>Copy the rpgmod.jar file into the mods folder</li>
+	<li>Run the forge jar file</li>
+</ol>
 
 <h1>Bug Reports</h1>
 Use the <a href="https://github.com/jaltekruse/WhatEverYouWantMinecraft/issues">GitHub issue tracker</a> to report bugs.
@@ -18,8 +40,6 @@ Use the <a href="https://github.com/jaltekruse/WhatEverYouWantMinecraft/issues">
 	<li>Open Eclipse, set the workspace to the Eclipse directory.  For me: C:\Users\Wesley\Git\forge\eclipse</li>
 	<li>You can now run the program like normal from Eclipse</li>
 	<li>If you get really stuck, check out this <a href="http://www.minecraftforge.net/wiki/Installation/Source">link</a></li>
-	<li></li>
-	<li></li>
 </ol>
 
 <h1>Commands to run once inside the game</h1>
@@ -37,8 +57,10 @@ Most of these items are also available in creative mode under the uncategorized 
 	<li>/give player### rpgmod:item.summon_zombie 64</li>
 	<li>/give player### rpgmod:item.heal_self 64</li>
 	<li>/give player### rpgmod:item.heal_mana 64/li>
-	<li></li>
-	<li></li>
+	<li>O hotkey - Skills</li>
+	<li>P hotkey - Party</li>
+	<li>L hotkey - Rain/Light</li>
+	<li>K hotkey - Enable/Disable admin mode</li>
 </ul>
 
 

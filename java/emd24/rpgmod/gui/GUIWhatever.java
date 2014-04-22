@@ -73,14 +73,7 @@ public class GUIWhatever extends GuiScreen
 		drawDefaultBackground();
 
 		drawRect(20, 20, width - 20, height - 20, 0x60ff0000);
-		drawCenteredString(fontRendererObj, "Fucking Players:", width / 2, 30, 0xffffffff);
-
-		
-		String[] usernames = Minecraft.getMinecraft().getIntegratedServer().getAllUsernames();
-		for(int x = 0; x < usernames.length; x++)
-		{
-			drawCenteredString(fontRendererObj, usernames[x], width / 2, x * 20 + 50, 0xffffffff);
-		}
+		drawCenteredString(fontRendererObj, "Change the fucking game state:", width / 2, 30, 0xffffffff);
 		
 
 		super.drawScreen(i, j, f);
