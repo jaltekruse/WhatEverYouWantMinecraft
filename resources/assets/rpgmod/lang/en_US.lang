@@ -5,6 +5,7 @@ item.summon_zombie.name=Summon Zombie
 item.heal_self.name=Heal Self
 item.heal_party.name=Heal Party
 item.fly.name=Fly
+item.mage_killer.name =Mage Killer
 
 potion.potion.potion_fly = Fly
 

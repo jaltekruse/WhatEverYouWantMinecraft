@@ -42,9 +42,9 @@ import emd24.rpgmod.combatitems.HolyHandGrenade;
 import emd24.rpgmod.combatitems.HolyHandGrenadeEntity;
 import emd24.rpgmod.combatitems.ItemAxeOfRevenge;
 import emd24.rpgmod.combatitems.ItemBattleaxe;
+import emd24.rpgmod.combatitems.ItemMageKiller;
 import emd24.rpgmod.combatitems.ItemThrowingKnife;
 import emd24.rpgmod.combatitems.ItemThrowingKnifeEntity;
-import emd24.rpgmod.effects.PotionFly;
 import emd24.rpgmod.gui.GUIKeyHandler;
 import emd24.rpgmod.gui.GUIManaBar;
 import emd24.rpgmod.gui.GUIPartyHUD;
@@ -89,6 +89,7 @@ public class RPGMod {
 	public static Item battleAxeStone;
 	public static Item axeRevenge;
 	public static Item throwingKnifeStone;
+	public static Item mageKiller;
 
 	public static Item testSpawner;
 
@@ -97,6 +98,7 @@ public class RPGMod {
 	public static Block clearerGlass;
 	
 	public static Potion flyingPotion;
+	public static Potion manaDrain;
 
 	private static int modEntityID = 0;
 
@@ -235,6 +237,10 @@ public class RPGMod {
 
 		throwingKnifeStone = new ItemThrowingKnife(Item.ToolMaterial.STONE).setUnlocalizedName("stone_throwing_knife")
 				.setTextureName(RPGMod.MOD_ID + ":throwingKnife");
+		
+		mageKiller = new ItemMageKiller().setUnlocalizedName("mage_killer")
+				.setTextureName(RPGMod.MOD_ID + ":mage_killer");
+		
 
 		// Initialize miscellaneous items
 
@@ -258,7 +264,9 @@ public class RPGMod {
 		.setBlockName("clearer_glass2").setBlockTextureName(MOD_ID + ":clearer_glass2")
 		.setCreativeTab(CreativeTabs.tabMaterials);
 		
-		flyingPotion = (new PotionFly(32, false, 0)).setIconIndex(0, 0).setPotionName("potion.potion_fly");
+		flyingPotion = (new PotionCustom(32, false, 0)).setPotionName("potion.potion_fly");
+		manaDrain = (new PotionCustom(33,true,0)).setPotionName("potion.potion_manaDrain");
+		
 		
 		// Add items to registry				
 
@@ -275,6 +283,7 @@ public class RPGMod {
 
 		GameRegistry.registerItem(battleAxeStone, battleAxeStone.getUnlocalizedName());
 		GameRegistry.registerItem(throwingKnifeStone, throwingKnifeStone.getUnlocalizedName());
+		GameRegistry.registerItem(mageKiller, mageKiller.getUnlocalizedName());
 
 		GameRegistry.registerItem(holyHandGrenade, holyHandGrenade.getUnlocalizedName());
 		GameRegistry.registerItem(axeRevenge, axeRevenge.getUnlocalizedName());

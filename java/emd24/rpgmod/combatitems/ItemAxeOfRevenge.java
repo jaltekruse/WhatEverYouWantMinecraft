@@ -25,7 +25,7 @@ import net.minecraft.world.World;
  */
 public class ItemAxeOfRevenge extends ItemSword {
 
-	private double damage = 5.0;
+	private float damage = 5.0F;
 
 	public ItemAxeOfRevenge()
 	{
@@ -73,7 +73,7 @@ public class ItemAxeOfRevenge extends ItemSword {
 		 * health lost, starting at 5 (equivalent to stone axe) 
 		 * 
 		 */
-		return Math.round(5.0F + (1 - entityBase.getHealth() / entityBase.getMaxHealth()) * 10);
+		return Math.round(damage + (1 - entityBase.getHealth() / entityBase.getMaxHealth()) * 10);
 
 	}
 

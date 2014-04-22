@@ -1,4 +1,4 @@
-package emd24.rpgmod.effects;
+package emd24.rpgmod.spells;
 
 import net.minecraft.potion.Potion;
 
@@ -12,9 +12,9 @@ import net.minecraft.potion.Potion;
  *
  */
 
-public class PotionFly extends Potion{
+public class PotionCustom extends Potion{
 	
-	public PotionFly(int par1, boolean par2, int par3) {
+	public PotionCustom(int par1, boolean par2, int par3) {
 		super(par1, par2, par3);
 	}
 

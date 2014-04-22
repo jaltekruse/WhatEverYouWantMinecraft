@@ -262,7 +262,7 @@ public class EventHookContainer {
 	public void updatePlayer(LivingUpdateEvent event){
 		if (event.entity instanceof EntityPlayer) {
 
-
+			
 
 			// Make the player catch fire if in sunlight or undead
 			EntityPlayer ent = (EntityPlayer) event.entityLiving;
@@ -276,12 +276,25 @@ public class EventHookContainer {
 				ent.capabilities.allowFlying = false;
 				ent.capabilities.isFlying = false;
 			}
+			
 
 			if (ent.getActivePotionEffect(RPGMod.flyingPotion) != null &&
 					ent.getActivePotionEffect(RPGMod.flyingPotion).getDuration() == 0) {
 				ent.removePotionEffect(RPGMod.flyingPotion.id);
 			}
 
+			// Check if mana drain is in effect
+			/*if (ent.isPotionActive(RPGMod.manaDrain.id)) {
+				ent.capabilities.allowFlying = true;
+			}
+			
+
+			if (ent.getActivePotionEffect(RPGMod.manaDrain) != null &&
+					ent.getActivePotionEffect(RPGMod.manaDrain).getDuration() == 0) {
+				ent.removePotionEffect(RPGMod.manaDrain.id);
+			}*/
+			
+			
 			if (data.isUndead() && ent.worldObj.isDaytime() && !ent.worldObj.isRemote)
 			{
 				float f = ent.getBrightness(1.0F);
@@ -414,9 +427,10 @@ public class EventHookContainer {
 
 		// Regenerate the player's mana
 		if(event.entity instanceof EntityPlayer && !event.entityLiving.worldObj.isRemote){
+			EntityPlayer player = (EntityPlayer) event.entity; 
 			ExtendedPlayerData data = ExtendedPlayerData.get((EntityPlayer) event.entityLiving);
 			data.manaTicks--;
-			if(data.manaTicks == 0){
+			if(data.manaTicks == 0 && !player.isPotionActive(RPGMod.flyingPotion.id)){
 				data.recoverMana(1);
 				data.manaTicks = data.getRegenRate();
 			}
@@ -470,4 +484,5 @@ public class EventHookContainer {
 	public void onPlayerLogout(PlayerLoggedOutEvent event){
 		PartyManagerServer.removePlayerFromGame(event.player.getCommandSenderName());
 	}
+	
 }

@@ -124,7 +124,8 @@ public class ExtendedPlayerData implements IExtendedEntityProperties{
 	}
 
 	public void useMana(int mana){
-		this.currMana -= mana;
+		
+		this.currMana = Math.max(this.currMana - mana, 0);
 		sync();
 	}
 
@@ -226,7 +227,7 @@ public class ExtendedPlayerData implements IExtendedEntityProperties{
 
 	public void sync(){
 		if(!player.worldObj.isRemote){
-			RPGMod.packetPipeline.sendToAll(new PlayerDataPacket(player));
+			RPGMod.packetPipeline.sendTo(new PlayerDataPacket(player), (EntityPlayerMP) this.player);
 		}
 	}
 }
