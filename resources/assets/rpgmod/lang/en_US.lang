@@ -1,0 +1,18 @@
+item.lightning.name=Lightning
+item.super_lightning.name=Super Lightning
+item.become_undead.name=Become Undead
+item.summon_zombie.name=Summon Zombie
+item.heal_self.name=Heal Self
+item.heal_party.name=Heal Party
+item.fly.name=Fly
+item.mage_killer.name =Mage Killer
+
+potion.potion.potion_fly = Fly
+
+item.heal_mana.name=Mana Heal 
+itle.elementium_ore.name=Elementium
+tile.sodium.name=Sodium
+
+item.holy_hand_grenade.name=Holy Hand Grenade of Antioch
+item.stone_battleaxe.name=Stone Battleaxe
+item.axe_of_revenge.name=Axe of Revenge

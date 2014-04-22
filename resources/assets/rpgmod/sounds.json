@@ -1,0 +1,4 @@
+{
+"holyhandgrenadethrow": {"category" : "master" , "sounds": [{"name" : "holyhandgrenadethrow", "stream" : false}]},
+"holyhandgrenadepickup": {"category" : "master" , "sounds": [{"name" : "holyhandgrenadepickup", "stream" : false}]}
+}
