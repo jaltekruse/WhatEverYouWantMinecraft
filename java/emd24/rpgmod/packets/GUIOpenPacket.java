@@ -53,15 +53,8 @@ public class GUIOpenPacket extends AbstractPacket {
 
 	@Override
 	public void handleClientSide(EntityPlayer player) {
-		//System.err.println("entityID received: " + entityID);
-		EntityLiving target = (EntityLiving) Minecraft.getMinecraft().theWorld.getEntityByID(entityID);
-		//System.err.println("entityID of target: " + target.getEntityId());
-		
-		if(GUIKeyHandler.npcAdminMode)
-			Minecraft.getMinecraft().displayGuiScreen(new GUIDialogueEditor(target, dialogue));
-		else
-			Minecraft.getMinecraft().displayGuiScreen(new GUIDialogue(target, dialogue));
-
+		//moved to common proxy to avoid server failing
+		RPGMod.proxy.openDialogueGUI(entityID, dialogue);
 	}
 
 	@Override
