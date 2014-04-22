@@ -66,7 +66,7 @@ public class GUISpells extends GuiScreen{
 			}
 			break;
 		// Close
-		case Keyboard.KEY_P:
+		case Keyboard.KEY_M:
 			this.mc.displayGuiScreen(null);
 			break;
 		}
