@@ -97,11 +97,14 @@ public class GUIScriptEditor extends GuiScreen {
         	String left_trim = line.replaceAll("^\\s+", "");
         	String whitespace = StringUtils.repeat(" ", line.length() - left_trim.length());
         	
+        	//auto-complete curly braces, indent next line further
         	if(last_char == '{')
         	{
             	lines.add(editLine + 1, whitespace + "}");
             	whitespace += " ";
         	}
+        	
+        	//add new line and go to it
         	lines.add(editLine + 1, whitespace);
             this.editLine = this.editLine + 1;
         }
@@ -122,6 +125,7 @@ public class GUIScriptEditor extends GuiScreen {
                 line = line.substring(0, line.length() - 1);
             	lines.set(editLine, line);
         	}
+        	//remove line if there are no characters left in the line
         	else if(lines.size() > 1)
         	{
         		lines.remove(editLine);
