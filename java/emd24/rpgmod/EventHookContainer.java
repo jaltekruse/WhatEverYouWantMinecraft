@@ -382,7 +382,17 @@ public class EventHookContainer {
 				playerData.addExp("Ranged", 4 * Math.min((int) event.ammount, Math.round(event.entityLiving.getHealth())));
 			}
 		}
-
+		
+		/* Check if damage is from hunger, cancel if undead
+		 * 
+		 */
+		if(event.entityLiving instanceof EntityPlayer && event.source == DamageSource.starve){
+			EntityPlayer playerDamaged = (EntityPlayer) event.entityLiving;
+			ExtendedPlayerData data = ExtendedPlayerData.get(playerDamaged);
+			if(data.isUndead()){
+				event.setCanceled(true);	
+			}
+		}
 	}
 
 	/**

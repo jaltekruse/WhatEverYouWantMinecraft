@@ -55,7 +55,6 @@ import emd24.rpgmod.skills.SkillRegistry;
 import emd24.rpgmod.skills.SkillThieving;
 import emd24.rpgmod.skills.ThievingData;
 import emd24.rpgmod.spells.*;
-import emd24.test.TestSpawner;
 /*
  * Basic needed forge stuff
  */
@@ -246,7 +245,7 @@ public class RPGMod {
 
 		healMana = new ItemManaHeal().setCreativeTab(CreativeTabs.tabMisc).setUnlocalizedName("heal_mana");
 
-		testSpawner = new TestSpawner().setUnlocalizedName("test_spawner").setTextureName(MOD_ID + ":test_spawner");
+		//testSpawner = new TestSpawner().setUnlocalizedName("test_spawner").setTextureName(MOD_ID + ":test_spawner");
 
 		elementium = new BlockOre().setHardness(5.0F).setResistance(5.0F).setStepSound(Block.soundTypeStone)
 				.setBlockName("elementium_ore").setBlockTextureName(MOD_ID + ":elementium_ore").setCreativeTab(CreativeTabs.tabMaterials);
@@ -288,7 +287,7 @@ public class RPGMod {
 		GameRegistry.registerItem(holyHandGrenade, holyHandGrenade.getUnlocalizedName());
 		GameRegistry.registerItem(axeRevenge, axeRevenge.getUnlocalizedName());
 
-		GameRegistry.registerItem(testSpawner, testSpawner.getUnlocalizedName());
+//		GameRegistry.registerItem(testSpawner, testSpawner.getUnlocalizedName());
 	}
 
 	/**
