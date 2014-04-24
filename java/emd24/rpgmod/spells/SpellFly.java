@@ -34,7 +34,12 @@ public class SpellFly extends Spell{
 			par3EntityPlayer.addChatMessage(new ChatComponentText("Unable to cast. Goodbye!"));
 			return false;
 		}
-
+		
+		if(par3EntityPlayer.isPotionActive(RPGMod.flyingPotion.id)){
+			par3EntityPlayer.addChatMessage(new ChatComponentText("Already flying!"));
+			return false;
+		}
+		
 		par3EntityPlayer.addPotionEffect(new PotionEffect(RPGMod.flyingPotion.id, 600, 1));
 		return true;
 	}
