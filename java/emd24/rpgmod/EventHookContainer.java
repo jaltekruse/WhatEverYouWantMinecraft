@@ -20,6 +20,7 @@ import emd24.rpgmod.skills.Skill;
 import emd24.rpgmod.skills.SkillManagerServer;
 import emd24.rpgmod.skills.SkillRegistry;
 import emd24.rpgmod.skills.SkillThieving;
+import emd24.rpgmod.spells.Spell;
 import emd24.rpgmod.spells.entities.MagicLightning;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -29,6 +30,7 @@ import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
@@ -167,12 +169,65 @@ public class EventHookContainer {
 	}
 
 	/**
+<<<<<<< HEAD
+=======
+	 * Method where a spell can be used on another entity (such as casting lighting on another player)
+	 * 
+	 * @param event
+	 */
+	@SubscribeEvent
+	public void useSpellOn(EntityInteractEvent event){
+		if(event.entityPlayer.getHeldItem() == null){
+			return;
+		}
+		if (event.entityPlayer.getHeldItem().getItem() instanceof Spell){
+
+			Spell s = (Spell) event.entityPlayer.getHeldItem().getItem();
+			if(!s.onItemUse){
+				return;
+			}
+
+			// Check to see if player has enough mana
+			ExtendedPlayerData properties = ExtendedPlayerData.get(event.entityPlayer);
+			if(properties.getCurrMana() < s.getManaCost()){
+				if(!event.entityPlayer.worldObj.isRemote)
+					event.entityPlayer.addChatMessage(new ChatComponentText("Not enough mana!"));
+			}
+			else if(s.getLevelRequired() > properties.getSkill("Magic").getLevel()){
+				if(!event.entityPlayer.worldObj.isRemote)
+					event.entityPlayer.addChatMessage((new ChatComponentText("Magic Level " + s.getLevelRequired() + 
+							" required").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED))));
+			}
+			else{
+				if(s.castSpell(event.entityPlayer.getHeldItem(), event.entityPlayer, event.entityPlayer.worldObj,
+						(int) event.target.posX, (int) event.target.posY, (int) event.target.posZ, 0)){
+					properties.useMana(s.getManaCost());
+					properties.addExp("Magic", s.getExperience());
+					if (!event.entityPlayer.capabilities.isCreativeMode)
+					{
+						--event.entityPlayer.getHeldItem().stackSize;
+					}
+					if(!event.entityPlayer.worldObj.isRemote){
+						event.entityPlayer.addChatMessage(new ChatComponentText("Mana remaining: " + properties.getCurrMana()));
+					}
+				}
+			}  		
+
+		}
+	}
+
+	/**
 	 * Event that checks for entity interaction and attempts to pickpocket NPC if player is sneaking. 
 	 * 
 	 * @param event
 	 */
 	@SubscribeEvent
 	public void onPickpocket(EntityInteractEvent event){
+		
+		// Exit if casting a spell
+		if((event.entityPlayer.getHeldItem() != null && (event.entityPlayer.getHeldItem().getItem() instanceof Spell))){
+			return;
+		}
 
 		if(event.target instanceof EntityLiving && !event.entityPlayer.worldObj.isRemote){
 			EntityPlayer player = event.entityPlayer;
@@ -262,7 +317,6 @@ public class EventHookContainer {
 	public void updatePlayer(LivingUpdateEvent event){
 		if (event.entity instanceof EntityPlayer) {
 
-			
 
 			// Make the player catch fire if in sunlight or undead
 			EntityPlayer ent = (EntityPlayer) event.entityLiving;
@@ -276,7 +330,6 @@ public class EventHookContainer {
 				ent.capabilities.allowFlying = false;
 				ent.capabilities.isFlying = false;
 			}
-			
 
 			if (ent.getActivePotionEffect(RPGMod.flyingPotion) != null &&
 					ent.getActivePotionEffect(RPGMod.flyingPotion).getDuration() == 0) {
@@ -287,13 +340,13 @@ public class EventHookContainer {
 			/*if (ent.isPotionActive(RPGMod.manaDrain.id)) {
 				ent.capabilities.allowFlying = true;
 			}
-			
+
 
 			if (ent.getActivePotionEffect(RPGMod.manaDrain) != null &&
 					ent.getActivePotionEffect(RPGMod.manaDrain).getDuration() == 0) {
 				ent.removePotionEffect(RPGMod.manaDrain.id);
 			}*/
-			
+		
 			
 			if (data.isUndead() && ent.worldObj.isDaytime() && !ent.worldObj.isRemote)
 			{
@@ -383,6 +436,16 @@ public class EventHookContainer {
 			}
 		}
 
+		/* Check if damage is from hunger, cancel if undead
+		 * 
+		 */
+		if(event.entityLiving instanceof EntityPlayer && event.source == DamageSource.starve){
+			EntityPlayer playerDamaged = (EntityPlayer) event.entityLiving;
+			ExtendedPlayerData data = ExtendedPlayerData.get(playerDamaged);
+			if(data.isUndead()){
+				event.setCanceled(true);	
+			}
+		}
 	}
 
 	/**
@@ -430,7 +493,8 @@ public class EventHookContainer {
 			EntityPlayer player = (EntityPlayer) event.entity; 
 			ExtendedPlayerData data = ExtendedPlayerData.get((EntityPlayer) event.entityLiving);
 			data.manaTicks--;
-			if(data.manaTicks == 0 && !player.isPotionActive(RPGMod.flyingPotion.id)){
+
+			if(data.manaTicks == 0){
 				data.recoverMana(1);
 				data.manaTicks = data.getRegenRate();
 			}
@@ -484,5 +548,5 @@ public class EventHookContainer {
 	public void onPlayerLogout(PlayerLoggedOutEvent event){
 		PartyManagerServer.removePlayerFromGame(event.player.getCommandSenderName());
 	}
-	
+
 }

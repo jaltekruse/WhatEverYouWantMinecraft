@@ -40,7 +40,8 @@ public class SummonCreatureSpell extends Spell{
 	 * ItemMonsterPlacer class, with some modifications made.
 	 */
 	@Override
-	public boolean castSpell(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
+
+	public boolean castSpell(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int x, int y, int z, int side)
 	{
 		if (par3World.isRemote)
         {
@@ -48,18 +49,19 @@ public class SummonCreatureSpell extends Spell{
         } 
         else
         {
-            Block block = par3World.getBlock(par4, par5, par6);
-            par4 += Facing.offsetsXForSide[par7];
-            par5 += Facing.offsetsYForSide[par7];
-            par6 += Facing.offsetsZForSide[par7];
+
+            Block block = par3World.getBlock(x, y, z);
+            x += Facing.offsetsXForSide[side];
+            y += Facing.offsetsYForSide[side];
+            z += Facing.offsetsZForSide[side];
             double d0 = 0.0D;
 
-            if (par7 == 1 && block.getRenderType() == 11)
+            if (side == 1 && block.getRenderType() == 11)
             {
                 d0 = 0.5D;
             }
 
-            Entity entity = ItemMonsterPlacer.spawnCreature(par3World, this.monster_id, (double)par4 + 0.5D, (double)par5 + d0, (double)par6 + 0.5D);
+            Entity entity = ItemMonsterPlacer.spawnCreature(par3World, this.monster_id, (double)x + 0.5D, (double)y + d0, (double)z + 0.5D);
 
             if (entity != null)
             {

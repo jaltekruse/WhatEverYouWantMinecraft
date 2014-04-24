@@ -45,6 +45,6 @@ public class ClientProxy extends CommonProxy {
 		else
 			Minecraft.getMinecraft().displayGuiScreen(new GUIDialogue(target, dialogue));
 	}
-	
+
 }
 

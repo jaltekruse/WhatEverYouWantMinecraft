@@ -38,8 +38,9 @@ public abstract class Spell extends Item implements Comparable {
 	private int cooldown;
 	private int experience = 0;
 
-	protected boolean onItemUse;
-	protected boolean onItemRightClick;
+
+	public boolean onItemUse;
+	public boolean onItemRightClick;
 
 	/**
 	 * Creates a spell object.
@@ -106,7 +107,7 @@ public abstract class Spell extends Item implements Comparable {
 							" required").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED))));
 			}
 			else{
-				if(castSpell(par1ItemStack, par2EntityPlayer, par3World, par4, par5, par6, par7, par8, par9, par10)){
+				if(castSpell(par1ItemStack, par2EntityPlayer, par3World, par4, par5, par6, par7)){
 					properties.useMana(this.manaCost);
 					properties.addExp("Magic", this.getExperience());
 					if (!par2EntityPlayer.capabilities.isCreativeMode)
@@ -182,7 +183,8 @@ public abstract class Spell extends Item implements Comparable {
 	 * @param par9
 	 * @param par10
 	 */
-	public boolean castSpell(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10){
+
+	public boolean castSpell(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int x, int y, int z, int side){
 		System.out.println("FAIL");
 		return true;
 	}

@@ -30,7 +30,8 @@ public class LightningSpell extends Spell{
 	 */
 
 	@Override
-	public boolean castSpell(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10){
+
+	public boolean castSpell(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int x, int y, int z, int side){
 		
 		ExtendedPlayerData playerData = ExtendedPlayerData.get(par2EntityPlayer);
 		
@@ -39,10 +40,9 @@ public class LightningSpell extends Spell{
 		*/
 		int damage = (int) (this.getBasePower() * (1.0 + (playerData.getSkill("Magic").getLevel() - 1) * .05));
 		
-		par3World.playSoundEffect((double)par4 + 0.5D, (double)par5 + 0.5D, (double)par6 + 0.5D, "fire.ignite", 1.0F, itemRand.nextFloat() * 0.4F + 0.8F);
-		par3World.spawnEntityInWorld(new MagicLightning(par3World, par4, par5, par6, this.getBasePower()));
+		par3World.playSoundEffect((double)x + 0.5D, (double)y + 0.5D, (double)z + 0.5D, "fire.ignite", 1.0F, itemRand.nextFloat() * 0.4F + 0.8F);
+		par3World.spawnEntityInWorld(new MagicLightning(par3World, x, y, z, damage));
 		return true;
 	}
-
 
 }
