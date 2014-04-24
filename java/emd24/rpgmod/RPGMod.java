@@ -232,7 +232,7 @@ public class RPGMod {
 				.setUnlocalizedName("fly").setTextureName(MOD_ID + ":fly");
 		
 		fireball = (Spell) new SpellMagicProjectile(6, CreativeTabs.tabCombat).setManaCost(15).setLevelRequired(1)
-				.setUnlocalizedName("fireball");
+				.setUnlocalizedName("magic_fireball");
 
 		// Initialize weapons
 
