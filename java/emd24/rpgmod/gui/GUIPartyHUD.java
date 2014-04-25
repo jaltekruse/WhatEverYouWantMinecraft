@@ -32,7 +32,7 @@ public class GUIPartyHUD extends Gui {
 	private static final int manaHeight = 15;
 	private static final int textHeight = 10;
 	private static final int barHeight = 4;
-	private static final int slotHeight = yBuffer + textHeight + barHeight * 2;
+	private static final int slotHeight = 2 * yBuffer + textHeight * 2 + barHeight * 2;
 	private static final int white = 0xffffffff;
 	
 	public GUIPartyHUD(Minecraft minecraft){
@@ -117,6 +117,10 @@ public class GUIPartyHUD extends Gui {
 					// Draw the inner rectangle
 					this.drawTexturedModalRect(xBuffer + 1, slotOrigin + textHeight + barHeight + 1, 0, 4, pixelLength, 2);
 				}
+				String location = "x: " + (int) currPlayer.posX + " y: " + (int) currPlayer.posY + " z: " + (int) currPlayer.posZ;
+				this.drawString(this.instance.fontRenderer,  location, xBuffer, slotOrigin + textHeight + barHeight + 1
+						+ (drawMana ? 1:0) * (barHeight + 1), white);
+				
 				
 				currSlot++;
 			}

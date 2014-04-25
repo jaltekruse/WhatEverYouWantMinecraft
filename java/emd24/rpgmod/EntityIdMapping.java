@@ -13,7 +13,7 @@ import net.minecraft.entity.passive.EntityVillager;
  */
 public class EntityIdMapping {
 	public enum EntityId{
-		INVALID, VILLAGER
+		INVALID, FARMER,  LIBRARIAN, PRIEST, BLACKSMITH, BUTCHER
 	}
 	/**
 	 * Gets the EntityId that is stored for a given entity.
@@ -23,7 +23,21 @@ public class EntityIdMapping {
 	 */
 	public static EntityId getEntityId(Entity ent){
 		if(ent instanceof EntityVillager){
-			return EntityId.VILLAGER;
+			EntityVillager v = (EntityVillager) ent;
+			// Assign a different ID depending on profession
+			switch(v.getProfession()){
+				case 0:
+					return EntityId.FARMER;
+				case 1: 
+					return EntityId.LIBRARIAN;
+				case 2:
+					return EntityId.PRIEST;
+				case 3:
+					return EntityId.BLACKSMITH;
+				case 4:
+					return EntityId.BUTCHER;
+			}
+						
 		}
 		return EntityId.INVALID;
 		

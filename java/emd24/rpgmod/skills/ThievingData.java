@@ -1,6 +1,7 @@
 package emd24.rpgmod.skills;
 
 import java.util.HashMap;
+import com.google.common.collect.HashMultimap;
 
 import emd24.rpgmod.EntityIdMapping.EntityId;
 

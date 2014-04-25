@@ -7,6 +7,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Objects;
+import com.google.common.collect.HashMultimap;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockOre;
@@ -322,12 +323,14 @@ public class RPGMod {
 
 		SkillThieving thieving = new SkillThieving("Thieving");
 
-		// Create loot of pickpocketing villager
+		// Create loot of pickpocketing villagers
+		
+		// FARMER
 		HashMap<Integer, Double> villagerLoot = new HashMap<Integer, Double>();
 		villagerLoot.put(GameData.itemRegistry.getId("minecraft:cookie"), 0.75);
 		villagerLoot.put(GameData.itemRegistry.getId("minecraft:emerald"), 0.25);
 
-		ThievingData villagerThievingData = new ThievingData(EntityId.VILLAGER,	25, 1, 0.9, villagerLoot);
+		ThievingData villagerThievingData = new ThievingData(EntityId.FARMER, 25, 1, 0.9, villagerLoot);
 		thieving.addThievingData(villagerThievingData);
 
 
