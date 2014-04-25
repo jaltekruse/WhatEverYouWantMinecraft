@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 import emd24.rpgmod.EntityIdMapping.EntityId;
+import emd24.rpgmod.skills.ThievingData.LootEntry;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
@@ -15,7 +16,7 @@ import net.minecraft.item.ItemStack;
  */
 public class SkillThieving extends Skill{
 
-	public static final int VILLAGER_ID = 1;
+
 	
 	private HashMap<EntityId, ThievingData> data;
 
@@ -84,7 +85,7 @@ public class SkillThieving extends Skill{
 		
 		// Check to see if thieving attempt successful
 		Random rnd = new Random();
-		if(rnd.nextDouble() <= Math.min(data.get(id).getProbSuccess() * (1 + (playerLevel - 1.0) / 100.0) / Math.pow(2, alertLevel), 1.0)){
+		if(rnd.nextDouble() <= Math.min(data.get(id).getProbSuccess() * (1 + (playerLevel - 1.0) / 100.0) / alertLevel, 1.0)){
 			
 			
 			/* Randomly generates loot. This is done by generating a random
@@ -97,9 +98,10 @@ public class SkillThieving extends Skill{
 			double value = rnd.nextDouble();
 			double cumProb = 0.0D;
 			for(int i : data.get(id).getLoot().keySet()){
-				cumProb += data.get(id).getLoot().get(i);
+				LootEntry l = data.get(id).getLoot().get(i);
+				cumProb += l.prob;
 				if(value < cumProb){
-					return new ItemStack(Item.getItemById(i), 1, 0);
+					return new ItemStack(Item.getItemById(i), rnd.nextInt(l.highest - l.lowest + 1) + l.lowest, 0);
 				}
 			}
 		}

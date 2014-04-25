@@ -13,13 +13,15 @@ import emd24.rpgmod.EntityIdMapping.EntityId;
  */
 public class ThievingData {
 	
+	private final static double EPSILON = 0.00001;
+	
 	private EntityId entityId;
 	private int level;
 	private int experience;
 	private double probSuccess;
-	private HashMap<Integer, Double> loot;
+	private HashMap<Integer, LootEntry> loot;
 	
-	public ThievingData(EntityId entityId, int experience, int level, double probSuccess, HashMap<Integer, Double> loot){
+	public ThievingData(EntityId entityId, int experience, int level, double probSuccess, HashMap<Integer, LootEntry> loot){
 		this.entityId = entityId;
 		this.level = level;
 		this.probSuccess = probSuccess;
@@ -52,11 +54,11 @@ public class ThievingData {
 		this.probSuccess = probSuccess;
 	}
 
-	public HashMap<Integer, Double> getLoot() {
+	public HashMap<Integer, LootEntry> getLoot() {
 		return loot;
 	}
 
-	public void setLootMap(HashMap<Integer, Double> loot) {
+	public void setLootMap(HashMap<Integer, LootEntry> loot) {
 		this.loot = loot;
 		validateLoot();
 	}
@@ -71,14 +73,34 @@ public class ThievingData {
 	
 	private void validateLoot(){
 		
-		double totalProb = 0.0D;
-		for(Double prob : loot.values()){
-			totalProb += prob;
+		double totalProb = 0.0;
+		for(LootEntry entry : loot.values()){
+			totalProb += entry.prob;
 		}
-		if(totalProb != 1){
+		// Inequality needed to compare double values
+		if(totalProb + EPSILON < 1.0 || totalProb - EPSILON > 1.0){
 			throw new IllegalArgumentException("Entity loot data must total a probability of 1.0 got " +
 					totalProb + " instead");
 		}
+	}
+	
+	/**
+	 * Class to represent data stored with each loot item, such as probability,
+	 * highest, and lowest amount recieved
+	 * 
+	 * @author Owner
+	 *
+	 */
+	public static class LootEntry{
+		public double prob;
+		public int lowest;
+		public int highest;
+		public LootEntry(double prob, int lowest, int highest) {
+			this.prob = prob;
+			this.lowest = lowest;
+			this.highest = highest;
+		}
+		
 	}
 	
 	

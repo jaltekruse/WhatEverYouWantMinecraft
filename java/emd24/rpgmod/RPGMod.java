@@ -7,6 +7,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Objects;
+
 import com.google.common.collect.HashMultimap;
 
 import net.minecraft.block.Block;
@@ -55,10 +56,9 @@ import emd24.rpgmod.skills.SkillPlayer;
 import emd24.rpgmod.skills.SkillRegistry;
 import emd24.rpgmod.skills.SkillThieving;
 import emd24.rpgmod.skills.ThievingData;
+import emd24.rpgmod.skills.ThievingData.LootEntry;
 import emd24.rpgmod.spells.*;
-
 import emd24.test.TestSpawner;
-
 import emd24.rpgmod.spells.entities.MagicBall;
 
 /*
@@ -103,7 +103,7 @@ public class RPGMod {
 	public static Block sodium;
 	public static Block elementium;
 	public static Block clearerGlass;
-	
+
 	public static Potion flyingPotion;
 	public static Potion manaDrain;
 
@@ -156,7 +156,7 @@ public class RPGMod {
 		}
 		// End code
 
-		
+
 		//Register Party Player Tracker
 		//GameRegistry.registerPlayerTracker(new PartyPlayerTracker());
 
@@ -231,7 +231,7 @@ public class RPGMod {
 
 		flySpell = (Spell) new SpellFly(0, CreativeTabs.tabCombat).setManaCost(30).setExperience(15).setLevelRequired(2)
 				.setUnlocalizedName("fly").setTextureName(MOD_ID + ":fly");
-		
+
 		fireball = (Spell) new SpellMagicProjectile(6, CreativeTabs.tabCombat).setManaCost(15).setLevelRequired(1)
 				.setUnlocalizedName("magic_fireball");
 
@@ -248,10 +248,10 @@ public class RPGMod {
 
 		throwingKnifeStone = new ItemThrowingKnife(Item.ToolMaterial.STONE).setUnlocalizedName("stone_throwing_knife")
 				.setTextureName(RPGMod.MOD_ID + ":throwingKnife");
-		
+
 		mageKiller = new ItemMageKiller().setUnlocalizedName("mage_killer")
 				.setTextureName(RPGMod.MOD_ID + ":mage_killer");
-		
+
 
 		// Initialize miscellaneous items
 
@@ -274,11 +274,11 @@ public class RPGMod {
 		clearerGlass.setHardness(0.3F)
 		.setBlockName("clearer_glass2").setBlockTextureName(MOD_ID + ":clearer_glass2")
 		.setCreativeTab(CreativeTabs.tabMaterials);
-		
+
 		flyingPotion = (new PotionCustom(32, false, 0)).setPotionName("potion.potion_fly");
 		manaDrain = (new PotionCustom(33,true,0)).setPotionName("potion.potion_manaDrain");
-		
-		
+
+
 		// Add items to registry				
 
 		SpellRegistry.registerSpell(lightningSpell);
@@ -302,7 +302,7 @@ public class RPGMod {
 		GameRegistry.registerItem(axeRevenge, axeRevenge.getUnlocalizedName());
 
 
-//		GameRegistry.registerItem(testSpawner, testSpawner.getUnlocalizedName());
+		//		GameRegistry.registerItem(testSpawner, testSpawner.getUnlocalizedName());
 
 	}
 
@@ -332,14 +332,80 @@ public class RPGMod {
 		SkillThieving thieving = new SkillThieving("Thieving");
 
 		// Create loot of pickpocketing villagers
-		
-		// FARMER
-		HashMap<Integer, Double> villagerLoot = new HashMap<Integer, Double>();
-		villagerLoot.put(GameData.itemRegistry.getId("minecraft:cookie"), 0.75);
-		villagerLoot.put(GameData.itemRegistry.getId("minecraft:emerald"), 0.25);
 
-		ThievingData villagerThievingData = new ThievingData(EntityId.FARMER, 25, 1, 0.9, villagerLoot);
-		thieving.addThievingData(villagerThievingData);
+		// FARMER
+		HashMap<Integer, LootEntry> farmerLoot = new HashMap<Integer, LootEntry>();
+		farmerLoot.put(GameData.itemRegistry.getId("minecraft:wheat"), new LootEntry(0.35, 3, 6));
+		farmerLoot.put(GameData.itemRegistry.getId("minecraft:carrot"), new LootEntry(0.3, 2, 4));
+		farmerLoot.put(GameData.itemRegistry.getId("minecraft:wool"), new LootEntry(0.2, 2, 4));
+		farmerLoot.put(GameData.itemRegistry.getId("minecraft:emerald"), new LootEntry(0.1, 1, 1));
+		farmerLoot.put(GameData.itemRegistry.getId("minecraft:golden_carrot"), new LootEntry(0.05, 3, 6));
+
+		ThievingData farmerThievingData = new ThievingData(EntityId.FARMER, 30, 1, 0.7, farmerLoot);
+		thieving.addThievingData(farmerThievingData);
+
+		// LIBRARIAN
+		HashMap<Integer, LootEntry> librarianLoot = new HashMap<Integer, LootEntry>();
+		librarianLoot.put(GameData.itemRegistry.getId("minecraft:feather"), new LootEntry(0.4, 1, 3));
+		librarianLoot.put(GameData.itemRegistry.getId("minecraft:paper"), new LootEntry(0.3, 1, 3));
+		librarianLoot.put(GameData.itemRegistry.getId("minecraft:book"), new LootEntry(0.15, 2, 4));
+		librarianLoot.put(GameData.itemRegistry.getId("minecraft:emerald"), new LootEntry(0.1, 1, 1));
+		librarianLoot.put(GameData.itemRegistry.getId("minecraft:compass"), new LootEntry(0.05, 1, 1));
+
+		ThievingData librarianThievingData = new ThievingData(EntityId.LIBRARIAN, 60, 3, 0.65, librarianLoot);
+		thieving.addThievingData(librarianThievingData);
+
+		// PRIEST
+		HashMap<Integer, LootEntry> priestLoot = new HashMap<Integer, LootEntry>();
+		priestLoot.put(GameData.itemRegistry.getId("minecraft:glass_bottle"), new LootEntry(0.4, 1, 2));
+		priestLoot.put(GameData.itemRegistry.getId("minecraft:ender_pearl"), new LootEntry(0.2, 1, 1));
+		priestLoot.put(Item.getIdFromItem(healMana), new LootEntry(0.15, 1, 1));
+		priestLoot.put(GameData.itemRegistry.getId("minecraft:emerald"), new LootEntry(0.1, 1, 1));
+		priestLoot.put(Item.getIdFromItem(holyHandGrenade), new LootEntry(0.15, 1, 1));
+
+		ThievingData priestThievingData = new ThievingData(EntityId.PRIEST, 175, 7, 0.4, priestLoot);
+		thieving.addThievingData(priestThievingData);
+
+		// BLACKSMITH
+		HashMap<Integer, LootEntry> blacksmithLoot = new HashMap<Integer, LootEntry>();
+		blacksmithLoot.put(GameData.itemRegistry.getId("minecraft:coal"), new LootEntry(0.3, 1, 3));
+		blacksmithLoot.put(GameData.itemRegistry.getId("minecraft:iron_ingot"), new LootEntry(0.2, 1, 1));
+		blacksmithLoot.put(GameData.itemRegistry.getId("minecraft:cobblestone"), new LootEntry(0.2, 1, 1));
+		// Iron armor set, 0.1 chance of getting item
+		blacksmithLoot.put(GameData.itemRegistry.getId("minecraft:iron_sword"), new LootEntry(0.02, 1, 1));
+		blacksmithLoot.put(GameData.itemRegistry.getId("minecraft:iron_chestplate"), new LootEntry(0.02, 1, 1));
+		blacksmithLoot.put(GameData.itemRegistry.getId("minecraft:iron_leggings"), new LootEntry(0.02, 1, 1));
+		blacksmithLoot.put(GameData.itemRegistry.getId("minecraft:iron_helmet"), new LootEntry(0.02, 2, 4));
+		blacksmithLoot.put(GameData.itemRegistry.getId("minecraft:iron_boots"), new LootEntry(0.02, 2, 4));
+		
+		blacksmithLoot.put(GameData.itemRegistry.getId("minecraft:emerald"), new LootEntry(0.1, 1, 1));
+		
+		blacksmithLoot.put(GameData.itemRegistry.getId("minecraft:diamond"), new LootEntry(0.025, 1, 1));
+		blacksmithLoot.put(GameData.itemRegistry.getId("minecraft:gold_ingot"), new LootEntry(0.05, 1, 1));
+		// Iron armor set, 0.025 chance of getting item
+		blacksmithLoot.put(GameData.itemRegistry.getId("minecraft:diamond_sword"), new LootEntry(0.005, 1, 1));
+		blacksmithLoot.put(GameData.itemRegistry.getId("minecraft:diamond_chestplate"), new LootEntry(0.005, 1, 1));
+		blacksmithLoot.put(GameData.itemRegistry.getId("minecraft:diamond_leggings"), new LootEntry(0.005, 1, 1));
+		blacksmithLoot.put(GameData.itemRegistry.getId("minecraft:diamond_helmet"), new LootEntry(0.005, 2, 4));
+		blacksmithLoot.put(GameData.itemRegistry.getId("minecraft:diamond_boots"), new LootEntry(0.005, 2, 4));
+		
+		
+		
+
+		ThievingData blacksmithThievingData = new ThievingData(EntityId.BLACKSMITH, 125, 5, 0.3, blacksmithLoot);
+		thieving.addThievingData(blacksmithThievingData);
+
+		// BUTCHER
+		HashMap<Integer, LootEntry> butcherLoot = new HashMap<Integer, LootEntry>();
+		butcherLoot.put(GameData.itemRegistry.getId("minecraft:chicken"), new LootEntry(0.2, 2, 4));
+		butcherLoot.put(GameData.itemRegistry.getId("minecraft:porkchop"), new LootEntry(0.2, 2, 4));
+		butcherLoot.put(GameData.itemRegistry.getId("minecraft:beef"), new LootEntry(0.2, 1, 3));
+		butcherLoot.put(GameData.itemRegistry.getId("minecraft:leather"), new LootEntry(0.2, 2, 4));
+		butcherLoot.put(GameData.itemRegistry.getId("minecraft:emerald"), new LootEntry(0.1, 1, 1));
+		butcherLoot.put(GameData.itemRegistry.getId("minecraft:lead"), new LootEntry(0.1, 1, 1));
+
+		ThievingData butcherThievingData = new ThievingData(EntityId.BUTCHER, 30, 1, 0.7, butcherLoot);
+		thieving.addThievingData(butcherThievingData);
 
 
 		// Ranged weapon requirements

@@ -237,16 +237,24 @@ public class EventHookContainer {
 			if(player.isSneaking() && (SkillRegistry.getSkill("Thieving") instanceof SkillThieving)){
 				ExtendedEntityLivingData dataTarget = ExtendedEntityLivingData.get(target); 
 				SkillThieving s = (SkillThieving) SkillRegistry.getSkill("Thieving");
-
+				
+				ExtendedPlayerData data = ExtendedPlayerData.get(player);
+				
 
 				EntityId id = EntityIdMapping.getEntityId(event.target);
-
+				if(data.getSkill("Thieving").getLevel() < s.getLevelRequirement(id)){
+					if(!player.worldObj.isRemote)
+						player.addChatMessage(new ChatComponentText("Thieving Level " +s.getLevelRequirement(id)
+								+ " required").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+					return;
+				}
+				
 				if(!s.isThievable(id) || dataTarget.stealCoolDown > 0){
 					player.addChatMessage(new ChatComponentText("Nothing to steal!"));
 					return;
 				}
 				player.addChatMessage((new ChatComponentText("Alert Level " + dataTarget.alertLevel)));
-				ExtendedPlayerData data = ExtendedPlayerData.get(player);
+
 
 				// Steal loot from entity
 				ItemStack loot = s.getLoot(id, dataTarget.alertLevel, data.getSkill("Thieving").getLevel());
