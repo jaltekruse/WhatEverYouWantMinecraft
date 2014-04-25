@@ -13,6 +13,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
+
 
 public class GUIOpenPacket extends AbstractPacket {
 	private NBTTagCompound data;
@@ -53,20 +55,18 @@ public class GUIOpenPacket extends AbstractPacket {
 
 	@Override
 	public void handleClientSide(EntityPlayer player) {
-		//System.err.println("entityID received: " + entityID);
-		EntityLiving target = (EntityLiving) Minecraft.getMinecraft().theWorld.getEntityByID(entityID);
-		//System.err.println("entityID of target: " + target.getEntityId());
-		
-		if(GUIKeyHandler.npcAdminMode)
-			Minecraft.getMinecraft().displayGuiScreen(new GUIDialogueEditor(target, dialogue));
-		else
-			Minecraft.getMinecraft().displayGuiScreen(new GUIDialogue(target, dialogue));
+
+		//moved to common proxy to avoid server failing
+		RPGMod.proxy.openDialogueGUI(entityID, dialogue);
+
 
 	}
 
 	@Override
 	public void handleServerSide(EntityPlayer player) {
-		EntityLiving target = (EntityLiving) Minecraft.getMinecraft().theWorld.getEntityByID(entityID);
+
+		EntityLiving target = (EntityLiving) MinecraftServer.getServer().getEntityWorld().getEntityByID(entityID);
+
 //		ExtendedEntityLivingDialogueData eeldd = ExtendedEntityLivingDialogueData.get(target);
 //		eeldd.dialogueTree.load(dialogue);	//TODO: can this line be removed?
 //		

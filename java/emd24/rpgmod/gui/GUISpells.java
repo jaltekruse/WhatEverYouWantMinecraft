@@ -31,6 +31,7 @@ public class GUISpells extends GuiScreen{
 	private int pageSize;
 	private int currentPage;
 	private int maxPage;
+
 	private int spellsPerRow;
 	private int slotHeight = 50;
 	private int slotWidth = 150;
@@ -62,6 +63,7 @@ public class GUISpells extends GuiScreen{
 		buttonList.clear();
 	}
 
+
 	public void keyTyped(char par1, int key) {
 		switch(key) {
 		// Move back a page
@@ -72,12 +74,14 @@ public class GUISpells extends GuiScreen{
 			}
 			break;
 			// Move forward a page
+
 		case Keyboard.KEY_DOWN:
 		case Keyboard.KEY_RIGHT:
 			if(currentPage < maxPage){
 				currentPage++;
 			}
 			break;
+
 			// Close
 		case Keyboard.KEY_M:
 			this.mc.displayGuiScreen(null);
@@ -97,12 +101,10 @@ public class GUISpells extends GuiScreen{
 
 		maxPage = spellList.size() / (2 * slotHeight);
 
-		// Add buttons of the spells to the screen
-		//addIcons();
-
 		// Draw the screen
 
 		drawDefaultBackground();
+
 
 		drawRect(fivePercentWidth, fivePercentHeight, width - fivePercentWidth, height - fivePercentHeight,
 				0xffdddddd);
@@ -110,7 +112,7 @@ public class GUISpells extends GuiScreen{
 		drawCenteredString(fontRendererObj, "Spells", width / 2, fivePercentHeight * 2, 0xffffffff);
 
 		renderText();
-		
+
 		renderIcons();
 	}
 
@@ -136,15 +138,16 @@ public class GUISpells extends GuiScreen{
 			// Only want to display a maximum of 9 spells per page for using numeric keys
 			if(index < spellList.size() && k < 9){
 				Spell s = spellList.get(index);
+
 				ExtendedPlayerData data = ExtendedPlayerData.get(player);
 				int color = 0xffffffff;
 				if(data.getSkill("Magic").getLevel() < s.getLevelRequired()){
 					color = 0xffff0000;
 				}
 
+
 				// Determine offset of the spell slot to start drawing
 				int offset = tenPercentWidth + (index % spellsPerRow) * slotWidth;
-
 
 				drawString(fontRendererObj, s.getItemStackDisplayName(new ItemStack(s)), offset + 32,
 						(k / spellsPerRow) * slotHeight + tenPercentHeight + (slotHeight - 16) / 2, color);
@@ -154,7 +157,7 @@ public class GUISpells extends GuiScreen{
 			}
 		}
 	}
-	
+
 	/**
 	 * Draw the spell icons on the screen
 	 * 
@@ -185,4 +188,3 @@ public class GUISpells extends GuiScreen{
 	}
 
 }
-

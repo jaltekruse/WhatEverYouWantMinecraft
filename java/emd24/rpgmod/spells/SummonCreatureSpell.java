@@ -40,6 +40,7 @@ public class SummonCreatureSpell extends Spell{
 	 * ItemMonsterPlacer class, with some modifications made.
 	 */
 	@Override
+
 	public boolean castSpell(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int x, int y, int z, int side)
 	{
 		if (par3World.isRemote)
@@ -48,6 +49,7 @@ public class SummonCreatureSpell extends Spell{
         } 
         else
         {
+
             Block block = par3World.getBlock(x, y, z);
             x += Facing.offsetsXForSide[side];
             y += Facing.offsetsYForSide[side];

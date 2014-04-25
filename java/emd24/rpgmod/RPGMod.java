@@ -56,7 +56,11 @@ import emd24.rpgmod.skills.SkillRegistry;
 import emd24.rpgmod.skills.SkillThieving;
 import emd24.rpgmod.skills.ThievingData;
 import emd24.rpgmod.spells.*;
+
+import emd24.test.TestSpawner;
+
 import emd24.rpgmod.spells.entities.MagicBall;
+
 /*
  * Basic needed forge stuff
  */
@@ -83,6 +87,7 @@ public class RPGMod {
 	public static Spell healSelf;
 	public static Spell healParty;
 	public static Spell flySpell;
+
 	public static Spell fireball;
 
 	public static Item healMana;
@@ -228,7 +233,7 @@ public class RPGMod {
 				.setUnlocalizedName("fly").setTextureName(MOD_ID + ":fly");
 		
 		fireball = (Spell) new SpellMagicProjectile(6, CreativeTabs.tabCombat).setManaCost(15).setLevelRequired(1)
-				.setUnlocalizedName("fireball");
+				.setUnlocalizedName("magic_fireball");
 
 		// Initialize weapons
 
@@ -283,6 +288,7 @@ public class RPGMod {
 		SpellRegistry.registerSpell(healSelf);
 		SpellRegistry.registerSpell(healParty);
 		SpellRegistry.registerSpell(flySpell);
+
 		SpellRegistry.registerSpell(fireball);
 
 
@@ -295,7 +301,9 @@ public class RPGMod {
 		GameRegistry.registerItem(holyHandGrenade, holyHandGrenade.getUnlocalizedName());
 		GameRegistry.registerItem(axeRevenge, axeRevenge.getUnlocalizedName());
 
+
 //		GameRegistry.registerItem(testSpawner, testSpawner.getUnlocalizedName());
+
 	}
 
 	/**

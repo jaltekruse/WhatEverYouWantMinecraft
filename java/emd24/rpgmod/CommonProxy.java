@@ -44,6 +44,9 @@ public class CommonProxy {
 	{
 		return dialogueData.remove(id);
 	}
-
+	public void openDialogueGUI(int entityID, String dialogue)
+	{
+		//do nothing, override in client
+	}
 }
 

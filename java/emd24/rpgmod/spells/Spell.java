@@ -38,6 +38,7 @@ public abstract class Spell extends Item implements Comparable {
 	private int cooldown;
 	private int experience = 0;
 
+
 	public boolean onItemUse;
 	public boolean onItemRightClick;
 
@@ -182,6 +183,7 @@ public abstract class Spell extends Item implements Comparable {
 	 * @param par9
 	 * @param par10
 	 */
+
 	public boolean castSpell(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int x, int y, int z, int side){
 		System.out.println("FAIL");
 		return true;

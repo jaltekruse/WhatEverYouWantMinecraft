@@ -169,6 +169,8 @@ public class EventHookContainer {
 	}
 
 	/**
+<<<<<<< HEAD
+=======
 	 * Method where a spell can be used on another entity (such as casting lighting on another player)
 	 * 
 	 * @param event
@@ -226,6 +228,7 @@ public class EventHookContainer {
 		if((event.entityPlayer.getHeldItem() != null && (event.entityPlayer.getHeldItem().getItem() instanceof Spell))){
 			return;
 		}
+
 		if(event.target instanceof EntityLiving && !event.entityPlayer.worldObj.isRemote){
 			EntityPlayer player = event.entityPlayer;
 
@@ -315,7 +318,6 @@ public class EventHookContainer {
 		if (event.entity instanceof EntityPlayer) {
 
 
-
 			// Make the player catch fire if in sunlight or undead
 			EntityPlayer ent = (EntityPlayer) event.entityLiving;
 			ExtendedPlayerData data = ExtendedPlayerData.get(ent);
@@ -328,7 +330,6 @@ public class EventHookContainer {
 				ent.capabilities.allowFlying = false;
 				ent.capabilities.isFlying = false;
 			}
-
 
 			if (ent.getActivePotionEffect(RPGMod.flyingPotion) != null &&
 					ent.getActivePotionEffect(RPGMod.flyingPotion).getDuration() == 0) {
@@ -345,8 +346,8 @@ public class EventHookContainer {
 					ent.getActivePotionEffect(RPGMod.manaDrain).getDuration() == 0) {
 				ent.removePotionEffect(RPGMod.manaDrain.id);
 			}*/
-
-
+		
+			
 			if (data.isUndead() && ent.worldObj.isDaytime() && !ent.worldObj.isRemote)
 			{
 				float f = ent.getBrightness(1.0F);
@@ -492,6 +493,7 @@ public class EventHookContainer {
 			EntityPlayer player = (EntityPlayer) event.entity; 
 			ExtendedPlayerData data = ExtendedPlayerData.get((EntityPlayer) event.entityLiving);
 			data.manaTicks--;
+
 			if(data.manaTicks == 0){
 				data.recoverMana(1);
 				data.manaTicks = data.getRegenRate();

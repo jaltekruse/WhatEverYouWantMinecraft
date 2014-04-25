@@ -1,4 +1,4 @@
-package emd24.rpgmod.combatitems;
+package emd24.rpgmod.spells.render;
 
 import org.lwjgl.opengl.GL11;
 
@@ -16,16 +16,16 @@ import net.minecraft.util.ResourceLocation;
  * @author Evan Dyke
  *
  */
-public class RenderHolyHandGrenade extends Render {
+public class RenderMagicBall extends Render {
 
-	private static final ResourceLocation texture = new ResourceLocation(RPGMod.MOD_ID, "textures/entity/HolyHandGrenade.png");
+	private static final ResourceLocation texture = new ResourceLocation(RPGMod.MOD_ID, "textures/entity/fireball.png");
 
 	// if you want a model, be sure to add it here:
 	private ModelBase model;
 
-	public RenderHolyHandGrenade() {
+	public RenderMagicBall() {
 		// we could have initialized it above, but here is fine as well:
-		model = new HolyHandGrenadeModel();
+		model = new ModelFireball();
 	}
 
 	@Override
@@ -56,7 +56,7 @@ public class RenderHolyHandGrenade extends Render {
 		bindTexture(texture);
 
 		// do whatever transformations you need, then render
-		GL11.glRotatef(180, 0, 0, 0);
+
 		// typically you will at least want to translate for x/y/z position:
 		GL11.glTranslated(x, y, z);
 

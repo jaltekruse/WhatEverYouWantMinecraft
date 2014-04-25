@@ -30,6 +30,7 @@ public class LightningSpell extends Spell{
 	 */
 
 	@Override
+
 	public boolean castSpell(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int x, int y, int z, int side){
 		
 		ExtendedPlayerData playerData = ExtendedPlayerData.get(par2EntityPlayer);

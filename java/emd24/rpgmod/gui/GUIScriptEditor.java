@@ -10,8 +10,11 @@ import emd24.rpgmod.packets.GUIOpenPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.util.ChatAllowedCharacters;
 import net.minecraft.util.ChatComponentText;
+
+import javax.script.*;
 
 public class GUIScriptEditor extends GuiScreen {
 	int editLine;
@@ -21,6 +24,12 @@ public class GUIScriptEditor extends GuiScreen {
 	static int line_length = 60;
 	static int max_display_lines = 12;
 
+	ScriptEngineManager factory;
+	ScriptEngine engine;
+	String scriptError;
+	
+	GuiTextField scriptNameTextBox;
+
 	public GUIScriptEditor()
 	{
 		super();
@@ -28,15 +37,29 @@ public class GUIScriptEditor extends GuiScreen {
 		lines = new ArrayList<String>();
 		lines.add("");
 		editLine = 0;
+
+		factory = new ScriptEngineManager();
+		engine = factory.getEngineByName("JavaScript");
+		
+		scriptError = "";
 	}
 	
 	public void initGui()
 	{
-		buttonList.clear();
-		buttonList.add(new GuiButton(1, width*1/8, height - 60, "Save Script"));
-		buttonList.add(new GuiButton(2, width*5/8, height - 60, "Run Script"));
-
 		Keyboard.enableRepeatEvents(true);
+		
+		buttonList.clear();
+		buttonList.add(new GuiButton(1, 30, height - 60, 60, 20, "Save Script"));
+		buttonList.add(new GuiButton(2, width/2, height - 60, 60, 20, "Load Script"));
+		buttonList.add(new GuiButton(3, width*3/4, height - 60, 60, 20, "Run Script"));
+		
+		this.scriptNameTextBox = new GuiTextField(this.fontRendererObj, width / 4, 30, width/2 - 30, 12);
+		this.scriptNameTextBox.setTextColor(-1);
+		this.scriptNameTextBox.setDisabledTextColour(-1);
+		this.scriptNameTextBox.setEnableBackgroundDrawing(true);
+		this.scriptNameTextBox.setMaxStringLength(30);
+		this.scriptNameTextBox.setText("script name");
+		//scriptNameTextBox.setFocused(true);
 	}
 	
 	protected void actionPerformed(GuiButton guibutton)
@@ -44,10 +67,24 @@ public class GUIScriptEditor extends GuiScreen {
 		switch(guibutton.id)
 		{
 		case 1:
-			//Save script
+			//TODO: Save script
 			break;
 		case 2:
+			//TODO: Load script
+			break;
+		case 3:
 			//Run script
+			String script = "";
+			for(String s : lines) {
+				script += s + "\n";
+			}
+			Object result;
+			try {
+				result = engine.eval(script);
+				scriptError = (String) result;
+			} catch(ScriptException e) {
+				scriptError = e.getMessage();
+			}
 			break;
 		default:
 			break;
@@ -59,21 +96,10 @@ public class GUIScriptEditor extends GuiScreen {
 		return false;
 	}
 	
-	public void drawScreen(int i, int j, float f)
+	protected void mouseClicked(int par1, int par2, int par3)
 	{
-		drawDefaultBackground();
-
-		drawRect(20, 20, width - 20, height - 20, 0x60ff0000);
-		drawCenteredString(fontRendererObj, "Edit your fucking script", width / 2, 30, 0xffffffff);
-		
-		//draw lines
-		int num_lines = Math.min(lines.size(), max_display_lines);
-		for(int line_num = 0; line_num < num_lines; line_num++) {
-			int h = 50 + line_num * 10;
-			drawString(fontRendererObj, lines.get(line_num), 30, h, 0xffffffff);
-		}
-
-		super.drawScreen(i, j, f);
+		super.mouseClicked(par1, par2, par3);
+		this.scriptNameTextBox.mouseClicked(par1, par2, par3);
 	}
 	
 	/*
@@ -83,9 +109,15 @@ public class GUIScriptEditor extends GuiScreen {
 	public void keyTyped(char par1, int par2) {
         String line = lines.get(editLine);
         //TODO: add delete key? not terribly important
+		
+        //type in dialogue box
+		if(this.scriptNameTextBox.textboxKeyTyped(par1, par2)) {
+			this.scriptNameTextBox.getText();
+			return;
+		}
         
 		//Up key ->  move up one line
-        if (par2 == 200)
+        if (par2 == 200 && editLine > 0)
         {
             this.editLine = this.editLine - 1;
         }
@@ -148,6 +180,26 @@ public class GUIScriptEditor extends GuiScreen {
         {
             this.mc.displayGuiScreen((GuiScreen)null);
         }
+	}
+	
+	public void drawScreen(int i, int j, float f)
+	{
+		drawDefaultBackground();
+		
+		//draw text box
+		this.scriptNameTextBox.drawTextBox();
+
+		drawRect(20, 20, width - 20, height - 20, 0x60ff0000);
+		drawString(fontRendererObj, scriptError, 30, height - 30, 0xffffffff);
+		
+		//draw lines
+		int num_lines = Math.min(lines.size(), max_display_lines);
+		for(int line_num = 0; line_num < num_lines; line_num++) {
+			int h = 50 + line_num * 10;
+			drawString(fontRendererObj, lines.get(line_num), 30, h, 0xffffffff);
+		}
+
+		super.drawScreen(i, j, f);
 	}
 	
 	public void onGuiClosed()
