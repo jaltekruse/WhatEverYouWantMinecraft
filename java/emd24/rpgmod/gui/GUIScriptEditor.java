@@ -216,10 +216,10 @@ public class GUIScriptEditor extends GuiScreen {
             	lines.set(editLine, line);
         	}
         	//remove line if there are no characters left in the line
-        	else if(lines.size() > 1)
+        	else if(lines.size() > 1 && editLine > 0)
         	{
         		lines.remove(editLine);
-        		if(editLine >= lines.size())
+        		if(editLine > 0)
         			editLine--;
         	}
         }
@@ -257,7 +257,10 @@ public class GUIScriptEditor extends GuiScreen {
 		int num_lines = Math.min(lines.size(), max_display_lines);
 		for(int line_num = 0; line_num < num_lines; line_num++) {
 			int h = 50 + line_num * 10;
-			drawString(fontRendererObj, lines.get(line_num), 30, h, 0xffffffff);
+			String line = lines.get(line_num);
+			if(line_num == editLine)
+				line += "_";
+			drawString(fontRendererObj, line, 30, h, 0xffffffff);
 		}
 
 		super.drawScreen(i, j, f);
