@@ -48,6 +48,8 @@ import emd24.rpgmod.combatitems.ItemMageKiller;
 import emd24.rpgmod.combatitems.ItemThrowingKnife;
 import emd24.rpgmod.combatitems.ItemThrowingKnifeEntity;
 import emd24.rpgmod.food.TomatoFood;
+import emd24.rpgmod.food.TomatoPlant;
+import emd24.rpgmod.food.TomatoSeeds;
 import emd24.rpgmod.gui.GUIKeyHandler;
 import emd24.rpgmod.gui.GUIManaBar;
 import emd24.rpgmod.gui.GUIPartyHUD;
@@ -111,7 +113,10 @@ public class RPGMod {
 	public static Potion manaDrain;
 	
 	//FoodItems
-	public static ItemFood tomatoFood;
+	public static Item tomatoFood;
+	public static Item tomatoSeeds;
+	public static Block tomatoPlant;
+	
 
 	private static int modEntityID = 0;
 
@@ -314,9 +319,19 @@ public class RPGMod {
 		GameRegistry.registerItem(testSpawner, testSpawner.getUnlocalizedName());
 		
 		//FoodItems
+		tomatoFood = new TomatoFood(4, 2.4f, false).setUnlocalizedName("tomato_food")
+				.setTextureName(MOD_ID + ":tomato_food");//apple stats once again...
 		GameRegistry.registerItem(tomatoFood, tomatoFood.getUnlocalizedName());
-		tomatoFood = new TomatoFood(4, 2.4f, false);//apple stats once again...
 		
+		//tomatoSeeds = new TomatoSeeds().setUnlocalizedName("tomato_seeds");
+
+		tomatoPlant = new TomatoPlant();
+		GameRegistry.registerBlock(tomatoPlant, "tomatoPlant");
+		
+//		tomatoPlant = new BlockOre().setHardness(0.5F).setResistance(5.0F).setStepSound(Block.soundTypeGravel)
+//				.setBlockName("sodium").setBlockTextureName(MOD_ID + ":dirt");
+		//GameRegistry.registerBlock(tomatoPlant, tomatoPlant.getUnlocalizedName());
+
 	}
 
 	/**
