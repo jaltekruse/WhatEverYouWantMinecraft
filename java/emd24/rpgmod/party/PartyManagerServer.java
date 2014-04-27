@@ -66,6 +66,8 @@ public class PartyManagerServer {
 	}
 	
 	public static void removePlayerFromParty(String playerName, String kickingPlayer){
+		if(playerParty == null)
+			return;
 		ArrayList<String> party = getPlayerParty(playerName);
 		if(party.size() == 2){
 			for(String player: party){
