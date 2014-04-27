@@ -20,6 +20,7 @@ import javax.script.*;
 
 public class GUIScriptEditor extends GuiScreen {
 	int editLine;
+	int firstDisplayLine;
 	ArrayList<String> lines;
 	char last_char;
 
@@ -43,6 +44,7 @@ public class GUIScriptEditor extends GuiScreen {
 		lines = new ArrayList<String>();
 		lines.add("");
 		editLine = 0;
+		firstDisplayLine = 0;
 		
 		scriptError = "";
 	}
@@ -238,6 +240,12 @@ public class GUIScriptEditor extends GuiScreen {
         {
             this.mc.displayGuiScreen((GuiScreen)null);
         }
+        
+        //Adjust FirstDisplayLine
+        if(editLine < firstDisplayLine)
+        	this.firstDisplayLine--;
+        if(editLine > firstDisplayLine + this.max_display_lines)
+        	firstDisplayLine++;
 	}
 	
 	public void drawScreen(int i, int j, float f)
@@ -257,7 +265,8 @@ public class GUIScriptEditor extends GuiScreen {
 		int num_lines = Math.min(lines.size(), max_display_lines);
 		for(int line_num = 0; line_num < num_lines; line_num++) {
 			int h = 50 + line_num * 10;
-			drawString(fontRendererObj, lines.get(line_num), 30, h, 0xffffffff);
+			String line = lines.get(line_num + firstDisplayLine);
+			drawString(fontRendererObj, line, 30, h, 0xffffffff);
 		}
 
 		super.drawScreen(i, j, f);
