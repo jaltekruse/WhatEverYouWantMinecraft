@@ -1,12 +1,14 @@
 package emd24.rpgmod.gui;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
 
 import emd24.rpgmod.RPGMod;
 import emd24.rpgmod.packets.GUIOpenPacket;
+import emd24.rpgmod.packets.ScriptPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -29,6 +31,10 @@ public class GUIScriptEditor extends GuiScreen {
 	String scriptError;
 	
 	GuiTextField scriptNameTextBox;
+	
+	static String name = "";
+	static String content = "";
+	static boolean updated = false;
 
 	public GUIScriptEditor()
 	{
@@ -37,15 +43,62 @@ public class GUIScriptEditor extends GuiScreen {
 		lines = new ArrayList<String>();
 		lines.add("");
 		editLine = 0;
-
-		factory = new ScriptEngineManager();
-		engine = factory.getEngineByName("JavaScript");
 		
 		scriptError = "";
 	}
 	
+	public String scriptString()
+	{
+		String script = "";
+		for(String s : lines) {
+			script += s + "\n";
+		}
+		return script;
+	}
+	
+	public void loadScript()
+	{
+		if(updated)
+		{
+			this.scriptNameTextBox.setText(name);
+			
+			Scanner scanner = new Scanner(content);
+			lines.clear();
+			
+			//handle the empty case
+			if(!scanner.hasNext())
+				lines.add("");
+			
+			//read lines into arraylist
+			while(scanner.hasNextLine()) {
+				String line = scanner.nextLine();
+				lines.add(line);
+			}
+			
+			//Cleanup
+			scanner.close();
+			updated = false;
+		}
+	}
+	
+	/**
+	 * Used to update the script name and content from the server when packet is received
+	 * @param name
+	 * @param content
+	 */
+	public static void updateScript(String name, String content)
+	{
+		GUIScriptEditor.name = name;
+		GUIScriptEditor.content = content;
+		GUIScriptEditor.updated = true;
+	}
+	
 	public void initGui()
 	{
+		//setup script manager
+		factory = new ScriptEngineManager();
+		engine = factory.getEngineByName("JavaScript");
+		
 		Keyboard.enableRepeatEvents(true);
 		
 		buttonList.clear();
@@ -64,22 +117,27 @@ public class GUIScriptEditor extends GuiScreen {
 	
 	protected void actionPerformed(GuiButton guibutton)
 	{
+		ScriptPacket message;
 		switch(guibutton.id)
 		{
 		case 1:
-			//TODO: Save script
+			//Save script
+			name = this.scriptNameTextBox.getText();
+			content = scriptString();
+			message = new ScriptPacket(name, content);
+			RPGMod.packetPipeline.sendToServer(message);
 			break;
 		case 2:
-			//TODO: Load script
+			//Load script
+			name = this.scriptNameTextBox.getText();
+			message = new ScriptPacket(name);
+			RPGMod.packetPipeline.sendToServer(message);
 			break;
 		case 3:
 			//Run script
-			String script = "";
-			for(String s : lines) {
-				script += s + "\n";
-			}
 			Object result;
 			try {
+				String script = scriptString();
 				result = engine.eval(script);
 				scriptError = (String) result;
 			} catch(ScriptException e) {
@@ -184,6 +242,9 @@ public class GUIScriptEditor extends GuiScreen {
 	
 	public void drawScreen(int i, int j, float f)
 	{
+		//check for packet updates
+		loadScript();
+		
 		drawDefaultBackground();
 		
 		//draw text box

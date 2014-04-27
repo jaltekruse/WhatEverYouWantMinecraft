@@ -12,6 +12,7 @@ import emd24.rpgmod.gui.GUIDialogueEditor;
 import emd24.rpgmod.gui.GUIKeyHandler;
 import emd24.rpgmod.gui.GUIManaBar;
 import emd24.rpgmod.gui.GUIPartyHUD;
+import emd24.rpgmod.gui.GUIScriptEditor;
 import emd24.rpgmod.gui.GUISkills;
 import emd24.rpgmod.spells.entities.MagicBall;
 import emd24.rpgmod.spells.render.RenderMagicBall;
@@ -48,6 +49,12 @@ public class ClientProxy extends CommonProxy {
 			Minecraft.getMinecraft().displayGuiScreen(new GUIDialogueEditor(target, dialogue));
 		else
 			Minecraft.getMinecraft().displayGuiScreen(new GUIDialogue(target, dialogue));
+	}
+
+	//method for updating the client gui script editor
+	@Override
+	public void updateScriptEditor(String name, String content) {
+		GUIScriptEditor.updateScript(name, content);
 	}
 
 }

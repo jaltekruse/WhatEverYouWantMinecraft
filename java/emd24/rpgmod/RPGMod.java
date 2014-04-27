@@ -51,6 +51,7 @@ import emd24.rpgmod.gui.GUIKeyHandler;
 import emd24.rpgmod.gui.GUIManaBar;
 import emd24.rpgmod.gui.GUIPartyHUD;
 import emd24.rpgmod.packets.PacketPipeline;
+import emd24.rpgmod.quest.ScriptManagerServer;
 import emd24.rpgmod.skills.Skill;
 import emd24.rpgmod.skills.SkillPlayer;
 import emd24.rpgmod.skills.SkillRegistry;
@@ -187,7 +188,6 @@ public class RPGMod {
 
 	@EventHandler
 	public void load(FMLInitializationEvent event){
-
 
 	}
 	@EventHandler
