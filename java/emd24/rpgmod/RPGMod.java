@@ -25,6 +25,7 @@ import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemSeedFood;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.potion.Potion;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -74,7 +75,7 @@ import emd24.rpgmod.spells.entities.MagicBall;
 public class RPGMod {
 
 	public static final String MOD_ID = "rpgmod";
-	public static final String VERSION = "0.1";
+	public static final String VERSION = "0.15";
 
 
 
@@ -288,7 +289,6 @@ public class RPGMod {
 		flyingPotion = (new PotionCustom(32, false, 0)).setPotionName("potion.potion_fly");
 		manaDrain = (new PotionCustom(33,true,0)).setPotionName("potion.potion_manaDrain");
 
-
 		// Add items to registry				
 
 		SpellRegistry.registerSpell(lightningSpell);
@@ -312,11 +312,12 @@ public class RPGMod {
 
 		GameRegistry.registerItem(healParty, healParty.getUnlocalizedName());
 		
-		//GameRegistry.registerItem(testSpawner, testSpawner.getUnlocalizedName());//don't run.
+		//GameRegistry.registerItem(testSpawner, testSpawner.getUnlocalizedName());//don't run tests because I'm a scrub.
 		
 		/*
 		 * ---------------FoodItems
 		 */
+		//Won't need if we can subclass food, and make a cleaner system in the future :3
 //		tomatoFood = new TomatoFood(4, 2.4f, false).setUnlocalizedName("tomato_food")
 //				.setTextureName(MOD_ID + ":tomato_food");//apple stats once again...
 //		((ItemFood)tomatoFood).setAlwaysEdible();
@@ -337,7 +338,8 @@ public class RPGMod {
 				.setTextureName(MOD_ID + ":tomato_seeds");//taken first two from apple in Item.class
 		GameRegistry.registerItem(tomatoSeeds, tomatoSeeds.getUnlocalizedName());
 
-
+		
+		
 	}
 
 	/**
