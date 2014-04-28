@@ -11,6 +11,7 @@ import java.util.Objects;
 import com.google.common.collect.HashMultimap;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFarmland;
 import net.minecraft.block.BlockOre;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -18,9 +19,11 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemFood;
+import net.minecraft.item.ItemSeedFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.world.World;
@@ -50,6 +53,7 @@ import emd24.rpgmod.combatitems.ItemThrowingKnifeEntity;
 import emd24.rpgmod.food.TomatoFood;
 import emd24.rpgmod.food.TomatoPlant;
 import emd24.rpgmod.food.TomatoSeeds;
+import emd24.rpgmod.food.TomatoTestBlock;
 import emd24.rpgmod.gui.GUIKeyHandler;
 import emd24.rpgmod.gui.GUIManaBar;
 import emd24.rpgmod.gui.GUIPartyHUD;
@@ -117,6 +121,7 @@ public class RPGMod {
 	public static Item tomatoSeeds;
 	public static Block tomatoPlant;
 	
+	public static Block tomatoTestBlock;
 
 	private static int modEntityID = 0;
 
@@ -316,7 +321,7 @@ public class RPGMod {
 
 		GameRegistry.registerItem(healParty, healParty.getUnlocalizedName());
 		
-		GameRegistry.registerItem(testSpawner, testSpawner.getUnlocalizedName());
+		//GameRegistry.registerItem(testSpawner, testSpawner.getUnlocalizedName());
 		
 		//FoodItems
 		tomatoFood = new TomatoFood(4, 2.4f, false).setUnlocalizedName("tomato_food")
@@ -325,9 +330,31 @@ public class RPGMod {
 		
 		//tomatoSeeds = new TomatoSeeds().setUnlocalizedName("tomato_seeds");
 
+		
+		
+		
+		tomatoTestBlock = new TomatoTestBlock().setBlockName("tomatoBlock").setBlockTextureName(MOD_ID + ":tomatoTestBlock")
+				.setCreativeTab(CreativeTabs.tabBlock);
+		GameRegistry.registerBlock(tomatoTestBlock, "tomatoTestBlock");
+		
+		// heal ammount, saturation modifier, plant block id?, soilId
+		tomatoSeeds = new ItemSeedFood(4, 0.3F,tomatoTestBlock, Blocks.farmland).setUnlocalizedName("tomato_seeds")
+				.setTextureName(MOD_ID + ":tomato_seeds");//taken first two from apple in Item.class
+		GameRegistry.registerItem(tomatoSeeds, tomatoSeeds.getUnlocalizedName());
+
+		
 		tomatoPlant = new TomatoPlant();
 		GameRegistry.registerBlock(tomatoPlant, "tomatoPlant");
 		
+//	test	
+//		sodium = new BlockOre().setHardness(0.5F).setResistance(5.0F).setStepSound(Block.soundTypeGravel)
+//				.setBlockName("sodium").setBlockTextureName(MOD_ID + ":dirt");
+
+		
+//		tomatoTestBlock = new TomatoTestBlock().setBlockName("tomatoBlock").setBlockTextureName(MOD_ID + ":tomatoTestBlock")
+//				.setCreativeTab(CreativeTabs.tabBlock);
+//		GameRegistry.registerBlock(tomatoTestBlock, "tomatoTestBlock");
+//		
 //		tomatoPlant = new BlockOre().setHardness(0.5F).setResistance(5.0F).setStepSound(Block.soundTypeGravel)
 //				.setBlockName("sodium").setBlockTextureName(MOD_ID + ":dirt");
 		//GameRegistry.registerBlock(tomatoPlant, tomatoPlant.getUnlocalizedName());
