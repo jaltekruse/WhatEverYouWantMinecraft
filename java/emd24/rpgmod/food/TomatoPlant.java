@@ -1,126 +1,68 @@
 package emd24.rpgmod.food;
 
+
 import java.util.Random;
 
-import net.minecraft.block.material.Material;
-import net.minecraft.block.Block;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import emd24.rpgmod.RPGMod;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.util.IIcon;
+import net.minecraft.block.BlockCrops;
 
-public class TomatoPlant extends Block { //extends GenericBlock instead...
+public class TomatoPlant extends BlockCrops
+{
+    @SideOnly(Side.CLIENT)
+    private IIcon[] field_149868_a;//the actual icons for the side of the block displayed
+    //private static final String __OBFID = "CL_00000212";//Taken from Carrot or something 0.o
+    private static final String __OBFID = "CL_00069212";//Still no idea what this is, so changed value a bit.
 
-    public TomatoPlant() {
-        super(Material.plants);//id, 32, Material.plants
-        this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F , 1.5F, 1.0F);
-        //setTickRandomly(true);
+    //Copied from BlockCrops aka Wheat and modified heavily
+    /**
+     * Gets the block's texture. Args: side, meta
+     */
+    @SideOnly(Side.CLIENT)
+    public IIcon getIcon(int p_149691_1_, int p_149691_2_)//why does this get passed in first param?
+    {
+        if (p_149691_2_ < 0 || p_149691_2_ > 7)
+        {
+            p_149691_2_ = 7;
+        }
 
+        return this.field_149868_a[p_149691_2_];
     }
-        
-    public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z) {
-        return null;
-    }
-        
-    public int getRenderType() {
-        return 6; // Magic number.
-    }
-    
-    public boolean isOpaqueCube() {
-        return false;
-    }
-    
 
-//  @Override
-//  public boolean canBlockStay (World world, int x, int y, int z) {
-//      Block soil = blocksList[world.getBlockId(x, y - 1, z)];
-//      return (world.getFullBlockLightValue(x, y, z) >= 8 || world
-//              .canBlockSeeTheSky(x, y, z))
-//              && (soil != null && soil.canSustainPlant(world, x, y - 1, z,
-//                      ForgeDirection.UP, RPGMod.tomatoSeeds));
-//  }
-    
+    // -> set pre-mature: seeds?
+    protected Item func_149866_i()
+    {
+    	return RPGMod.tomatoSeeds;
+    }
 
-//  @Override
-//  public int idDropped (int metadata, Random random, int par2) {
-//      switch (metadata) {
-//      case 0:
-//          return RPGMod.tomatoSeeds.itemID;
-//      case 1:
-//          return RPGMod.tomatoFood.itemID;
-//      default:
-//          // Error case!
-//          return -1; // air
-//      }
-//  }
-//    
-//  @Override
-//  public int idPicked (World world, int x, int y, int z) {
-//      return RPGMod.tomatoSeeds.itemID;
-//  }
+    // -> set mature: food
+    protected Item func_149865_P()
+    {
+    	return RPGMod.tomatoFood;
+    }
+
+    /**
+     * Returns the quantity of items to drop on block destruction.
+     */
+    public int quantityDropped(Random p_149745_1_)
+    {
+        return 3;
+    }
+
     
-    
-    
-//    
-//    @Override
-//    public int getBlockTextureFromSideAndMetadata (int side, int metadata) {
-//        return 32 + metadata;
-//    }
-//
-//    @Override
-//    public void updateTick (World world, int x, int y, int z, Random random) {
-//        if (world.getBlockMetadata(x, y, z) == 1) {
-//            return;
-//        }
-//
-//        if (random.nextInt(isFertile(world, x, y - 1, z) ? 12 : 25) != 0) {
-//            return;
-//        }
-//        
-//        /**
-//         * Sets the blocks metadata and if set will then notify blocks that this block changed, depending on the flag. Args:
-//         * x, y, z, metadata, flag. See setBlock for flag description
-//         */
-//        world.setBlockMetadataWithNotify(x, y, z, 1, 3);//was x, y, z, 1
-//        
-//    }
-//
-//    @Override
-//    public void onNeighborBlockChange (World world, int x, int y, int z,
-//            int neighborId) {
-//        if (!canBlockStay(world, x, y, z)) {
-//            dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
-//            world.setBlockWithNotify(x, y, z, 0);
-//        }
-//    }
-//
-//    @Override
-//    public boolean canBlockStay (World world, int x, int y, int z) {
-//        Block soil = blocksList[world.getBlockId(x, y - 1, z)];
-//        return (world.getFullBlockLightValue(x, y, z) >= 8 || world
-//                .canBlockSeeTheSky(x, y, z))
-//                && (soil != null && soil.canSustainPlant(world, x, y - 1, z,
-//                        ForgeDirection.UP, Generic.tomatoSeeds));
-//    }
-//
-//    @Override
-//    public int idDropped (int metadata, Random random, int par2) {
-//        switch (metadata) {
-//        case 0:
-//            return Generic.tomatoSeeds.itemID;
-//        case 1:
-//            return Generic.tomatoFruit.itemID;
-//        default:
-//            // Error case!
-//            return -1; // air
-//        }
-//    }
-//
-//    @Override
-//    public int idPicked (World world, int x, int y, int z) {
-//        return Generic.tomatoSeeds.itemID;
-//    }
-//    
-    
-    
-    
+    @SideOnly(Side.CLIENT)
+    public void registerBlockIcons(IIconRegister p_149651_1_)
+    {
+        this.field_149868_a = new IIcon[8];//was 4, 8 because of 8 grow cycles
+
+        for (int i = 0; i < this.field_149868_a.length; ++i)
+        {
+            this.field_149868_a[i] = p_149651_1_.registerIcon(this.getTextureName() + "_stage_" + i);
+        }
+    }
 }

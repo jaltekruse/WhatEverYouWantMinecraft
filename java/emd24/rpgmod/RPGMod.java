@@ -50,10 +50,7 @@ import emd24.rpgmod.combatitems.ItemBattleaxe;
 import emd24.rpgmod.combatitems.ItemMageKiller;
 import emd24.rpgmod.combatitems.ItemThrowingKnife;
 import emd24.rpgmod.combatitems.ItemThrowingKnifeEntity;
-import emd24.rpgmod.food.TomatoFood;
 import emd24.rpgmod.food.TomatoPlant;
-import emd24.rpgmod.food.TomatoSeeds;
-import emd24.rpgmod.food.TomatoTestBlock;
 import emd24.rpgmod.gui.GUIKeyHandler;
 import emd24.rpgmod.gui.GUIManaBar;
 import emd24.rpgmod.gui.GUIPartyHUD;
@@ -120,8 +117,6 @@ public class RPGMod {
 	public static Item tomatoFood;
 	public static Item tomatoSeeds;
 	public static Block tomatoPlant;
-	
-	public static Block tomatoTestBlock;
 
 	private static int modEntityID = 0;
 
@@ -306,7 +301,6 @@ public class RPGMod {
 
 		SpellRegistry.registerSpell(fireball);
 
-
 		GameRegistry.registerItem(healMana, healMana.getUnlocalizedName());
 
 		GameRegistry.registerItem(battleAxeStone, battleAxeStone.getUnlocalizedName());
@@ -316,48 +310,32 @@ public class RPGMod {
 		GameRegistry.registerItem(holyHandGrenade, holyHandGrenade.getUnlocalizedName());
 		GameRegistry.registerItem(axeRevenge, axeRevenge.getUnlocalizedName());
 
-
-		//		GameRegistry.registerItem(testSpawner, testSpawner.getUnlocalizedName());
-
 		GameRegistry.registerItem(healParty, healParty.getUnlocalizedName());
 		
-		//GameRegistry.registerItem(testSpawner, testSpawner.getUnlocalizedName());
+		//GameRegistry.registerItem(testSpawner, testSpawner.getUnlocalizedName());//don't run.
 		
-		//FoodItems
-		tomatoFood = new TomatoFood(4, 2.4f, false).setUnlocalizedName("tomato_food")
-				.setTextureName(MOD_ID + ":tomato_food");//apple stats once again...
-		GameRegistry.registerItem(tomatoFood, tomatoFood.getUnlocalizedName());
-		
-		//tomatoSeeds = new TomatoSeeds().setUnlocalizedName("tomato_seeds");
+		/*
+		 * ---------------FoodItems
+		 */
+//		tomatoFood = new TomatoFood(4, 2.4f, false).setUnlocalizedName("tomato_food")
+//				.setTextureName(MOD_ID + ":tomato_food");//apple stats once again...
+//		((ItemFood)tomatoFood).setAlwaysEdible();
+//		GameRegistry.registerItem(tomatoFood, tomatoFood.getUnlocalizedName());
 
-		
-		
-		
-		tomatoTestBlock = new TomatoTestBlock().setBlockName("tomatoBlock").setBlockTextureName(MOD_ID + ":tomatoTestBlock")
+		tomatoFood = new ItemFood(4,2.4f, false).setUnlocalizedName("tomato_food")
+				.setTextureName(MOD_ID + ":tomato_food");
+		((ItemFood) tomatoFood).setAlwaysEdible();
+		GameRegistry.registerItem(tomatoFood, tomatoFood.getUnlocalizedName());
+
+		tomatoPlant = new TomatoPlant().setBlockName("tomato_plant").setBlockTextureName(MOD_ID + ":tomato_plant")
 				.setCreativeTab(CreativeTabs.tabBlock);
-		GameRegistry.registerBlock(tomatoTestBlock, "tomatoTestBlock");
+		GameRegistry.registerBlock(tomatoPlant, "tomato_plant");
 		
-		// heal ammount, saturation modifier, plant block id?, soilId
-		tomatoSeeds = new ItemSeedFood(4, 0.3F,tomatoTestBlock, Blocks.farmland).setUnlocalizedName("tomato_seeds")
+		// heal amount, saturation modifier, plant block id?, soilId
+		tomatoSeeds = new ItemSeedFood(4, 0.3F, tomatoPlant, Blocks.farmland).setUnlocalizedName("tomato_seeds")
 				.setTextureName(MOD_ID + ":tomato_seeds");//taken first two from apple in Item.class
 		GameRegistry.registerItem(tomatoSeeds, tomatoSeeds.getUnlocalizedName());
 
-		
-		tomatoPlant = new TomatoPlant();
-		GameRegistry.registerBlock(tomatoPlant, "tomatoPlant");
-		
-//	test	
-//		sodium = new BlockOre().setHardness(0.5F).setResistance(5.0F).setStepSound(Block.soundTypeGravel)
-//				.setBlockName("sodium").setBlockTextureName(MOD_ID + ":dirt");
-
-		
-//		tomatoTestBlock = new TomatoTestBlock().setBlockName("tomatoBlock").setBlockTextureName(MOD_ID + ":tomatoTestBlock")
-//				.setCreativeTab(CreativeTabs.tabBlock);
-//		GameRegistry.registerBlock(tomatoTestBlock, "tomatoTestBlock");
-//		
-//		tomatoPlant = new BlockOre().setHardness(0.5F).setResistance(5.0F).setStepSound(Block.soundTypeGravel)
-//				.setBlockName("sodium").setBlockTextureName(MOD_ID + ":dirt");
-		//GameRegistry.registerBlock(tomatoPlant, tomatoPlant.getUnlocalizedName());
 
 	}
 
