@@ -322,6 +322,7 @@ public class RPGMod {
 //		((ItemFood)tomatoFood).setAlwaysEdible();
 //		GameRegistry.registerItem(tomatoFood, tomatoFood.getUnlocalizedName());
 
+		//do these params hold, or the tomatoSeeds params?
 		tomatoFood = new ItemFood(4,2.4f, false).setUnlocalizedName("tomato_food")
 				.setTextureName(MOD_ID + ":tomato_food");
 		((ItemFood) tomatoFood).setAlwaysEdible();
@@ -331,7 +332,7 @@ public class RPGMod {
 				.setCreativeTab(CreativeTabs.tabBlock);
 		GameRegistry.registerBlock(tomatoPlant, "tomato_plant");
 		
-		// heal amount, saturation modifier, plant block id?, soilId
+		// heal amount, saturation modifier, plant block id, soilId
 		tomatoSeeds = new ItemSeedFood(4, 0.3F, tomatoPlant, Blocks.farmland).setUnlocalizedName("tomato_seeds")
 				.setTextureName(MOD_ID + ":tomato_seeds");//taken first two from apple in Item.class
 		GameRegistry.registerItem(tomatoSeeds, tomatoSeeds.getUnlocalizedName());
