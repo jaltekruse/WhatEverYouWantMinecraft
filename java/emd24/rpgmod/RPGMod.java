@@ -11,6 +11,7 @@ import java.util.Objects;
 import com.google.common.collect.HashMultimap;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFarmland;
 import net.minecraft.block.BlockOre;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -18,10 +19,13 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemFood;
+import net.minecraft.item.ItemSeedFood;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.potion.Potion;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -47,6 +51,7 @@ import emd24.rpgmod.combatitems.ItemBattleaxe;
 import emd24.rpgmod.combatitems.ItemMageKiller;
 import emd24.rpgmod.combatitems.ItemThrowingKnife;
 import emd24.rpgmod.combatitems.ItemThrowingKnifeEntity;
+import emd24.rpgmod.food.TomatoPlant;
 import emd24.rpgmod.gui.GUIKeyHandler;
 import emd24.rpgmod.gui.GUIManaBar;
 import emd24.rpgmod.gui.GUIPartyHUD;
@@ -70,7 +75,7 @@ import emd24.rpgmod.spells.entities.MagicBall;
 public class RPGMod {
 
 	public static final String MOD_ID = "rpgmod";
-	public static final String VERSION = "0.1";
+	public static final String VERSION = "0.15";
 
 
 
@@ -105,8 +110,14 @@ public class RPGMod {
 	public static Block elementium;
 	public static Block clearerGlass;
 
+
 	public static Potion flyingPotion;
 	public static Potion manaDrain;
+	
+	//FoodItems
+	public static Item tomatoFood;
+	public static Item tomatoSeeds;
+	public static Block tomatoPlant;
 
 	private static int modEntityID = 0;
 
@@ -172,8 +183,8 @@ public class RPGMod {
 
 		// Register Items
 
-
-
+		//We're actually doing this in a method below, so we should eventually clean this up...
+		
 		// Register Entities
 
 		EntityRegistry.registerModEntity(HolyHandGrenadeEntity.class, "holy_hand_grenade", ++modEntityID, this, 64, 10, true);
@@ -278,7 +289,6 @@ public class RPGMod {
 		flyingPotion = (new PotionCustom(32, false, 0)).setPotionName("potion.potion_fly");
 		manaDrain = (new PotionCustom(33,true,0)).setPotionName("potion.potion_manaDrain");
 
-
 		// Add items to registry				
 
 		SpellRegistry.registerSpell(lightningSpell);
@@ -291,7 +301,6 @@ public class RPGMod {
 
 		SpellRegistry.registerSpell(fireball);
 
-
 		GameRegistry.registerItem(healMana, healMana.getUnlocalizedName());
 
 		GameRegistry.registerItem(battleAxeStone, battleAxeStone.getUnlocalizedName());
@@ -301,9 +310,36 @@ public class RPGMod {
 		GameRegistry.registerItem(holyHandGrenade, holyHandGrenade.getUnlocalizedName());
 		GameRegistry.registerItem(axeRevenge, axeRevenge.getUnlocalizedName());
 
+		GameRegistry.registerItem(healParty, healParty.getUnlocalizedName());
+		
+		//GameRegistry.registerItem(testSpawner, testSpawner.getUnlocalizedName());//don't run tests because I'm a scrub.
+		
+		/*
+		 * ---------------FoodItems
+		 */
+		//Won't need if we can subclass food, and make a cleaner system in the future :3
+//		tomatoFood = new TomatoFood(4, 2.4f, false).setUnlocalizedName("tomato_food")
+//				.setTextureName(MOD_ID + ":tomato_food");//apple stats once again...
+//		((ItemFood)tomatoFood).setAlwaysEdible();
+//		GameRegistry.registerItem(tomatoFood, tomatoFood.getUnlocalizedName());
 
-		//		GameRegistry.registerItem(testSpawner, testSpawner.getUnlocalizedName());
+		//do these params hold, or the tomatoSeeds params?
+		tomatoFood = new ItemFood(4,2.4f, false).setUnlocalizedName("tomato_food")
+				.setTextureName(MOD_ID + ":tomato_food");
+		((ItemFood) tomatoFood).setAlwaysEdible();
+		GameRegistry.registerItem(tomatoFood, tomatoFood.getUnlocalizedName());
 
+		tomatoPlant = new TomatoPlant().setBlockName("tomato_plant").setBlockTextureName(MOD_ID + ":tomato_plant")
+				.setCreativeTab(CreativeTabs.tabBlock);
+		GameRegistry.registerBlock(tomatoPlant, "tomato_plant");
+		
+		// heal amount, saturation modifier, plant block id, soilId
+		tomatoSeeds = new ItemSeedFood(4, 0.3F, tomatoPlant, Blocks.farmland).setUnlocalizedName("tomato_seeds")
+				.setTextureName(MOD_ID + ":tomato_seeds");//taken first two from apple in Item.class
+		GameRegistry.registerItem(tomatoSeeds, tomatoSeeds.getUnlocalizedName());
+
+		
+		
 	}
 
 	/**
