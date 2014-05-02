@@ -8,6 +8,7 @@ import org.lwjgl.input.Keyboard;
 
 import emd24.rpgmod.RPGMod;
 import emd24.rpgmod.packets.GUIOpenPacket;
+import emd24.rpgmod.packets.ScriptActionPacket;
 import emd24.rpgmod.packets.ScriptPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -104,9 +105,10 @@ public class GUIScriptEditor extends GuiScreen {
 		Keyboard.enableRepeatEvents(true);
 		
 		buttonList.clear();
-		buttonList.add(new GuiButton(1, 30, height - 60, 60, 20, "Save Script"));
-		buttonList.add(new GuiButton(2, width/2, height - 60, 60, 20, "Load Script"));
-		buttonList.add(new GuiButton(3, width*3/4, height - 60, 60, 20, "Run Script"));
+		buttonList.add(new GuiButton(1, 30, height - 60, 80, 20, "Save Script"));
+		buttonList.add(new GuiButton(2, width*1/4 + 10, height - 60, 80, 20, "Load Script"));
+		buttonList.add(new GuiButton(3, width*2/4, height - 60, 80, 20, "Run Script"));
+		buttonList.add(new GuiButton(3, width*3/4 - 20, height - 60, 100, 20, "Run Script Server"));
 		
 		this.scriptNameTextBox = new GuiTextField(this.fontRendererObj, width / 4, 30, width/2 - 30, 12);
 		this.scriptNameTextBox.setTextColor(-1);
@@ -117,23 +119,34 @@ public class GUIScriptEditor extends GuiScreen {
 		//scriptNameTextBox.setFocused(true);
 	}
 	
-	protected void actionPerformed(GuiButton guibutton)
+	protected void saveScript()
 	{
 		ScriptPacket message;
+		name = this.scriptNameTextBox.getText();
+		content = scriptString();
+		message = new ScriptPacket(name, content);
+		RPGMod.packetPipeline.sendToServer(message);
+	}
+	
+	protected void loadScriptAction()
+	{
+		ScriptPacket message;
+		name = this.scriptNameTextBox.getText();
+		message = new ScriptPacket(name);
+		RPGMod.packetPipeline.sendToServer(message);
+	}
+	
+	protected void actionPerformed(GuiButton guibutton)
+	{
 		switch(guibutton.id)
 		{
 		case 1:
 			//Save script
-			name = this.scriptNameTextBox.getText();
-			content = scriptString();
-			message = new ScriptPacket(name, content);
-			RPGMod.packetPipeline.sendToServer(message);
+			saveScript();
 			break;
 		case 2:
 			//Load script
-			name = this.scriptNameTextBox.getText();
-			message = new ScriptPacket(name);
-			RPGMod.packetPipeline.sendToServer(message);
+			loadScriptAction();
 			break;
 		case 3:
 			//Run script
@@ -141,10 +154,16 @@ public class GUIScriptEditor extends GuiScreen {
 			try {
 				String script = scriptString();
 				result = engine.eval(script);
-				scriptError = (String) result;
-			} catch(ScriptException e) {
+				scriptError = result.toString();
+			} catch(Exception e) {	//ScriptException
 				scriptError = e.getMessage();
 			}
+			break;
+		case 4:
+			//Run Script Server
+			Integer entityID = Minecraft.getMinecraft().thePlayer.getEntityId();
+			ScriptActionPacket message = new ScriptActionPacket(entityID, this.scriptNameTextBox.getText());
+			RPGMod.packetPipeline.sendToServer(message);
 			break;
 		default:
 			break;

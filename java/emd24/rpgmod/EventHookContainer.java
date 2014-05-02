@@ -16,6 +16,7 @@ import emd24.rpgmod.packets.PartyInvitePacket;
 import emd24.rpgmod.packets.PlayerDataPacket;
 import emd24.rpgmod.party.PartyManagerServer;
 import emd24.rpgmod.quest.ExtendedEntityLivingDialogueData;
+import emd24.rpgmod.quest.ScriptManagerServer;
 import emd24.rpgmod.skills.Skill;
 import emd24.rpgmod.skills.SkillManagerServer;
 import emd24.rpgmod.skills.SkillRegistry;
@@ -510,6 +511,10 @@ public class EventHookContainer {
 
 
 		}
+		
+		//Call LivingEntity's script if needed
+		Integer entityID = event.entity.getEntityId();
+		ScriptManagerServer.runScript(entityID);
 	}
 
 	/**
