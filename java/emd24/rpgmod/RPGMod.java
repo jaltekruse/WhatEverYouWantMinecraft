@@ -90,6 +90,7 @@ public class RPGMod {
 	public static Spell superLightningSpell;
 	public static Spell becomeUndead;
 	public static Spell summonZombie;
+	public static Spell summonSlime;
 	public static Spell healSelf;
 	public static Spell healParty;
 	public static Spell flySpell;
@@ -231,9 +232,13 @@ public class RPGMod {
 		.setManaCost(10).setExperience(10).setUnlocalizedName("become_undead")
 		.setTextureName(MOD_ID + ":become_undead");
 
-		summonZombie = (Spell) new SummonCreatureSpell(0, CreativeTabs.tabCombat)
+		summonZombie = (Spell) new SummonCreatureSpell(54, CreativeTabs.tabCombat)
 		.setManaCost(20).setExperience(20).setUnlocalizedName("summon_zombie")
 		.setTextureName(MOD_ID + ":summon_zombie");
+
+		summonSlime = (Spell) new SummonCreatureSpell(55, CreativeTabs.tabCombat)
+		.setManaCost(20).setExperience(20).setUnlocalizedName("summon_slime")
+		.setTextureName(MOD_ID + ":summon_slime");
 
 		healSelf = (Spell) new HealSpell(5, CreativeTabs.tabCombat, false).setManaCost(10)
 				.setExperience(10).setUnlocalizedName("heal_self");
@@ -295,6 +300,7 @@ public class RPGMod {
 		SpellRegistry.registerSpell(superLightningSpell);
 		SpellRegistry.registerSpell(becomeUndead);
 		SpellRegistry.registerSpell(summonZombie);
+		SpellRegistry.registerSpell(summonSlime);
 		SpellRegistry.registerSpell(healSelf);
 		SpellRegistry.registerSpell(healParty);
 		SpellRegistry.registerSpell(flySpell);
