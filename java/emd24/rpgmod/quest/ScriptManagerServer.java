@@ -30,6 +30,17 @@ public class ScriptManagerServer {
 	static ScriptEngine engine;
 	static String scriptError;
 	
+	static boolean initialized = false;
+	
+	public static void init()
+	{
+		if(!initialized)
+		{
+			load();
+			initialized = true;
+		}
+	}
+	
 	/**
 	 * Set's a target script to execute on entityID every tick.
 	 * @param entityID entityID of Entity to attach script
@@ -46,9 +57,11 @@ public class ScriptManagerServer {
 	 */
 	public static void runScript(Integer entityID)
 	{
+		init();
 		String script_name = active_scripts.get(entityID);
 		if(script_name != null)
 		{
+			ScriptManagerServer.load();
 			String script = ScriptManagerServer.scripts.get(script_name);
 			if(script != null)
 			{
@@ -77,10 +90,12 @@ public class ScriptManagerServer {
 	}
 	
 	public static String getScript(String name) {
+		init();
 		return scripts.get(name);
 	}
 	
 	public static void storeScript(String name, String content) {
+		init();
 		scripts.put(name, content);
 	}
 		
