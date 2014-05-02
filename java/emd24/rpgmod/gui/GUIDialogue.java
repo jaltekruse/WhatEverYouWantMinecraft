@@ -77,7 +77,7 @@ public class GUIDialogue extends GuiScreen
 		Integer entityID = this.target.getEntityId();
 		String scriptName = selectedNode.action;
 
-		if(scriptName != "" && entityID != 0)
+		if((!scriptName.equals("")) && entityID != 0)
 		{
 			ScriptActionPacket message = new ScriptActionPacket(entityID, scriptName);
 			RPGMod.packetPipeline.sendToServer(message);
@@ -97,7 +97,7 @@ public class GUIDialogue extends GuiScreen
 	
 	public boolean doesGuiPauseGame()
 	{
-		return true;
+		return false;
 	}
 	
 	protected void mouseClicked(int par1, int par2, int par3)

@@ -49,17 +49,29 @@ public class ScriptManagerServer {
 		String script_name = active_scripts.get(entityID);
 		if(script_name != null)
 		{
-			String script = scripts.get(script_name);
+			String script = ScriptManagerServer.scripts.get(script_name);
 			if(script != null)
 			{
 				//Run script
 				Object result;
 				try {
 					result = engine.eval(script);
-					scriptError = (String) result;
+					if(result != null)
+					{
+						scriptError = result.toString();
+						if(scriptError.equals("false"))
+						{
+							active_scripts.remove(entityID);
+						}
+					}
 				} catch(ScriptException e) {
 					scriptError = e.getLocalizedMessage();
 				}
+			}
+			else
+			{
+				System.err.println(" Script name: '" + script_name + "' not found.");
+				active_scripts.remove(entityID);
 			}
 		}
 	}

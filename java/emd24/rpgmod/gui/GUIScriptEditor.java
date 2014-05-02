@@ -115,7 +115,7 @@ public class GUIScriptEditor extends GuiScreen {
 		this.scriptNameTextBox.setDisabledTextColour(-1);
 		this.scriptNameTextBox.setEnableBackgroundDrawing(true);
 		this.scriptNameTextBox.setMaxStringLength(30);
-		this.scriptNameTextBox.setText("script name");
+		this.scriptNameTextBox.setText("");
 		//scriptNameTextBox.setFocused(true);
 	}
 	
