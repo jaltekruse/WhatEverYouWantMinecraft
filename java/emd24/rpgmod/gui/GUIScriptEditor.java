@@ -108,7 +108,7 @@ public class GUIScriptEditor extends GuiScreen {
 		buttonList.add(new GuiButton(1, 30, height - 60, 80, 20, "Save Script"));
 		buttonList.add(new GuiButton(2, width*1/4 + 10, height - 60, 80, 20, "Load Script"));
 		buttonList.add(new GuiButton(3, width*2/4, height - 60, 80, 20, "Run Script"));
-		buttonList.add(new GuiButton(3, width*3/4 - 20, height - 60, 100, 20, "Run Script Server"));
+		buttonList.add(new GuiButton(4, width*3/4 - 20, height - 60, 100, 20, "Run Script Server"));
 		
 		this.scriptNameTextBox = new GuiTextField(this.fontRendererObj, width / 4, 30, width/2 - 30, 12);
 		this.scriptNameTextBox.setTextColor(-1);

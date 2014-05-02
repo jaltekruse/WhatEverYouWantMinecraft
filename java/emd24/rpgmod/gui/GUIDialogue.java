@@ -18,6 +18,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import emd24.rpgmod.ExtendedPlayerData;
 import emd24.rpgmod.RPGMod;
 import emd24.rpgmod.packets.GUIOpenPacket;
+import emd24.rpgmod.packets.ScriptActionPacket;
 import emd24.rpgmod.quest.DialogueTreeNode;
 import emd24.rpgmod.quest.ExtendedEntityLivingDialogueData;
 import net.minecraft.client.Minecraft;
@@ -71,11 +72,25 @@ public class GUIDialogue extends GuiScreen
 		
 	}
 	
+	protected void runScriptOnSelectedNode()
+	{
+		Integer entityID = this.target.getEntityId();
+		String scriptName = selectedNode.action;
+
+		if(scriptName != "" && entityID != 0)
+		{
+			ScriptActionPacket message = new ScriptActionPacket(entityID, scriptName);
+			RPGMod.packetPipeline.sendToServer(message);
+		}
+	}
+	
 	protected void actionPerformed(GuiButton guibutton)
 	{
 		if(guibutton.id < selectedNode.children.size()) {
 			selectedNode = selectedNode.children.get(guibutton.id);
+			runScriptOnSelectedNode();
 			selectedNode = selectedNode.children.get(0); //TODO: go through children looking for condition to be true
+			runScriptOnSelectedNode();
 			initGui();
 		}
 	}
