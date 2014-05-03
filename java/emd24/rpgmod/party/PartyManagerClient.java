@@ -3,6 +3,8 @@ package emd24.rpgmod.party;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -12,6 +14,12 @@ public class PartyManagerClient {
 	//Primary data structure
 	public static HashMap<String, Integer> playerParty
 		= new HashMap<String, Integer>();
+	
+	// Maps player name to mana
+	public static HashMap<String, Integer[]> playerMana
+	= new HashMap<String, Integer[]>();
+	public final static int CURR_MANA_LOC = 0;
+	public final static int MAX_MANA_LOC = 1;
 	
 	public static void clear() {
 		playerParty.clear();
@@ -35,4 +43,13 @@ public class PartyManagerClient {
 		}
 		return partyPlayerList;
 	}
+	
+	public static void manaClear(){
+		playerMana.clear();
+	}
+	
+	public static void handlePlayerMana(String player, Integer[] mana){
+		playerMana.put(player, mana);
+	}
+
 }

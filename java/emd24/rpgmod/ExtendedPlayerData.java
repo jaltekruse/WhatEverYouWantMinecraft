@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import emd24.rpgmod.packets.PlayerDataPacket;
+import emd24.rpgmod.packets.PlayerManaPacket;
 import emd24.rpgmod.skills.SkillPlayer;
 import emd24.rpgmod.skills.SkillRegistry;
 import net.minecraft.entity.Entity;
@@ -228,6 +229,8 @@ public class ExtendedPlayerData implements IExtendedEntityProperties{
 	public void sync(){
 		if(!player.worldObj.isRemote){
 			RPGMod.packetPipeline.sendTo(new PlayerDataPacket(player), (EntityPlayerMP) this.player);
+			int[] mana = {this.currMana, this.maxMana};
+			RPGMod.packetPipeline.sendToServer(new PlayerManaPacket(player.getCommandSenderName(), mana));
 		}
 	}
 }
