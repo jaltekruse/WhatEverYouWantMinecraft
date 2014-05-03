@@ -7,6 +7,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -16,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import sun.org.mozilla.javascript.internal.Context;
 import sun.org.mozilla.javascript.internal.ScriptableObject;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
@@ -92,6 +94,12 @@ public class ScriptManagerServer {
 				//Run script
 				Object result;
 				try {
+					/*
+					Set set = Block.blockRegistry.getKeys();
+					for (Object o : set) {
+						System.out.println(o.toString());
+					}
+					*/
 					//first set the trigger object entity id variable
 					engine.eval("id = " + entityID);
 					//next evaluate the common script

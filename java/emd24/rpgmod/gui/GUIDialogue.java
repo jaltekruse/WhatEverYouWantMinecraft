@@ -28,6 +28,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -63,6 +64,26 @@ public class GUIDialogue extends GuiScreen
 		selectedNode = tree;
 	}
 	
+	protected boolean checkForItem(String itemName, Integer quantity){
+		if (itemName == null || itemName.equals(""))
+			return true;
+		EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
+		InventoryPlayer inventory = player.inventory;
+		Item item = (Item) Item.itemRegistry.getObject(itemName);
+		if(item == null)
+			return false;
+		ItemStack itemStack = new ItemStack(item, quantity);
+		int quantityOnHand = 0;
+		for(ItemStack test : inventory.mainInventory) {
+			if(test != null) {
+				if(test.isItemEqual(itemStack)) {
+					quantityOnHand =+ test.stackSize;
+				}
+			}
+		}
+		return quantityOnHand >= quantity;
+	}
+	
 	public void initGui()
 	{
 		super.initGui();
@@ -70,8 +91,13 @@ public class GUIDialogue extends GuiScreen
 		
 		buttonList.clear();
 		for(int i = 0; i < selectedNode.children.size(); i++) {
-			String text = selectedNode.children.get(i).dialogueText;
-			buttonList.add(new GuiButton(i, 50, i*30 + 80, text));
+			DialogueTreeNode child = selectedNode.children.get(i);
+			String item = child.itemNeeded;
+			Integer quantity = child.itemQuantity;
+			if(checkForItem(item, quantity)) {
+				String text = child.dialogueText;
+				buttonList.add(new GuiButton(i, 50, i*30 + 80, text));
+			}
 		}
 		
 	}
