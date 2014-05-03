@@ -34,6 +34,7 @@ public class ScriptManagerServer {
 	static ScriptEngineManager factory;
 	static ScriptEngine engine;
 	static String scriptError;
+	static String commonScriptName = "common_server";
 	
 	static boolean initialized = false;
 	
@@ -56,29 +57,46 @@ public class ScriptManagerServer {
 		active_scripts.put(entityID, scriptName);
 	}
 	
+	public static void runCommonScript()
+	{
+		//get the common script from map
+		String script = getScript(commonScriptName);
+		if(script != null)
+		{
+			//run common script if it exists
+			try {
+				engine.eval(script);
+			} catch (ScriptException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				System.err.println("Error running common script: " + e.getLocalizedMessage());
+			}
+		}
+	}
+	
 	/**
 	 * Run entityID's active script, if any.  Called every tick.
 	 * @param entity entity to update.
 	 */
 	public static void runScript(Entity entity)
 	{
+		init();
 		//entity.getEntityId()
 		Integer entityID = entity.getEntityId();
-		init();
 		String script_name = active_scripts.get(entityID);
 		if(script_name != null)
 		{
-			ScriptManagerServer.load(); //TODO: Remove
 			String script = ScriptManagerServer.scripts.get(script_name);
 			if(script != null)
 			{
 				//Run script
 				Object result;
 				try {
-					//Minecraft.getMinecraft().theWorld.getEntityByID(par1)
-					//MinecraftServer.getServer().getEntityWorld().getEntityByID(entityID).posX
-					//entity.worldObj
+					//first set the trigger object entity id variable
 					engine.eval("id = " + entityID);
+					//next evaluate the common script
+					runCommonScript();
+					//finally evaluate the script
 					result = engine.eval(script);
 					if(result != null)
 					{
@@ -147,6 +165,7 @@ public class ScriptManagerServer {
 	 * Store the scripts into a file.
 	 */
 	public static void store() {
+		init();
 		PrintWriter writer = null;
 		try {
 			File file = new File(DimensionManager.getCurrentSaveRootDirectory(), filename);

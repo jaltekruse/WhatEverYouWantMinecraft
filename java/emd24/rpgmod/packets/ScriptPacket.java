@@ -66,14 +66,13 @@ public class ScriptPacket extends AbstractPacket {
 	public void handleServerSide(EntityPlayer player) {
 		//TODO: check for player admin rights
 		//System.err.println("Server Recveived script:\n\tScriptName: " + name + "\n\tContent: " + content);
+		
 		//check if the request is for a load or store
 		if(this.isPlaceholder()) {
-
-			//load scripts from file on server
-			//if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)
+			//load scripts from file
 			ScriptManagerServer.load();
 			
-			//then send back the script requested
+			//send script back to client
 			content = ScriptManagerServer.getScript(name);
 			ScriptPacket message = new ScriptPacket(name, content);
 			RPGMod.packetPipeline.sendTo(message, (EntityPlayerMP) player);
