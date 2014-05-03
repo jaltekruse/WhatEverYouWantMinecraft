@@ -17,7 +17,11 @@ public class DialogueTreeNode {
 	public String itemNeeded;		//The item ID needed to access this dialogue item
 	public int itemQuantity;		//The quantity of items needed to access this dialogue item
 	public boolean isReply;		//if the node is a reply to a statement made by the character
-	public String action;	//use in a factory to create action stuff
+	public String action;	//name of server-side script to execute
+	
+	public String reward;	//Item to give after Dialogue item is clicked
+	public int rewardQuantity;	//Quantity of reward item
+	
 	
 	protected void Init()
 	{
@@ -28,6 +32,9 @@ public class DialogueTreeNode {
 		isReply = false;
 		action = "";
 		parent = null;
+		
+		reward = "";
+		rewardQuantity = 0;
 	}
 	
 	public DialogueTreeNode()
@@ -70,6 +77,9 @@ public class DialogueTreeNode {
 		
 		result += children.size() + "`";
 		
+		result += reward + "`";
+		result += rewardQuantity + "`";
+		
 		result += "\n";
 		
 		for(DialogueTreeNode child : children) {
@@ -106,6 +116,12 @@ public class DialogueTreeNode {
 		isReply = Boolean.parseBoolean(values[i++]);
 		action = values[i++];
 		int childrenSize = Integer.parseInt(values[i++]);
+		
+		if(values.length > 7)
+		{
+			reward = values[i++];
+			rewardQuantity = Integer.parseInt(values[i++]);
+		}
 		
 		lineNumber++;
 		

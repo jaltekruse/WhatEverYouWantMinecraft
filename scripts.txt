@@ -1,0 +1,135 @@
+////////////////////////////////////////build2////////////////////////////////////////
+//diagonal wall
+for(var i = 2; i < 10; i++) {
+	for(var j = 2; j < 10; j++) {
+		set_block(x + j, y + i, z + j, 'bedrock')
+	}
+}
+false
+////////////////////////////////////////////////////////////////////////////////
+print_error("ID:" + id)
+false
+
+////////////////////////////////////////common_server////////////////////////////////////////
+//run this on server
+importPackage(net.minecraft.server)
+importPackage(net.minecraft.item)
+importPackage(net.minecraft.block)
+
+server = MinecraftServer.getServer()
+entity = server.getEntityWorld().getEntityByID(id)
+world = entity.worldObj
+
+x = entity.posX
+y = entity.posY
+z = entity.posZ
+
+function set_time(time) {
+	var num_world_servers = server.worldServers.length
+	for(var j = 0; j < num_world_servers; j++) {
+		server.worldServers[j].setWorldTime(time)
+	}
+}
+
+function spawn_monster(monster_id, x, y, z) {
+	ItemMonsterPlacer.spawnCreature(world, monster_id, x, y, z)
+}
+
+function print_error(text) {
+	java.lang.System.err.println(text)
+}
+
+function set_block(x, y, z, block_name) {
+	block = Block.blockRegistry.getObject(block_name)
+	world.setBlock(x, y, z, block, 0, 3)
+}
+////////////////////////////////////////build1////////////////////////////////////////
+//Creates a wall near the player/npc
+for(var i = 2; i < 10; i++) {
+	for(var j = 2; j < 10; j++) {
+		set_block(x + j, y + i, z, 'diamond_ore')
+	}
+}
+false
+////////////////////////////////////////castle////////////////////////////////////////
+var size = 8
+function wall(x, y, z, dir, type) {
+	for(var i = 2; i < size; i++) {
+		for(var j = 0; j < size; j++) {
+			if(dir == 0) {
+				set_block(x + j, y + i, z, type)
+			} else if(dir == 1) {
+				set_block(x, y + i, z + j, type)
+			} else if(dir == 2) {
+				set_block(x + j, y + i, z + size - 1, type)
+			} else if(dir == 3) {
+				set_block(x + size - 1, y + i, z + j, type)
+			}
+		}
+	}
+}
+
+function ceiling(x, y, z, dir, type) {
+	for(var i = 0; i < size; i++) {
+		for(var j = 0; j < size; j++) {
+			if(dir == 0) {
+				set_block(x + j, y + size, z + i, type)
+			} else if(dir == 1) {
+				set_block(x + j, y + 1, z + i, type)
+			}
+
+		}
+	}
+
+}
+function door(x, y, z, dir, type) {
+	set_block(x + size / 2, y + 1, z - 1, type)
+	set_block(x + size / 2, y + 1, z + 1, type)
+	set_block(x + size / 2, y + 1, z, type)
+
+	set_block(x + size / 2, y + 3, z, 'none')
+	set_block(x + size / 2, y + 2, z, 'none')
+
+	set_block(x + size / 2, y + 2, z, 'wooden_door')
+	set_block(x + size / 2, y + 3, z, 'wooden_door')
+}
+function set_cube(x, y, z, w, h, d, type) {
+	for(cz = z; cz < z + d; cz++) {
+		for(cy = y; cy < y + h; cy++) {
+			for(cx = x; cx < x + w; cx++) {
+				set_block(cx, cy, cz, type)
+			}
+		}
+	}
+}
+
+//x = 0
+//y = 0
+//z = 0
+set_cube(x - size/2, y - 1, z, size*2, size*2, size*2, 'none')
+set_cube(x, y, z, size, size, size, 'diamond_ore')
+
+var type = 'stone'
+for(var i = 0; i < 4; i++) {
+	wall(x, y, z, i, type)
+}
+ceiling(x, y, z, 0, type)
+ceiling(x, y, z, 1, type)
+door(x, y, z, 0, type)
+
+false
+////////////////////////////////////////summon////////////////////////////////////////
+print_error("pos: " + x + "," + y + "," + z)
+
+var monster_id = 54 //54 = zombie
+var num_monsters = 5
+for(var i = 0; i < num_monsters; i++) {
+	spawn_monster(monster_id, x, y, z + 5)
+}
+false
+////////////////////////////////////////night////////////////////////////////////////
+set_time(15000)
+false
+////////////////////////////////////////day////////////////////////////////////////
+set_time(0)
+false

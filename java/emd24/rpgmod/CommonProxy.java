@@ -48,5 +48,10 @@ public class CommonProxy {
 	{
 		//do nothing, override in client
 	}
+	
+	//method for updating the client gui script editor
+	public void updateScriptEditor(String name, String content) {
+		//do nothing, override in client
+	}
 }
 
