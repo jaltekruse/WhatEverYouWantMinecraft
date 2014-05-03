@@ -64,15 +64,8 @@ public class GUIDialogue extends GuiScreen
 		selectedNode = tree;
 	}
 	
-	protected boolean checkForItem(String itemName, Integer quantity){
-		if (itemName == null || itemName.equals(""))
-			return true;
-		EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
-		InventoryPlayer inventory = player.inventory;
-		Item item = (Item) Item.itemRegistry.getObject(itemName);
-		if(item == null)
-			return false;
-		ItemStack itemStack = new ItemStack(item, quantity);
+	protected int getItemQuantityInventory(Item item, InventoryPlayer inventory) {
+		ItemStack itemStack = new ItemStack(item, 1);
 		int quantityOnHand = 0;
 		for(ItemStack test : inventory.mainInventory) {
 			if(test != null) {
@@ -81,6 +74,18 @@ public class GUIDialogue extends GuiScreen
 				}
 			}
 		}
+		return quantityOnHand;
+	}
+	
+	protected boolean checkForItem(String itemName, Integer quantity){
+		if (itemName == null || itemName.equals(""))
+			return true;
+		EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
+		InventoryPlayer inventory = player.inventory;
+		Item item = (Item) Item.itemRegistry.getObject(itemName);
+		if(item == null)
+			return false;
+		Integer quantityOnHand = getItemQuantityInventory(item, inventory);
 		return quantityOnHand >= quantity;
 	}
 	
@@ -100,6 +105,19 @@ public class GUIDialogue extends GuiScreen
 			}
 		}
 		
+	}
+	
+	protected void removePlayerItem() {
+		String itemName = selectedNode.itemNeeded;
+		Integer quantity = (-1) * selectedNode.itemQuantity; //multiple by (-1) to denote a removal of item
+		EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
+		
+		if(!itemName.equals("") && quantity < 0)
+		{
+			Integer playerID = player.getEntityId();
+			DialogueRewardPacket message = new DialogueRewardPacket(playerID, itemName, quantity);
+			RPGMod.packetPipeline.sendToServer(message);
+		}
 	}
 	
 	protected void givePlayerItem()
@@ -139,9 +157,11 @@ public class GUIDialogue extends GuiScreen
 			selectedNode = selectedNode.children.get(guibutton.id);
 			runScriptOnSelectedNode();
 			givePlayerItem();
+			removePlayerItem();
 			selectedNode = selectedNode.children.get(0); //TODO: go through children looking for condition to be true
 			runScriptOnSelectedNode();
 			givePlayerItem();
+			removePlayerItem();
 			initGui();
 		}
 	}
