@@ -4,9 +4,11 @@ import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 
 public class DialogueRewardPacket extends AbstractPacket {
 	
@@ -53,12 +55,37 @@ public class DialogueRewardPacket extends AbstractPacket {
 		// TODO Auto-generated method stub
 
 	}
+	
+
+	protected void removeItemInventory(Item item, InventoryPlayer inventory, int quantity) {
+		ItemStack itemStack = new ItemStack(item, 1);
+		int quantityRemoved = 0;
+		for(ItemStack test : inventory.mainInventory) {
+			if(test != null) {
+				if(test.isItemEqual(itemStack)) {
+					quantityRemoved += test.stackSize;
+					if(quantityRemoved > quantity) {
+						test.stackSize = (quantityRemoved - quantity);
+						return;
+					} else {
+						test.stackSize = 0;
+					}
+				}
+			}
+		}
+	}
 
 	@Override
 	public void handleServerSide(EntityPlayer player) {
-		
 		Item item = (Item) Item.itemRegistry.getObject(itemName);
-		player.inventory.addItemStackToInventory(new ItemStack(item, itemQuantity));
+		if(itemQuantity < 0) {
+			//remove items from player's inventory
+			removeItemInventory(item, player.inventory, (-1) * itemQuantity);
+		}else if(itemQuantity > 0) {
+			player.inventory.addItemStackToInventory(new ItemStack(item, itemQuantity));
+		} else {
+			System.err.println("DialogueRewardPacket() error: itemQuantity=0");
+		}
 	}
 
 }
