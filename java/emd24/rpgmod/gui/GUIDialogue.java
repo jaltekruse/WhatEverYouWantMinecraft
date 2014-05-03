@@ -17,15 +17,19 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import emd24.rpgmod.ExtendedPlayerData;
 import emd24.rpgmod.RPGMod;
+import emd24.rpgmod.packets.DialogueRewardPacket;
 import emd24.rpgmod.packets.GUIOpenPacket;
 import emd24.rpgmod.packets.ScriptActionPacket;
 import emd24.rpgmod.quest.DialogueTreeNode;
 import emd24.rpgmod.quest.ExtendedEntityLivingDialogueData;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
@@ -72,6 +76,25 @@ public class GUIDialogue extends GuiScreen
 		
 	}
 	
+	protected void givePlayerItem()
+	{
+		String itemName = selectedNode.reward;
+		Integer quantity = selectedNode.rewardQuantity;
+		EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
+		
+		if(!itemName.equals("") && quantity > 0)
+		{
+			Integer playerID = player.getEntityId();
+			DialogueRewardPacket message = new DialogueRewardPacket(playerID, itemName, quantity);
+			RPGMod.packetPipeline.sendToServer(message);
+		}
+		/*
+		EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
+		
+		Item item = (Item) Item.itemRegistry.getObject(itemName);
+		player.inventory.addItemStackToInventory(new ItemStack(item, quantity));*/
+	}
+	
 	protected void runScriptOnSelectedNode()
 	{
 		Integer entityID = this.target.getEntityId();
@@ -89,8 +112,10 @@ public class GUIDialogue extends GuiScreen
 		if(guibutton.id < selectedNode.children.size()) {
 			selectedNode = selectedNode.children.get(guibutton.id);
 			runScriptOnSelectedNode();
+			givePlayerItem();
 			selectedNode = selectedNode.children.get(0); //TODO: go through children looking for condition to be true
 			runScriptOnSelectedNode();
+			givePlayerItem();
 			initGui();
 		}
 	}
