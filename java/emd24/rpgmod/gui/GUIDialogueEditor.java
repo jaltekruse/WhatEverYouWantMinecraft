@@ -32,6 +32,7 @@ import net.minecraft.util.ChatComponentText;
 public class GUIDialogueEditor extends GuiScreen
 {
 	protected String npcName;
+	static String defaultNPCName = "NPC NAME NOT AVAILABLE!";
 	
 	DialogueTreeNode tree;
 	
@@ -44,6 +45,7 @@ public class GUIDialogueEditor extends GuiScreen
 	
 	List<DialogueTreeNode> list;
 	
+	GuiTextField npcNameTextbox, rewardTextbox, rewardQuantityTextbox;
 	GuiTextField dialogueTextbox, itemTextbox, quantityTextbox, actionTextbox;
 	
 	EntityLiving target;
@@ -65,7 +67,7 @@ public class GUIDialogueEditor extends GuiScreen
 		if(target.hasCustomNameTag())
 			npcName = target.getCustomNameTag();
 		else
-			npcName = "NPC NAME NOT AVAILABLE!";
+			npcName = defaultNPCName;
 		
 		
 		tree = new DialogueTreeNode();
@@ -81,7 +83,7 @@ public class GUIDialogueEditor extends GuiScreen
 		buttonList.add(new GuiButton(1, width/2, height - 50, width/4 - 15, 20, "New-Enter"));
 		buttonList.add(new GuiButton(2, width*3/4, height - 50, width/4 - 30, 20, "Delete"));
 		
-		int h = 75;
+		int h = 50;
 		
 		this.dialogueTextbox = new GuiTextField(this.fontRendererObj, width / 2, h, width/2 - 30, 12);
 		this.dialogueTextbox.setTextColor(-1);
@@ -90,26 +92,48 @@ public class GUIDialogueEditor extends GuiScreen
 		this.dialogueTextbox.setMaxStringLength(30);
 		dialogueTextbox.setFocused(true);
 
-		h+= 30;
+		h+= 25;
 		this.itemTextbox = new GuiTextField(this.fontRendererObj, width / 2, h, width/2 - 30, 12);
 		this.itemTextbox.setTextColor(-1);
 		this.itemTextbox.setDisabledTextColour(-1);
 		this.itemTextbox.setEnableBackgroundDrawing(true);
 		this.itemTextbox.setMaxStringLength(30);
 
-		h+= 30;
+		h+= 25;
 		this.quantityTextbox = new GuiTextField(this.fontRendererObj, width / 2, h, width/2 - 30, 12);
 		this.quantityTextbox.setTextColor(-1);
 		this.quantityTextbox.setDisabledTextColour(-1);
 		this.quantityTextbox.setEnableBackgroundDrawing(true);
 		this.quantityTextbox.setMaxStringLength(30);
 
-		h+= 30;
+		h+= 25;
 		this.actionTextbox = new GuiTextField(this.fontRendererObj, width / 2, h, width/2 - 30, 12);
 		this.actionTextbox.setTextColor(-1);
 		this.actionTextbox.setDisabledTextColour(-1);
 		this.actionTextbox.setEnableBackgroundDrawing(true);
 		this.actionTextbox.setMaxStringLength(30);
+
+		h+= 25;
+		this.rewardTextbox = new GuiTextField(this.fontRendererObj, width / 2, h, width/2 - 30, 12);
+		this.rewardTextbox.setTextColor(-1);
+		this.rewardTextbox.setDisabledTextColour(-1);
+		this.rewardTextbox.setEnableBackgroundDrawing(true);
+		this.rewardTextbox.setMaxStringLength(30);
+
+		h+= 25;
+		this.rewardQuantityTextbox = new GuiTextField(this.fontRendererObj, width / 2, h, width/2 - 30, 12);
+		this.rewardQuantityTextbox.setTextColor(-1);
+		this.rewardQuantityTextbox.setDisabledTextColour(-1);
+		this.rewardQuantityTextbox.setEnableBackgroundDrawing(true);
+		this.rewardQuantityTextbox.setMaxStringLength(30);
+
+		h+= 25;
+		this.npcNameTextbox = new GuiTextField(this.fontRendererObj, width / 4, 25, width/2 - 30, 12);
+		this.npcNameTextbox.setTextColor(-1);
+		this.npcNameTextbox.setDisabledTextColour(-1);
+		this.npcNameTextbox.setEnableBackgroundDrawing(true);
+		this.npcNameTextbox.setMaxStringLength(30);
+		this.npcNameTextbox.setText(this.npcName);
 		
 		initialized = true;
 	}
@@ -146,6 +170,9 @@ public class GUIDialogueEditor extends GuiScreen
 		this.itemTextbox.mouseClicked(par1, par2, par3);
 		this.quantityTextbox.mouseClicked(par1, par2, par3);
 		this.actionTextbox.mouseClicked(par1, par2, par3);
+		this.rewardTextbox.mouseClicked(par1, par2, par3);
+		this.rewardQuantityTextbox.mouseClicked(par1, par2, par3);
+		this.npcNameTextbox.mouseClicked(par1, par2, par3);
 	}
 	
 	public void drawScreen(int par1, int j, float f)
@@ -157,11 +184,14 @@ public class GUIDialogueEditor extends GuiScreen
 		this.itemTextbox.drawTextBox();
 		this.quantityTextbox.drawTextBox();
 		this.actionTextbox.drawTextBox();
+		this.rewardTextbox.drawTextBox();
+		this.rewardQuantityTextbox.drawTextBox();
+		this.npcNameTextbox.drawTextBox();
 
 		//draw header
 		drawRect(20, 20, width - 20, height - 20, 0x60ff0000);
 		int h = 30;
-		drawCenteredString(fontRendererObj, npcName, width / 2, h, 0xffffffff);
+		//drawCenteredString(fontRendererObj, npcName, width / 2, h, 0xffffffff);
 		drawHorizontalLine(20, 50, 500, 0xffffffff);
 
 		//draw selected item
@@ -196,27 +226,37 @@ public class GUIDialogueEditor extends GuiScreen
 		}
 		
 		//Selected Node Drawing (right side of Window)
-		h = 30;
+		h = 40;
 		String dialogue = "dialogue: ";// + selectedNode.dialogueText;
 		dialogueTextbox.setText(selectedNode.dialogueText);
-		h += 30;
 		drawString(fontRendererObj, dialogue, width / 2, h, 0xffffffff);
 
 		String item = "item: ";
 		itemTextbox.setText(selectedNode.itemNeeded);
-		h += 30;
+		h += 25;
 		drawString(fontRendererObj, item, width / 2, h, 0xffffffff);
 
 		String quantity = "item quantity: ";
 		if(selectedNode.itemQuantity >= 0)
 			quantityTextbox.setText(Integer.toString(selectedNode.itemQuantity));
-		h += 30;
+		h += 25;
 		drawString(fontRendererObj, quantity, width / 2, h, 0xffffffff);
 
 		String action = "action: ";
 		actionTextbox.setText(selectedNode.action);
-		h += 30;
+		h += 25;
 		drawString(fontRendererObj, action, width / 2, h, 0xffffffff);
+
+		String reward = "reward: ";
+		rewardTextbox.setText(selectedNode.reward);
+		h += 25;
+		drawString(fontRendererObj, reward, width / 2, h, 0xffffffff);
+
+		String rewardQuantity = "reward quantity: ";
+		if(selectedNode.rewardQuantity >= 0)
+			rewardQuantityTextbox.setText(Integer.toString(selectedNode.rewardQuantity));
+		h += 25;
+		drawString(fontRendererObj, quantity, width / 2, h, 0xffffffff);
 		
 
 		super.drawScreen(par1, j, f);
@@ -265,6 +305,26 @@ public class GUIDialogueEditor extends GuiScreen
 		if(this.actionTextbox.textboxKeyTyped(par1, key)) {
 			selectedNode.action = this.actionTextbox.getText();
 		}
+		if(this.rewardTextbox.textboxKeyTyped(par1, key)) {
+			selectedNode.reward = this.rewardTextbox.getText();
+		}
+		if(this.rewardQuantityTextbox.textboxKeyTyped(par1, key)) {
+			try {
+				selectedNode.rewardQuantity = Integer.parseInt(this.rewardQuantityTextbox.getText());
+			}
+			catch(NumberFormatException e) {
+				selectedNode.rewardQuantity = -1;
+			}
+		}
+		if(this.npcNameTextbox.textboxKeyTyped(par1, key)) {
+			if(npcNameTextbox.getText().contains(defaultNPCName))
+			{
+				this.npcNameTextbox.setText("");
+				this.npcNameTextbox.textboxKeyTyped(par1, key);
+			}
+			String name = this.npcNameTextbox.getText();
+			this.target.setCustomNameTag(name);
+		}
 		
 		switch(key) {
 		case Keyboard.KEY_DOWN:
@@ -276,6 +336,8 @@ public class GUIDialogueEditor extends GuiScreen
 				this.itemTextbox.setFocused(false);
 				this.quantityTextbox.setFocused(false);
 				this.actionTextbox.setFocused(false);
+				this.rewardTextbox.setFocused(false);
+				this.rewardQuantityTextbox.setFocused(false);
 			}
 			break;
 		case Keyboard.KEY_UP:
@@ -287,6 +349,8 @@ public class GUIDialogueEditor extends GuiScreen
 				this.itemTextbox.setFocused(false);
 				this.quantityTextbox.setFocused(false);
 				this.actionTextbox.setFocused(false);
+				this.rewardTextbox.setFocused(false);
+				this.rewardQuantityTextbox.setFocused(false);
 			}
 			break;
 		case Keyboard.KEY_DELETE:

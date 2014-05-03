@@ -513,8 +513,7 @@ public class EventHookContainer {
 		}
 		
 		//Call LivingEntity's script if needed
-		Integer entityID = event.entity.getEntityId();
-		ScriptManagerServer.runScript(entityID);
+		ScriptManagerServer.runScript(event.entity);
 	}
 
 	/**

@@ -14,6 +14,11 @@ import javax.script.ScriptException;
 
 import org.apache.commons.lang3.StringUtils;
 
+import sun.org.mozilla.javascript.internal.Context;
+import sun.org.mozilla.javascript.internal.ScriptableObject;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.DimensionManager;
 
 public class ScriptManagerServer {
@@ -24,7 +29,7 @@ public class ScriptManagerServer {
 	//Name of scripts file
 	static String filename = "scripts.txt";
 	//Delimiter to use for storing scripts
-	static String delimiter = StringUtils.repeat("!", 80);
+	static String delimiter = StringUtils.repeat("/", 40);
 	//Scripting Engine Stuff
 	static ScriptEngineManager factory;
 	static ScriptEngine engine;
@@ -53,21 +58,27 @@ public class ScriptManagerServer {
 	
 	/**
 	 * Run entityID's active script, if any.  Called every tick.
-	 * @param entityID entityID of entity to update.
+	 * @param entity entity to update.
 	 */
-	public static void runScript(Integer entityID)
+	public static void runScript(Entity entity)
 	{
+		//entity.getEntityId()
+		Integer entityID = entity.getEntityId();
 		init();
 		String script_name = active_scripts.get(entityID);
 		if(script_name != null)
 		{
-			ScriptManagerServer.load();
+			ScriptManagerServer.load(); //TODO: Remove
 			String script = ScriptManagerServer.scripts.get(script_name);
 			if(script != null)
 			{
 				//Run script
 				Object result;
 				try {
+					//Minecraft.getMinecraft().theWorld.getEntityByID(par1)
+					//MinecraftServer.getServer().getEntityWorld().getEntityByID(entityID).posX
+					//entity.worldObj
+					engine.eval("id = " + entityID);
 					result = engine.eval(script);
 					if(result != null)
 					{
@@ -79,6 +90,7 @@ public class ScriptManagerServer {
 					}
 				} catch(ScriptException e) {
 					scriptError = e.getLocalizedMessage();
+					System.err.println("Error in script '" + script_name + "': " + scriptError);
 				}
 			}
 			else
@@ -147,10 +159,10 @@ public class ScriptManagerServer {
 		for(Map.Entry<String, String> entry : scripts.entrySet()) {
 			String name = entry.getKey();
 			String content = entry.getValue();
-			writer.println(name);
+			writer.print(delimiter);
+			writer.print(name);
 			writer.println(delimiter);
-			writer.print(content);
-			writer.println(delimiter);
+			writer.println(content);
 		}
 		
 		
