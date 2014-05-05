@@ -203,8 +203,9 @@ public abstract class Spell extends Item implements Comparable {
 		return spellType;
 	}
 
-	public void setSpellType(DamageType spellType) {
+	public Spell setSpellType(DamageType spellType) {
 		this.spellType = spellType;
+		return this;
 	}
 
 	public int getBasePower() {
