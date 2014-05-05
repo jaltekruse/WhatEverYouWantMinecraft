@@ -71,14 +71,6 @@ public class GUIPartyHUD extends Gui {
 				if(currPlayer == null)
 					continue;
 				
-				ExtendedPlayerData data = ExtendedPlayerData.get(currPlayer);
-				
-				boolean drawMana = true;
-				// Check if mana property doesn't exist
-				if(data == null || data.getMaxMana() == 0){
-					drawMana = false;
-				}
-				
 				int slotOrigin =  manaHeight + slotHeight * currSlot + yBuffer;
 				
 				// If slot origin > screen height, we'd try to place something
@@ -107,19 +99,19 @@ public class GUIPartyHUD extends Gui {
 				this.drawTexturedModalRect(xBuffer + 1, slotOrigin + textHeight + 1, 0, 4, pixelLength, 2);
 
 				/* Draw Mana Bar */
-				if (drawMana){
-					// Draw Health Bar
-					this.instance.getTextureManager().bindTexture(this.manatexture);
-					// Draw outer rectangle for health bar
-					this.drawTexturedModalRect(xBuffer, slotOrigin + textHeight + barHeight, 0, 0, 64, 4);
-					// Calculate # of pixels to scale health bar
-					pixelLength = (int) (((float) data.getCurrMana() / data.getMaxMana()) * 62);
-					// Draw the inner rectangle
-					this.drawTexturedModalRect(xBuffer + 1, slotOrigin + textHeight + barHeight + 1, 0, 4, pixelLength, 2);
-				}
+				this.instance.getTextureManager().bindTexture(this.manatexture);
+				// Draw outer rectangle for health bar
+				this.drawTexturedModalRect(xBuffer, slotOrigin + textHeight + barHeight, 0, 0, 64, 4);
+				// Calculate # of pixels to scale health bar
+				int currMana = PartyManagerClient.playerMana.get(curr)[PartyManagerClient.CURR_MANA_LOC];
+				int currMaxMana = PartyManagerClient.playerMana.get(curr)[PartyManagerClient.MAX_MANA_LOC];
+				pixelLength = (int) (((float) currMana / currMaxMana) * 62);
+				// Draw the inner rectangle
+				this.drawTexturedModalRect(xBuffer + 1, slotOrigin + textHeight + barHeight + 1, 0, 4, pixelLength, 2);
+
 				String location = "x: " + (int) currPlayer.posX + " y: " + (int) currPlayer.posY + " z: " + (int) currPlayer.posZ;
 				this.drawString(this.instance.fontRenderer,  location, xBuffer, slotOrigin + textHeight + barHeight + 1
-						+ (drawMana ? 1:0) * (barHeight + 1), white);
+						+ (barHeight + 1), white);
 				
 				
 				currSlot++;

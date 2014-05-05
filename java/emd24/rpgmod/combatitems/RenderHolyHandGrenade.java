@@ -56,7 +56,7 @@ public class RenderHolyHandGrenade extends Render {
 		bindTexture(texture);
 
 		// do whatever transformations you need, then render
-		GL11.glRotatef(180, 0, 0, 0);
+		//GL11.glRotatef(180, 0, 0, 0);
 		// typically you will at least want to translate for x/y/z position:
 		GL11.glTranslated(x, y, z);
 

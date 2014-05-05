@@ -190,7 +190,7 @@ public class RPGMod {
 
 		EntityRegistry.registerModEntity(HolyHandGrenadeEntity.class, "holy_hand_grenade", ++modEntityID, this, 64, 10, true);
 		EntityRegistry.registerModEntity(ItemThrowingKnifeEntity.class, "throwing_knife", ++modEntityID, this, 64, 10, true);
-		EntityRegistry.registerModEntity(MagicBall.class, "magic_fireball", ++modEntityID, this, 64, 10, true);
+		EntityRegistry.registerModEntity(MagicBall.class, "fireball", ++modEntityID, this, 64, 10, true);
 
 
 
@@ -241,15 +241,16 @@ public class RPGMod {
 		.setTextureName(MOD_ID + ":summon_slime");
 
 		healSelf = (Spell) new HealSpell(5, CreativeTabs.tabCombat, false).setManaCost(10)
-				.setExperience(10).setUnlocalizedName("heal_self");
+				.setExperience(10).setUnlocalizedName("heal_self").setTextureName(MOD_ID + ":heal_self");
 
-		healParty = (Spell) new HealSpell(15, CreativeTabs.tabCombat, true).setManaCost(35).setUnlocalizedName("heal_party");
+		healParty = (Spell) new HealSpell(15, CreativeTabs.tabCombat, true).setManaCost(35)
+				.setUnlocalizedName("heal_party").setTextureName(MOD_ID + ":heal_party");
 
 		flySpell = (Spell) new SpellFly(0, CreativeTabs.tabCombat).setManaCost(30).setExperience(15).setLevelRequired(2)
 				.setUnlocalizedName("fly").setTextureName(MOD_ID + ":fly");
 
 		fireball = (Spell) new SpellMagicProjectile(6, CreativeTabs.tabCombat).setManaCost(15).setLevelRequired(1)
-				.setUnlocalizedName("magic_fireball");
+				.setUnlocalizedName("fireball").setTextureName(MOD_ID + ":fireball");
 
 		// Initialize weapons
 

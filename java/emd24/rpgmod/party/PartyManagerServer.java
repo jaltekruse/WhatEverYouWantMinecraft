@@ -5,14 +5,24 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import emd24.rpgmod.RPGMod;
 import emd24.rpgmod.packets.PartyDataPacket;
+import emd24.rpgmod.packets.PartyManaPacket;
 import emd24.rpgmod.packets.PlayerDataPacket;
 
 public class PartyManagerServer {
 	// Maps player name to party ID
 	public static HashMap<String, Integer> playerParty
 		= new HashMap<String, Integer>();
+	
+	// Maps player name to current mana
+	public static HashMap<String, Integer[]> playerMana
+	= new HashMap<String, Integer[]>();
+	public final int CURR_MANA_LOC = 0;
+	public final int MAX_MANA_LOC = 1;
+	
 	protected static int autoincrement = 1;
 	
 	/**
@@ -101,6 +111,7 @@ public class PartyManagerServer {
 		} else {
 		removePlayerFromParty(playerName, playerName);
 		playerParty.remove(playerName);
+		playerMana.remove(playerName);
 		RPGMod.packetPipeline.sendToAll(new PartyDataPacket());
 		}
 	}
@@ -115,4 +126,19 @@ public class PartyManagerServer {
 			RPGMod.packetPipeline.sendToAll(new PartyDataPacket());
 		} else {}
 	}
+	
+	public static void handlePlayerMana(String player, int[] mana){
+		if (player == null || mana == null){
+			throw new NullPointerException();
+		}
+		//If the player is already in the map, remove it so we get a clean add
+		if(playerMana.containsKey(player)){
+			playerMana.remove(player);
+		}
+		//Then add the player to our map
+		Integer[] manaArray = ArrayUtils.toObject(mana);
+		playerMana.put(player, manaArray);
+		RPGMod.packetPipeline.sendToAll(new PartyManaPacket());
+	}
+
 }
