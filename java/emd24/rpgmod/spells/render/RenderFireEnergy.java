@@ -8,6 +8,7 @@ import emd24.rpgmod.spells.entities.MagicBall;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 
 /**
@@ -40,25 +41,9 @@ public class RenderFireEnergy extends Render {
 	private ResourceLocation getCustomTexture(MagicBall entity) {
 		// now you have access to your custom entity fields and methods, if any,
 		// and can base the texture to return upon those
-		String name = "";
-		switch(entity.getDamageType()){
-		case WIND:
-			name = "wind";
-			break;
-		case WATER:
-			name = "water";
-			break;
-		case EARTH:
-			name = "earth";
-			break;
-		case FIRE:
-			name = "fire";
-			break;
-
-		default:
-			break;
-
-		}
+		NBTTagCompound tag = entity.getEntityData();
+		String name = tag.getString("mag_type").toLowerCase();
+		
 		return new ResourceLocation(RPGMod.MOD_ID, "textures/entity/" + name + "_energy.png");
 	}
 

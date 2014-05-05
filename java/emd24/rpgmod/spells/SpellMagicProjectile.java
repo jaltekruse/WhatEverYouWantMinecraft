@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class SpellMagicProjectile extends Spell{
 
@@ -22,6 +23,9 @@ public class SpellMagicProjectile extends Spell{
 	@Override
 	public boolean castSpell(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer){
 
+		
+		
+		
 		if(!par2World.isRemote){
 			ExtendedPlayerData playerData = ExtendedPlayerData.get(par3EntityPlayer);
 
@@ -30,7 +34,11 @@ public class SpellMagicProjectile extends Spell{
 			 */
 			int damage = (int) (this.getBasePower() * (1.0 + (playerData.getSkill("Magic").getLevel() - 1) * .05));
 
-			par2World.spawnEntityInWorld(new MagicBall(par2World, par3EntityPlayer).setPower(damage).setType(this.getSpellType()));
+			MagicBall projectile = (new MagicBall(par2World, par3EntityPlayer));
+			NBTTagCompound prop = projectile.getEntityData();
+			prop.setInteger("mag_dmg", damage);
+			prop.setString("mag_type", this.getSpellType().toString());
+			par2World.spawnEntityInWorld(projectile);
 		}
 		return true;
 	}

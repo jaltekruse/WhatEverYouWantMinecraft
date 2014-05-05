@@ -4,14 +4,12 @@ import emd24.rpgmod.spells.Spell;
 import emd24.rpgmod.spells.Spell.DamageType;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityThrowable;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
 public class MagicBall extends EntityThrowable {
-
-	private int damage;
-	private Spell.DamageType type;
 
 	public MagicBall(World world) {
 		super(world);
@@ -31,11 +29,16 @@ public class MagicBall extends EntityThrowable {
 	@Override
 	protected void onImpact(MovingObjectPosition mop) {
 		if (mop.entityHit != null) {
+			
+			// Get custom entity properties
+			NBTTagCompound tag = this.getEntityData();
+			int damage = tag.getInteger("mag_dmg");
+			
 			// We changed this to type 'float' and set to '2'; note you could just put the damage in
 			// the method directly if you don't intend to change the damage variable
-
+			
 			// now in this line we don't need to cast as 'float', since our variable is already that type
-			mop.entityHit.attackEntityFrom(DamageSource.causeThrownDamage(this, this.getThrower()), this.damage);
+			mop.entityHit.attackEntityFrom(DamageSource.causeThrownDamage(this, this.getThrower()), damage);
 		}
 
 		// spawn 4 "crit" particles at the point of impact
@@ -50,17 +53,5 @@ public class MagicBall extends EntityThrowable {
 		}
 	}
 
-	public MagicBall setPower(int damage){
-		this.damage = damage;
-		return this;
-	}
-	
-	public MagicBall setType(DamageType type){
-		this.type = type;
-		return this;
-	}
-	
-	public DamageType getDamageType(){
-		return this.type;
-	}
+
 }

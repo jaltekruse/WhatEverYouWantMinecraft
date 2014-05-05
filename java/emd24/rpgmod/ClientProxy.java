@@ -30,7 +30,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void registerRenderers() {
 		
-		RenderingRegistry.registerEntityRenderingHandler(HolyHandGrenadeEntity.class, new RenderSnowball(RPGMod.holyHandGrenade));
+		RenderingRegistry.registerEntityRenderingHandler(HolyHandGrenadeEntity.class, new RenderHolyHandGrenade());
 		RenderingRegistry.registerEntityRenderingHandler(ItemThrowingKnifeEntity.class, new RenderSnowball(RPGMod.throwingKnifeStone));
 		RenderingRegistry.registerEntityRenderingHandler(MagicBall.class, new RenderFireEnergy());
 	}

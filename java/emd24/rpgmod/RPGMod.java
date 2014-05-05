@@ -284,7 +284,8 @@ public class RPGMod {
 
 		// Initialize miscellaneous items
 
-		healMana = new ItemManaHeal().setCreativeTab(CreativeTabs.tabMisc).setUnlocalizedName("heal_mana");
+		healMana = new ItemManaHeal().setCreativeTab(CreativeTabs.tabMisc).setUnlocalizedName("heal_mana")
+				.setTextureName(RPGMod.MOD_ID + ":mana_heal");
 
 		//testSpawner = new TestSpawner().setUnlocalizedName("test_spawner").setTextureName(MOD_ID + ":test_spawner");
 
