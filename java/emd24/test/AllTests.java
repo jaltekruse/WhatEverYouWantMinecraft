@@ -19,6 +19,8 @@ import joptsimple.OptionSpec;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.BlockDoublePlant;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.creativetab.CreativeTabs;
@@ -75,6 +77,7 @@ import emd24.rpgmod.ExtendedPlayerData;
 import emd24.rpgmod.RPGMod;
 import emd24.rpgmod.combatitems.HolyHandGrenade;
 import emd24.rpgmod.combatitems.HolyHandGrenadeEntity;
+import emd24.rpgmod.gui.GUIParty;
 import emd24.rpgmod.packets.PacketPipeline;
 import emd24.rpgmod.party.PartyManagerServer;
 import emd24.rpgmod.spells.BecomeUndeadSpell;
@@ -161,20 +164,57 @@ public class AllTests {
 //	    }
 //	}
 	
+	private static class TestGUIParty extends GUIParty {
+
+		public TestGUIParty(EntityPlayer player) {
+			super(player);
+		}
+		
+		public String getInvitingPlayerName() {
+			return "player name";
+		}
+		
+		public void drawString(FontRenderer par1FontRenderer, String par2Str, int par3, int par4, int par5) {
+		}
+
+		public void drawDefaultBackground() {
+		}
+		
+		public void drawRectNotStatic(int par0, int par1, int par2, int par3, int par4)  {
+		}
+		
+		public void drawCenteredString(FontRenderer par1FontRenderer, String par2Str, int par3, int par4, int par5) {
+		}
+	}
+	
+	@Test
+	public void testPartyGUI() {
+		PartyManagerServer.addPlayerToParty(mockPlayer1.getCommandSenderName(), 0);
+		PartyManagerServer.addPlayerToPlayersParty(mockPlayer2.getCommandSenderName(), mockPlayer1.getCommandSenderName());
+		world.isRemote = false;
+		GUIParty gp = new TestGUIParty(mockPlayer1);
+		gp.height = 100;
+		gp.initGui();
+		GuiButton gb = mock(GuiButton.class);
+		gb.id = 0;
+		gp.actionPerformed(gb);
+		gp.drawScreen(10, 10, 1.0f);
+	}
+	
 	private void setPlayerHealth(EntityPlayer player, float health) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		Class cls = Entity.class;
 		Field f = cls.getDeclaredField("dataWatcher");
 		f.setAccessible(true);
 		DataWatcher dw = mock(DataWatcher.class);
 		when(dw.getWatchableObjectFloat(6)).thenReturn(health);
-		f.set(mockPlayer1, dw);
+		f.set(player, dw);
 	}
 	
 	private void setPlayerMaxHealth(EntityPlayer player, float maxHealth) {
 		IAttributeInstance maxHealthAttr = mock(IAttributeInstance.class);
 		// max health > health, heal can be cast
 		when(maxHealthAttr.getAttributeValue()).thenReturn(8.0);
-		when(mockPlayer1.getEntityAttribute(SharedMonsterAttributes.maxHealth)).thenReturn(maxHealthAttr);
+		when(player.getEntityAttribute(SharedMonsterAttributes.maxHealth)).thenReturn(maxHealthAttr);
 	}
 	
 	/*
