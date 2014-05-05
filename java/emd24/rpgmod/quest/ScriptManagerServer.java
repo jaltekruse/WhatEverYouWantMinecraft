@@ -15,8 +15,6 @@ import javax.script.ScriptException;
 
 import org.apache.commons.lang3.StringUtils;
 
-import sun.org.mozilla.javascript.internal.Context;
-import sun.org.mozilla.javascript.internal.ScriptableObject;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;

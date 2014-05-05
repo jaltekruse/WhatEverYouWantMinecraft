@@ -64,7 +64,6 @@ import emd24.rpgmod.skills.SkillThieving;
 import emd24.rpgmod.skills.ThievingData;
 import emd24.rpgmod.skills.ThievingData.LootEntry;
 import emd24.rpgmod.spells.*;
-import emd24.test.TestSpawner;
 import emd24.rpgmod.spells.entities.MagicBall;
 
 /*
