@@ -34,6 +34,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.DamageSource;
@@ -304,7 +305,7 @@ public class EventHookContainer {
 					GUIOpenPacket packet = new GUIOpenPacket(0, entityID, dialogue);
 					RPGMod.packetPipeline.sendTo(packet, (EntityPlayerMP)player);
 
-					event.setCanceled(true);
+		//			event.setCanceled(true);
 				} else {
 					// Regular method call
 					player.interactWith(event.entity);
@@ -332,7 +333,7 @@ public class EventHookContainer {
 			ExtendedPlayerData data = ExtendedPlayerData.get(ent);
 
 			// Check if the fly spell is in effect
-			if (ent.isPotionActive(RPGMod.flyingPotion.id)) {
+			if (ent.isPotionActive(RPGMod.flyingPotion.id) || ent.capabilities.isCreativeMode) {
 				ent.capabilities.allowFlying = true;
 			}
 			else{

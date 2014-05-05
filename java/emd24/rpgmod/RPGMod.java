@@ -64,6 +64,8 @@ import emd24.rpgmod.skills.SkillThieving;
 import emd24.rpgmod.skills.ThievingData;
 import emd24.rpgmod.skills.ThievingData.LootEntry;
 import emd24.rpgmod.spells.*;
+
+import emd24.rpgmod.spells.Spell.DamageType;
 import emd24.rpgmod.spells.entities.MagicBall;
 
 /*
@@ -94,7 +96,10 @@ public class RPGMod {
 	public static Spell healParty;
 	public static Spell flySpell;
 
-	public static Spell fireball;
+	public static Spell windEnergy;
+	public static Spell waterEnergy;
+	public static Spell earthEnergy;
+	public static Spell fireEnergy;
 
 	public static Item healMana;
 	public static Item holyHandGrenade;
@@ -248,8 +253,17 @@ public class RPGMod {
 		flySpell = (Spell) new SpellFly(0, CreativeTabs.tabCombat).setManaCost(30).setExperience(15).setLevelRequired(2)
 				.setUnlocalizedName("fly").setTextureName(MOD_ID + ":fly");
 
-		fireball = (Spell) new SpellMagicProjectile(6, CreativeTabs.tabCombat).setManaCost(15).setLevelRequired(1)
-				.setUnlocalizedName("fireball").setTextureName(MOD_ID + ":fireball");
+		windEnergy = (Spell) new SpellMagicProjectile(6, CreativeTabs.tabCombat).setManaCost(20).setLevelRequired(1).setSpellType(DamageType.WIND)
+				.setUnlocalizedName("wind_energy").setTextureName(MOD_ID + ":wind_energy");
+		
+		waterEnergy = (Spell) new SpellMagicProjectile(6, CreativeTabs.tabCombat).setManaCost(20).setLevelRequired(1).setSpellType(DamageType.WATER)
+				.setUnlocalizedName("water_energy").setTextureName(MOD_ID + ":water_energy");
+		
+		earthEnergy = (Spell) new SpellMagicProjectile(6, CreativeTabs.tabCombat).setManaCost(20).setLevelRequired(1).setSpellType(DamageType.EARTH)
+				.setUnlocalizedName("earth_energy").setTextureName(MOD_ID + ":earth_energy");
+		
+		fireEnergy = (Spell) new SpellMagicProjectile(6, CreativeTabs.tabCombat).setManaCost(20).setLevelRequired(1).setSpellType(DamageType.FIRE)
+				.setUnlocalizedName("fire_energy").setTextureName(MOD_ID + ":fire_energy");
 
 		// Initialize weapons
 
@@ -305,7 +319,10 @@ public class RPGMod {
 		SpellRegistry.registerSpell(healParty);
 		SpellRegistry.registerSpell(flySpell);
 
-		SpellRegistry.registerSpell(fireball);
+		SpellRegistry.registerSpell(windEnergy);
+		SpellRegistry.registerSpell(waterEnergy);
+		SpellRegistry.registerSpell(earthEnergy);
+		SpellRegistry.registerSpell(fireEnergy);
 
 		GameRegistry.registerItem(healMana, healMana.getUnlocalizedName());
 

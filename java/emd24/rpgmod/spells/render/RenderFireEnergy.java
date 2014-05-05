@@ -3,6 +3,7 @@ package emd24.rpgmod.spells.render;
 import org.lwjgl.opengl.GL11;
 
 import emd24.rpgmod.RPGMod;
+import emd24.rpgmod.spells.Spell.DamageType;
 import emd24.rpgmod.spells.entities.MagicBall;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.entity.Render;
@@ -16,14 +17,14 @@ import net.minecraft.util.ResourceLocation;
  * @author Evan Dyke
  *
  */
-public class RenderMagicBall extends Render {
+public class RenderFireEnergy extends Render {
 
-	private static final ResourceLocation texture = new ResourceLocation(RPGMod.MOD_ID, "textures/entity/fireball.png");
+	private static ResourceLocation texture = new ResourceLocation(RPGMod.MOD_ID, "textures/entity/fire_energy.png");
 
 	// if you want a model, be sure to add it here:
 	private ModelBase model;
 
-	public RenderMagicBall() {
+	public RenderFireEnergy() {
 		// we could have initialized it above, but here is fine as well:
 		model = new ModelFireball();
 	}
@@ -39,7 +40,26 @@ public class RenderMagicBall extends Render {
 	private ResourceLocation getCustomTexture(MagicBall entity) {
 		// now you have access to your custom entity fields and methods, if any,
 		// and can base the texture to return upon those
-		return texture;
+		String name = "";
+		switch(entity.getDamageType()){
+		case WIND:
+			name = "wind";
+			break;
+		case WATER:
+			name = "water";
+			break;
+		case EARTH:
+			name = "earth";
+			break;
+		case FIRE:
+			name = "fire";
+			break;
+
+		default:
+			break;
+
+		}
+		return new ResourceLocation(RPGMod.MOD_ID, "textures/entity/" + name + "_energy.png");
 	}
 
 	// in whatever render method you are using; this one is from Render class:
@@ -53,7 +73,7 @@ public class RenderMagicBall extends Render {
 		GL11.glPushMatrix();
 
 		// bind your texture:
-		bindTexture(texture);
+		bindTexture(getEntityTexture(entity));
 
 		// do whatever transformations you need, then render
 

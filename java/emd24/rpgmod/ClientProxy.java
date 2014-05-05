@@ -15,7 +15,7 @@ import emd24.rpgmod.gui.GUIPartyHUD;
 import emd24.rpgmod.gui.GUIScriptEditor;
 import emd24.rpgmod.gui.GUISkills;
 import emd24.rpgmod.spells.entities.MagicBall;
-import emd24.rpgmod.spells.render.RenderMagicBall;
+import emd24.rpgmod.spells.render.RenderFireEnergy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderSnowball;
 import net.minecraft.entity.EntityLiving;
@@ -30,9 +30,9 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void registerRenderers() {
 		
-		RenderingRegistry.registerEntityRenderingHandler(HolyHandGrenadeEntity.class, new RenderHolyHandGrenade());
+		RenderingRegistry.registerEntityRenderingHandler(HolyHandGrenadeEntity.class, new RenderSnowball(RPGMod.holyHandGrenade));
 		RenderingRegistry.registerEntityRenderingHandler(ItemThrowingKnifeEntity.class, new RenderSnowball(RPGMod.throwingKnifeStone));
-		RenderingRegistry.registerEntityRenderingHandler(MagicBall.class, new RenderMagicBall());
+		RenderingRegistry.registerEntityRenderingHandler(MagicBall.class, new RenderFireEnergy());
 	}
 	@Override
 	public void registerKeys(){

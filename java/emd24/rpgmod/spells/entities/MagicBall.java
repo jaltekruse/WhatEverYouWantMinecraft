@@ -1,5 +1,7 @@
 package emd24.rpgmod.spells.entities;
 
+import emd24.rpgmod.spells.Spell;
+import emd24.rpgmod.spells.Spell.DamageType;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.util.DamageSource;
@@ -9,6 +11,7 @@ import net.minecraft.world.World;
 public class MagicBall extends EntityThrowable {
 
 	private int damage;
+	private Spell.DamageType type;
 
 	public MagicBall(World world) {
 		super(world);
@@ -50,5 +53,14 @@ public class MagicBall extends EntityThrowable {
 	public MagicBall setPower(int damage){
 		this.damage = damage;
 		return this;
+	}
+	
+	public MagicBall setType(DamageType type){
+		this.type = type;
+		return this;
+	}
+	
+	public DamageType getDamageType(){
+		return this.type;
 	}
 }
