@@ -20,6 +20,7 @@ import emd24.rpgmod.packets.PartyDataPacket;
 import emd24.rpgmod.packets.PartyInvitePacket;
 import emd24.rpgmod.party.PartyManagerClient;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
@@ -81,11 +82,33 @@ public class GUIParty extends GuiScreen {
 		buttonList.clear();
 	}
 	
-	protected void actionPerformed(GuiButton guibutton)
+	// having thesew methods here allows me to mock the functionality in test, I cannot override static methods
+	// and it is too hard to spin up the Minecraft class correctly
+	public String getInvitingPlayerName() {
+		return Minecraft.getMinecraft().thePlayer.getCommandSenderName();
+	}
+
+	public void drawString(FontRenderer par1FontRenderer, String par2Str, int par3, int par4, int par5) {
+		super.drawString(par1FontRenderer, par2Str, par3, par4, par5);
+	}
+	
+	public void drawCenteredString(FontRenderer par1FontRenderer, String par2Str, int par3, int par4, int par5) {
+		super.drawCenteredString(par1FontRenderer, par2Str, par3, par4, par5);
+	}
+
+	public void drawDefaultBackground() {
+		super.drawDefaultBackground();
+	}
+	
+	public void drawRectNotStatic(int par0, int par1, int par2, int par3, int par4)  {
+		drawRect(par0, par1, par2, par3, par4);
+	}
+
+	public void actionPerformed(GuiButton guibutton)
 	{
 		//We need to take the button id, figure out which player that entry maps
 		//to and then send the invite to the player.
-		String invitingPlayer = Minecraft.getMinecraft().thePlayer.getCommandSenderName();
+		String invitingPlayer = getInvitingPlayerName();
 		PartyInvitePacket packet = null;
 		PartyPlayerNode curr = null;
 		int type = 0;
@@ -175,7 +198,7 @@ public class GUIParty extends GuiScreen {
 
 		// Draw background and header
 		drawDefaultBackground();
-		drawRect(fivePercentWidth, fivePercentHeight, width - fivePercentWidth,
+		drawRectNotStatic(fivePercentWidth, fivePercentHeight, width - fivePercentWidth,
 				height - fivePercentHeight, 0xffdddddd);
 		drawCenteredString(fontRendererObj, "Party", width / 2, fivePercentHeight * 2, 0xffffffff);
 		drawString(fontRendererObj, "Page: " + (currentPage + 1) + " of " + 

@@ -8,6 +8,7 @@ import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
@@ -96,7 +97,7 @@ public abstract class Spell extends Item implements Comparable {
 		}
 		else{
 			// Check to see if player has enough mana
-			ExtendedPlayerData properties = ExtendedPlayerData.get(par2EntityPlayer);
+			ExtendedPlayerData properties = (ExtendedPlayerData) par2EntityPlayer.getExtendedProperties(ExtendedPlayerData.IDENTIFIER);
 			if(properties.getCurrMana() < this.manaCost){
 				if(!par3World.isRemote)
 					par2EntityPlayer.addChatMessage(new ChatComponentText("Not enough mana!"));
