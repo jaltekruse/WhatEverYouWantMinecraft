@@ -102,13 +102,14 @@ public class GUIPartyHUD extends Gui {
 				this.instance.getTextureManager().bindTexture(this.manatexture);
 				// Draw outer rectangle for health bar
 				this.drawTexturedModalRect(xBuffer, slotOrigin + textHeight + barHeight, 0, 0, 64, 4);
-				// Calculate # of pixels to scale health bar
-				int currMana = PartyManagerClient.playerMana.get(curr)[PartyManagerClient.CURR_MANA_LOC];
-				int currMaxMana = PartyManagerClient.playerMana.get(curr)[PartyManagerClient.MAX_MANA_LOC];
-				pixelLength = (int) (((float) currMana / currMaxMana) * 62);
-				// Draw the inner rectangle
-				this.drawTexturedModalRect(xBuffer + 1, slotOrigin + textHeight + barHeight + 1, 0, 4, pixelLength, 2);
-
+				try{
+						// Calculate # of pixels to scale health bar
+					int currMana = PartyManagerClient.playerMana.get(curr)[PartyManagerClient.CURR_MANA_LOC];
+					int currMaxMana = PartyManagerClient.playerMana.get(curr)[PartyManagerClient.MAX_MANA_LOC];
+					pixelLength = (int) (((float) currMana / currMaxMana) * 62);
+					// Draw the inner rectangle
+					this.drawTexturedModalRect(xBuffer + 1, slotOrigin + textHeight + barHeight + 1, 0, 4, pixelLength, 2);
+				} catch (NullPointerException e){}
 				String location = "x: " + (int) currPlayer.posX + " y: " + (int) currPlayer.posY + " z: " + (int) currPlayer.posZ;
 				this.drawString(this.instance.fontRenderer,  location, xBuffer, slotOrigin + textHeight + barHeight + 1
 						+ (barHeight + 1), white);
