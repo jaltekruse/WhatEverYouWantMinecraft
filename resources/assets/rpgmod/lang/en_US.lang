@@ -6,6 +6,8 @@ item.heal_self.name=Heal Self
 item.heal_party.name=Heal Party
 item.fly.name=Fly
 item.mage_killer.name =Mage Killer
+item.fireball.name=Fireball
+item.summon_slime.name=Summon Slime
 
 potion.potion.potion_fly = Fly
 
