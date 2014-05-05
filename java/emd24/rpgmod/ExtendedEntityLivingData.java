@@ -29,6 +29,7 @@ public class ExtendedEntityLivingData implements IExtendedEntityProperties{
 	public int alertLevel;
 	public int stealCoolDown; // number of ticks until entity can be stolen from
 	public int alertTimer; // number of ticks until alert level decreases
+	public String summonerName;
 	
 	// Sets whether player is undead
 	
@@ -37,6 +38,7 @@ public class ExtendedEntityLivingData implements IExtendedEntityProperties{
 		this.alertLevel = 0;
 		this.stealCoolDown = 0;
 		this.alertTimer = 0;
+		this.summonerName = "";
 		
 		// TODO: sync data
 	}
@@ -63,7 +65,9 @@ public class ExtendedEntityLivingData implements IExtendedEntityProperties{
 		rbt.setInteger("alertLvl", this.alertLevel);
 		rbt.setInteger("stealTicks", this.stealCoolDown);
 		rbt.setInteger("alertTicks", this.alertTimer);
-		
+		if(this.summonerName != ""){
+			rbt.setString("summonerName", this.summonerName);
+		}
 		compound.setTag(IDENTIFIER, rbt);
 	
 	}
@@ -75,6 +79,7 @@ public class ExtendedEntityLivingData implements IExtendedEntityProperties{
 		NBTTagCompound rbt = compound.getCompoundTag(IDENTIFIER);
 		this.alertLevel = rbt.getInteger("alertLvl");
 		this.stealCoolDown = rbt.getInteger("stealTicks");
+		this.summonerName = rbt.getString("summonerName");
 	}
 	
 }
