@@ -305,7 +305,7 @@ public class EventHookContainer {
 					GUIOpenPacket packet = new GUIOpenPacket(0, entityID, dialogue);
 					RPGMod.packetPipeline.sendTo(packet, (EntityPlayerMP)player);
 
-		//			event.setCanceled(true);
+					event.setCanceled(true);
 				} else {
 					// Regular method call
 					player.interactWith(event.entity);
