@@ -1,13 +1,21 @@
 package emd24.rpgmod.spells;
 
+import emd24.rpgmod.ExtendedEntityLivingData;
 import emd24.rpgmod.spells.entities.MagicLightning;
+import emd24.rpgmod.summons.ai.EntityAIFollowSummoner;
+import emd24.rpgmod.summons.ai.EntityAISummonerHurtByTarget;
+import emd24.rpgmod.summons.ai.EntityAISummonerHurtTarget;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.ai.EntityAIFollowOwner;
+import net.minecraft.entity.ai.EntityAIHurtByTarget;
+import net.minecraft.entity.ai.EntityAIOwnerHurtByTarget;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemMonsterPlacer;
@@ -61,7 +69,7 @@ public class SummonCreatureSpell extends Spell{
             {
                 d0 = 0.5D;
             }
-
+            
             Entity entity = ItemMonsterPlacer.spawnCreature(par3World, this.monster_id, (double)x + 0.5D, (double)y + d0, (double)z + 0.5D);
 
             if (entity != null)
@@ -70,10 +78,22 @@ public class SummonCreatureSpell extends Spell{
                 {
                     ((EntityLiving)entity).setCustomNameTag(par1ItemStack.getDisplayName());
                 }
-
-                if (!par2EntityPlayer.capabilities.isCreativeMode)
-                {
-                    --par1ItemStack.stackSize;
+                if(entity instanceof EntityCreature){
+                	// Here beigns code to change the mob's AI to be a loyal, aithful servant
+                	EntityCreature ent = (EntityCreature) entity;
+                	
+                	// Get and/or create extended properties of player
+                	if(ExtendedEntityLivingData.get(ent) == null){
+                		ExtendedEntityLivingData.register(ent);
+                	}
+                	ExtendedEntityLivingData prop = ExtendedEntityLivingData.get(ent);
+                	prop.summonerName = par2EntityPlayer.getCommandSenderName();
+                	ent.tasks.addTask(5, new EntityAIFollowSummoner(ent, 1.0D, 10.0F, 2.0F));
+                	ent.targetTasks.taskEntries.clear();
+                	ent.targetTasks.addTask(1, new EntityAISummonerHurtByTarget(ent));
+                	ent.targetTasks.addTask(2, new EntityAISummonerHurtTarget(ent));
+                	ent.targetTasks.addTask(3, new EntityAIHurtByTarget(ent, true));
+                		
                 }
             }
         }

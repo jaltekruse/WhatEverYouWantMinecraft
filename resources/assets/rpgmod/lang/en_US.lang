@@ -6,7 +6,10 @@ item.heal_self.name=Heal Self
 item.heal_party.name=Heal Party
 item.fly.name=Fly
 item.mage_killer.name =Mage Killer
-item.fireball.name=Fireball
+item.wind_energy.name=Wind Energy
+item.water_energy.name=Water Energy
+item.earth_energy.name=Earth Energy
+item.fire_energy.name=Fire Energy
 item.summon_slime.name=Summon Slime
 
 potion.potion.potion_fly = Fly
