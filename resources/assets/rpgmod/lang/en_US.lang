@@ -21,4 +21,14 @@ item.axe_of_revenge.name=Axe of Revenge
 
 item.tomato_food.name=Tomato
 item.tomato_seeds.name=Tomato Seeds
-tile.tomato_block.name=Tomato Plant
+tile.tomato_plant.name=Tomato Plant
+
+item.dough.name=Dough
+item.flour.name=Flour
+item.tomato_sauce.name=Tomato Sauce
+item.pepperoni.name=Pepperoni
+item.cheese.name=Cheese
+item.uncooked_basic_pizza.name=Uncooked Basic Pizza
+item.uncooked_pepperoni_pizza.name=Uncooked Pepperoni Pizza
+item.cooked_basic_pizza.name=Cooked Basic Pizza
+item.cooked_pepperoni_pizza.name=Cooked Pepperoni Pizza
