@@ -15,7 +15,9 @@ import net.minecraft.block.BlockFarmland;
 import net.minecraft.block.BlockOre;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.shader.Shader;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
@@ -55,6 +57,8 @@ import emd24.rpgmod.combatitems.ItemThrowingKnifeEntity;
 import emd24.rpgmod.food.CookingTable;
 import emd24.rpgmod.food.NewCookingTable;
 import emd24.rpgmod.food.TomatoPlant;
+import emd24.rpgmod.food.WesFood;
+import emd24.rpgmod.food.WesPlant;
 import emd24.rpgmod.gui.GUIKeyHandler;
 import emd24.rpgmod.gui.GUIManaBar;
 import emd24.rpgmod.gui.GUIPartyHUD;
@@ -79,7 +83,7 @@ import emd24.rpgmod.spells.entities.MagicBall;
 public class RPGMod {
 
 	public static final String MOD_ID = "rpgmod";
-	public static final String VERSION = "0.15";
+	public static final String VERSION = "0.3";
 
 
 
@@ -137,6 +141,10 @@ public class RPGMod {
 	public static Item cookedBasicPizza;
 	public static Item cookedPepperoniPizza;
 	
+	public static Item wesFood;
+	public static Item wesSeeds;
+	public static Block wesPlant;
+		
 	private static int modEntityID = 0;
 
 
@@ -367,7 +375,8 @@ public class RPGMod {
 		((ItemFood) tomatoFood).setAlwaysEdible();
 		GameRegistry.registerItem(tomatoFood, tomatoFood.getUnlocalizedName());
 
-		tomatoPlant = new TomatoPlant().setBlockName("tomato_plant").setBlockTextureName(MOD_ID + ":tomato_plant");
+		//set to clear because they look better
+		tomatoPlant = new TomatoPlant().setBlockName("tomato_plant").setBlockTextureName(MOD_ID + ":tomato_plant_clear");
 		GameRegistry.registerBlock(tomatoPlant, tomatoPlant.getUnlocalizedName());
 		
 		// heal amount, saturation modifier, plant block id, soilId
@@ -378,70 +387,65 @@ public class RPGMod {
 		tomatoSauce = new ItemFood(0, false).setUnlocalizedName("tomato_sauce").setTextureName(MOD_ID + ":tomato_sauce");
 		GameRegistry.registerItem(tomatoSauce, tomatoSauce.getUnlocalizedName());
 		
-		flour = new ItemFood(0, false).setUnlocalizedName("flour").setTextureName(MOD_ID + ":flour");
+		//Can have negative param?
+		flour = new ItemFood(-4, false).setUnlocalizedName("flour").setTextureName(MOD_ID + ":flour");
 		GameRegistry.registerItem(flour, flour.getUnlocalizedName());
 		
-		dough = new ItemFood(4, false).setUnlocalizedName("dough").setTextureName(MOD_ID + ":dough");
+		dough = new ItemFood(-4, false).setUnlocalizedName("dough").setTextureName(MOD_ID + ":dough");
 		GameRegistry.registerItem(dough, dough.getUnlocalizedName());
 		
 		cheese = new ItemFood(4, false).setUnlocalizedName("cheese").setTextureName(MOD_ID + ":cheese");
-		GameRegistry.registerItem(cheese, cheese.getUnlocalizedName());		
+		GameRegistry.registerItem(cheese, cheese.getUnlocalizedName());	
+		((ItemFood) cheese).setAlwaysEdible();
 		
 		pepperoni = new ItemFood(4, false).setUnlocalizedName("pepperoni").setTextureName(MOD_ID + ":pepperoni");
 		GameRegistry.registerItem(pepperoni, pepperoni.getUnlocalizedName());	
+		((ItemFood) pepperoni).setAlwaysEdible();
 		
-		uncookedBasicPizza = new ItemFood(4, false).setUnlocalizedName("uncooked_basic_pizza")
+		//Can have negative param?
+		uncookedBasicPizza = new ItemFood(-4, false).setUnlocalizedName("uncooked_basic_pizza")
 				.setTextureName(MOD_ID + ":uncooked_basic_pizza");
 		GameRegistry.registerItem(uncookedBasicPizza, uncookedBasicPizza.getUnlocalizedName());
 		
-		uncookedPepperoniPizza = new ItemFood(4, false).setUnlocalizedName("uncooked_pepperoni_pizza")
+		//Can have negative param?
+		uncookedPepperoniPizza = new ItemFood(-4, false).setUnlocalizedName("uncooked_pepperoni_pizza")
 				.setTextureName(MOD_ID + ":uncooked_pepperoni_pizza");
 		GameRegistry.registerItem(uncookedPepperoniPizza, uncookedPepperoniPizza.getUnlocalizedName());
 		
-		cookedBasicPizza = new ItemFood(4, false).setUnlocalizedName("cooked_basic_pizza")
+		cookedBasicPizza = new ItemFood(20, false).setUnlocalizedName("cooked_basic_pizza")
 				.setTextureName(MOD_ID + ":cooked_basic_pizza");
 		GameRegistry.registerItem(cookedBasicPizza, cookedBasicPizza.getUnlocalizedName());
+		((ItemFood) cookedBasicPizza).setAlwaysEdible();
 		
-		cookedPepperoniPizza = new ItemFood(4, false).setUnlocalizedName("cooked_pepperoni_pizza")
+		cookedPepperoniPizza = new ItemFood(34, false).setUnlocalizedName("cooked_pepperoni_pizza")
 				.setTextureName(MOD_ID + ":cooked_pepperoni_pizza");
 		GameRegistry.registerItem(cookedPepperoniPizza, cookedPepperoniPizza.getUnlocalizedName());
-		
-		/* custom crafting blocks are not implemented for the demo
-		cookingTable = new CookingTable().setStepSound(Block.soundTypeWood).setBlockName("cooking_table")
-				.setBlockTextureName(MOD_ID + ":cooking_table").setCreativeTab(CreativeTabs.tabMaterials);//dont know if materials is right
-		GameRegistry.registerBlock(cookingTable, cookingTable.getUnlocalizedName());
+		((ItemFood) cookedPepperoniPizza).setAlwaysEdible();
 
-		cookingTableNew = new NewCookingTable().setStepSound(Block.soundTypeWood).setBlockName("cooking_table_new")
-				.setBlockTextureName(MOD_ID + ":cooking_table_new").setCreativeTab(CreativeTabs.tabMaterials);//dont know if materials is right
-		GameRegistry.registerBlock(cookingTableNew, cookingTableNew.getUnlocalizedName());	
-		*/
+		//Use wes_plant_clear texture because it looks much nicer that just wes_plant
+		wesPlant = new WesPlant().setBlockName("wes_plant").setBlockTextureName(MOD_ID + ":wes_plant_clear");
+		GameRegistry.registerBlock(wesPlant, wesPlant.getUnlocalizedName());
 		
-
+		// heal amount, saturation modifier, plant block id, soilId
+		wesSeeds = new ItemSeedFood(4, 0.3F, wesPlant, Blocks.farmland).setUnlocalizedName("wes_seeds")
+				.setTextureName(MOD_ID + ":wes_seeds");//taken first two from apple in Item.class
+		GameRegistry.registerItem(wesSeeds, wesSeeds.getUnlocalizedName());
+		
+		wesFood = new WesFood(4, 2.4f, false).setUnlocalizedName("wes_food")
+				.setTextureName(MOD_ID + ":wes_food");
+		GameRegistry.registerItem(wesFood, wesFood.getUnlocalizedName());
+		
 		
 	}
 
 	
     public static void initializeRecipes() 
     {
-//        GameRegistry.addShapelessRecipe(new ItemStack(Tutorial.tutorialBlock), new Object[]{
-//            new ItemStack(Items.diamond), new ItemStack(Blocks.stone), new ItemStack(Items.dye, 1, 15)
-//        });
-//        
-//        GameRegistry.addRecipe(new ItemStack(Tutorial.tutorialBlock), new Object[]{
-//            "XZX",
-//            "CX ",
-//            'X', Items.gold_ingot, 'C', Blocks.stone, 'Z', new ItemStack(Items.dye, 1, 15)
-//        });
-//        
-//        ItemStack enchanted = new ItemStack(Items.stone_pickaxe);
-//        enchanted.addEnchantment(Enchantment.sharpness, 2);
-        
-//        GameRegistry.addShapelessRecipe(enchanted, new Object[]{
-//                new ItemStack(Items.stone_pickaxe), new ItemStack(Items.flint), new ItemStack(Tutorial.tutorialBlock)
-//        });
         
       GameRegistry.addShapelessRecipe(new ItemStack(tomatoSeeds, 4), new Object[]{new ItemStack(tomatoFood)});
-    	
+      GameRegistry.addShapelessRecipe(new ItemStack(wesSeeds, 4), new Object[]{new ItemStack(wesFood)});
+	
+      
       GameRegistry.addShapelessRecipe(new ItemStack(flour, 4), new Object[]{
     	  new ItemStack(Items.wheat)
       });
@@ -452,24 +456,18 @@ public class RPGMod {
       'X', flour, 'C', Items.egg
       });
     	
-      GameRegistry.addRecipe(new ItemStack(tomatoSauce), new Object[]{
-      " X ",
-      " C ",
-      'X', tomatoFood, 'C', Items.bowl
-      });
-      
-      GameRegistry.addRecipe(new ItemStack(uncookedBasicPizza), new Object[]{
-      " Z ",
-      " X ",
-      " C ",
-      'Z', cheese, 'X', tomatoSauce, 'C', dough
-      });
-      
-      GameRegistry.addRecipe(new ItemStack(uncookedPepperoniPizza), new Object[]{
-      " Z ",
-      " X ",
-      'Z', pepperoni, 'X', uncookedBasicPizza
-      });
+      GameRegistry.addRecipe(new ItemStack(tomatoSauce), new Object[]{ "X  ", "C  ", 'X', tomatoFood, 'C', Items.bowl });
+      GameRegistry.addRecipe(new ItemStack(tomatoSauce), new Object[]{ " X ", " C ", 'X', tomatoFood, 'C', Items.bowl });
+      GameRegistry.addRecipe(new ItemStack(tomatoSauce), new Object[]{ "  X", "  C", 'X', tomatoFood, 'C', Items.bowl });
+
+      GameRegistry.addRecipe(new ItemStack(uncookedBasicPizza), new Object[]{"Z  ", "X  ", "C  ", 'Z', cheese, 'X', tomatoSauce, 'C', dough });
+      GameRegistry.addRecipe(new ItemStack(uncookedBasicPizza), new Object[]{" Z ", " X ", " C ", 'Z', cheese, 'X', tomatoSauce, 'C', dough });
+      GameRegistry.addRecipe(new ItemStack(uncookedBasicPizza), new Object[]{"  Z", "  X", "  C", 'Z', cheese, 'X', tomatoSauce, 'C', dough });
+
+      GameRegistry.addRecipe(new ItemStack(uncookedPepperoniPizza), new Object[]{"Z  ", "X  ", 'Z', pepperoni, 'X', uncookedBasicPizza });
+      GameRegistry.addRecipe(new ItemStack(uncookedPepperoniPizza), new Object[]{" Z ", " X ", 'Z', pepperoni, 'X', uncookedBasicPizza });
+      GameRegistry.addRecipe(new ItemStack(uncookedPepperoniPizza), new Object[]{"  Z", "  X", 'Z', pepperoni, 'X', uncookedBasicPizza });
+
       
       GameRegistry.addShapelessRecipe(new ItemStack(cheese, 4), new Object[]{
     	  new ItemStack(Items.milk_bucket)
@@ -482,6 +480,13 @@ public class RPGMod {
       GameRegistry.addSmelting(uncookedBasicPizza, new ItemStack(cookedBasicPizza), 1F);
       GameRegistry.addSmelting(uncookedPepperoniPizza, new ItemStack(cookedPepperoniPizza), 1F);
 
+      ItemStack enchantedPizza = new ItemStack(cookedPepperoniPizza);
+      enchantedPizza.addEnchantment(Enchantment.efficiency, 3);
+      
+      GameRegistry.addShapelessRecipe(enchantedPizza, new Object[]{
+    	  new ItemStack(wesFood), new ItemStack(cookedPepperoniPizza)
+      });
+      
     }
 	/**
 	 * Initializes all the skills in the game, adding the correct perks.

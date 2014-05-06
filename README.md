@@ -56,7 +56,19 @@ Most of these items are also available in creative mode under the uncategorized 
 	<li>/give player### rpgmod:item.become_undead 64</li>
 	<li>/give player### rpgmod:item.summon_zombie 64</li>
 	<li>/give player### rpgmod:item.heal_self 64</li>
-	<li>/give player### rpgmod:item.heal_mana 64/li>
+	<li>/give player### rpgmod:item.heal_mana 64</li>
+	<li>/give player### rpgmod:item.tomato_food 64</li>
+	<li>/give player### rpgmod:item.tomato_seeds 64</li>
+	<li>/give player### rpgmod:item.pepperoni 64</li>
+	<li>/give player### rpgmod:item.dough 64</li>
+	<li>/give player### rpgmod:item.tomato_sauce 64</li>
+	<li>/give player### rpgmod:item.cheese 64</li>
+	<li>/give player### rpgmod:item.uncooked_basic_pizza 64</li>
+	<li>/give player### rpgmod:item.uncooked_pepperoni_pizza 64</li>
+	<li>/give player### rpgmod:item.cooked_basic_pizza 64</li>
+	<li>/give player### rpgmod:item.cooked_pepperoni_pizza 64</li>
+	<li>/give player### rpgmod:item.wes_food 64</li>
+	<li>/give player### rpgmod:item.wes_seeds 64</li>
 	<li>O hotkey - Skills</li>
 	<li>P hotkey - Party</li>
 	<li>L hotkey - Rain/Light</li>
@@ -64,12 +76,19 @@ Most of these items are also available in creative mode under the uncategorized 
 </ul>
 
 
-
-
-
-
-
-
-
-
-
+<h1>Recipes</h1>
+Here are some special recipes for the mod.
+<ul>
+	<li>Tomato Seeds: Place a Tomato in the crafting block</li>
+	<li>Wes Plant Seeds: Place a Wes Plant in the crafting block</li>
+	<li>Flour: Place wheat in the crafting block</li>
+	<li>Cheese: Place a bucket of milk in the crafting block (You'll get your bucket back!)</li>
+	<li>Tomato Sauce: Place a tomato on top of a bowl in the crafting block</li>
+	<li>Dough: Place a flour, an egg, and a flour above an egg, a flour, and an egg in the crafting block</li>
+    <li>Pepperoni: Place a porkchop on top of a bowl in the crafting block</li>
+	<li>Uncooked Cheese Pizza: Place some cheese above some tomato sauce on top of dough in the crafting block</li>
+	<li>Uncooked Pepperoni Pizza: Place some pepperoni above an uncooked cheese pizza in the crafting block</li>
+	<li>Cooked Cheese Pizza: Place the pizza in a furnace and give it some fuel!</li>
+	<li>Cooked Pepperoni Pizza: Place the pizza in a furnace and give it some fuel!</li>
+	<li>Enchanted Pepperoni Pizza: Place a wes plant on top of a cooked pepperoni pizza</li>
+</ul>
